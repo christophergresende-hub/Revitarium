@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Revitarium — Login</title>
+
+<!-- CSS interno: layout responsivo, acessível e moderno -->
+<style>
+  :root{
+    --bg:#0e1013;
+    --card:#0f1720;
+    --accent:#00eaff;
+    --muted:#98a0a8;
+    --success:#4aa96c;
+    --danger:#e04b4b;
+    --glass: rgba(255,255,255,0.03);
+    --radius:12px;
+    --focus: 0 0 0 4px rgba(0,234,255,0.08);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#071016 0%, #0b0d10 60%);
+    color:#e6eef5;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:24px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:420px;
+  }
+
+  header.brand{
+    text-align:left;
+    margin-bottom:18px;
+  }
+  header .logo{
+    font-weight:800;
+    font-size:34px;
+    color:var(--accent);
+    letter-spacing:-0.8px;
+    margin:0 0 6px 0;
+  }
+  header p{ margin:0; color:var(--muted); font-size:14px }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .form-row{ display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+
+  label{
+    font-size:13px;
+    color:var(--muted);
+    display:block;
+    margin-bottom:6px;
+  }
+
+  input[type="text"], input[type="email"], input[type="password"]{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,0.03);
+    color: #eaf6ff;
+    font-size:15px;
+  }
+
+  .input-inline{
+    position:relative;
+  }
+  .toggle-pass{
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    font-size:13px;
+    padding:6px;
+    cursor:pointer;
+  }
+
+  .row-between{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;}
+  .checkbox{
+    display:flex; gap:8px; align-items:center; font-size:13px; color:var(--muted);
+  }
+  .btn{
+    display:inline-block;
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--accent), #66f0ff);
+    color:#052026;
+    font-weight:700;
+    border:none;
+    cursor:pointer;
+    font-size:15px;
+    box-shadow: 0 6px 18px rgba(0,234,255,0.08);
+  }
+
+  .btn:focus { box-shadow:var(--focus); }
+
+  .muted { color:var(--muted); font-size:13px; margin-top:10px; }
+
+  .error {
+    background: rgba(224,75,75,0.12);
+    color: var(--danger);
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    margin-bottom:12px;
+  }
+
+  .success {
+    background: rgba(74,169,108,0.08);
+    color: var(--success);
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    margin-bottom:12px;
+  }
+
+  .small {
+    font-size:12px; color:var(--muted);
+  }
+
+  footer.foot { text-align:center; margin-top:12px; font-size:12px; color:var(--muted) }
+
+  @media (max-width:420px){
+    .wrap { padding:6px; }
+    header .logo { font-size:28px; }
+  }
+</style>
+</head>
+<body>
+  <main class="wrap" role="main">
+    <header class="brand" aria-hidden="false">
+      <div class="logo">Revitarium</div>
+      <p>Bem-vindo. Entre com sua conta para acessar o Dashboard.</p>
+    </header>
+
+    <section class="card" aria-labelledby="form-title" role="region">
+      <h2 id="form-title" style="margin:0 0 12px 0">Login</h2>
+
+      <!-- Mensagens dinâmicas -->
+      <div id="msg" aria-live="polite" style="min-height:26px"></div>
+
+      <!-- Formulário -->
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div class="form-row">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" inputmode="email" placeholder="seu@exemplo.com" required aria-required="true" />
+        </div>
+
+        <div class="form-row input-inline">
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" placeholder="••••••••" required aria-required="true" minlength="6" />
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar senha">Mostrar</button>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox"><input id="remember" type="checkbox" /> Lembrar-me</label>
+          <a href="#" id="forgot" class="small" style="color:var(--muted); text-decoration:none">Esqueceu a senha?</a>
+        </div>
+
+        <button class="btn" id="submitBtn" type="submit">Entrar</button>
+      </form>
+
+      <div class="muted small" style="margin-top:12px">
+        Login de demonstração: <strong>demo@revit.com</strong> / <strong>password</strong>
+      </div>
+    </section>
+
+    <footer class="foot">Ao continuar, você concorda com os termos de uso.</footer>
+  </main>
+
+<!-- JS: validação, UX, "login" local e fallback para redirecionar -->
+<script>
+  (function(){
+    const form = document.getElementById('loginForm');
+    const email = document.getElementById('email');
+    const pass = document.getElementById('password');
+    const msg = document.getElementById('msg');
+    const toggle = document.getElementById('togglePass');
+    const remember = document.getElementById('remember');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Preencher automaticamente se "remember" salvo
+    try {
+      const stored = localStorage.getItem('rv_user');
+      if(stored){
+        const data = JSON.parse(stored);
+        email.value = data.email || '';
+        remember.checked = true;
+      }
+    } catch(e){ console.warn(e) }
+
+    // Toggle senha
+    toggle.addEventListener('click', ()=> {
+      const visible = pass.type === 'text';
+      pass.type = visible ? 'password' : 'text';
+      toggle.textContent = visible ? 'Mostrar' : 'Ocultar';
+      toggle.setAttribute('aria-pressed', String(!visible));
+    });
+
+    function showError(text){ msg.innerHTML = '<div class="error" role="alert">'+text+'</div>'; }
+    function showSuccess(text){ msg.innerHTML = '<div class="success" role="status">'+text+'</div>'; }
+
+    // Simples validação de email
+    function validEmail(v){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+
+    // Mock autenticação: você poderá substituir pelo fetch no futuro
+    function authenticate({emailVal, passVal}){
+      // Demo account OR any non-empty valid email + 6+ char password
+      const demoOk = (emailVal.toLowerCase() === 'demo@revit.com' && passVal === 'password');
+      const basicOk = validEmail(emailVal) && passVal.length >= 6;
+      return demoOk || basicOk;
+    }
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      msg.innerHTML = '';
+      const eVal = email.value.trim();
+      const pVal = pass.value;
+
+      // quick checks
+      if(!eVal || !pVal){
+        showError('Preencha e-mail e senha.');
+        return;
+      }
+      if(!validEmail(eVal)){
+        showError('Formato de e-mail inválido.');
+        return;
+      }
+      if(pVal.length < 6){
+        showError('Senha deve ter ao menos 6 caracteres.');
+        return;
+      }
+
+      // bloqueia botão
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = 0.85;
+      showSuccess('Entrando...');
+
+      // Simula chamada de rede (substituir por fetch quando tiver backend)
+      setTimeout(()=> {
+        const ok = authenticate({emailVal:eVal, passVal:pVal});
+        if(!ok){
+          showError('E-mail ou senha incorretos.');
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = 1;
+          return;
+        }
+
+        // grava "lembrar" local
+        try {
+          if(remember.checked){
+            localStorage.setItem('rv_user', JSON.stringify({ email: eVal }));
+          } else {
+            localStorage.removeItem('rv_user');
+          }
+        } catch(e){ console.warn(e) }
+
+        // sinaliza sucesso e redireciona (dashboard.html)
+        showSuccess('Autenticado. Redirecionando...');
+        setTimeout(()=> {
+          // opcional: passar token/usuário via sessionStorage
+          try {
+            sessionStorage.setItem('rv_session', JSON.stringify({ email: eVal, ts: Date.now() }));
+          } catch(e){}
+          window.location.href = 'dashboard.html';
+        }, 650);
+      }, 700);
+    });
+
+    // UX: enter para submit (já padrão) e acessibilidade
+    email.addEventListener('keyup', (e)=> { if(e.key==='Enter') pass.focus(); });
+  })();
+</script>
+</body>
+</html>
