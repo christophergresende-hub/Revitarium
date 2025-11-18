@@ -1,41 +1,13 @@
-// Núcleo do Revitarium
-export const Revitarium = {
-    screens: {},
-    currentScreen: null,
+// Teste inicial — confirma que o app.js está conectado ao site
 
-    register(name, renderFunction) {
-        this.screens[name] = renderFunction;
-    },
-
-    navigate(name) {
-        if (!this.screens[name]) {
-            alert("Tela não encontrada: " + name);
-            return;
-        }
-        this.currentScreen = name;
-        document.getElementById("app").innerHTML = this.screens[name]();
-    }
-};
-
-// Tela inicial padrão
-Revitarium.register("home", () => `
-    <div class="card">
-        <h2>Bem-vindo ao Revitarium</h2>
-        <p>Seu ambiente está pronto. Agora podemos criar telas ilimitadas.</p>
-        <button onclick="Revitarium.navigate('sobre')">Ir para Sobre</button>
-    </div>
-`);
-
-// Tela 2 – exemplo
-Revitarium.register("sobre", () => `
-    <div class="card">
-        <h2>Sobre o App</h2>
-        <p>O Revitarium já está funcionando com navegação interna.</p>
-        <button onclick="Revitarium.navigate('home')">Voltar</button>
-    </div>
-`);
-
-// Inicializar app
 document.addEventListener("DOMContentLoaded", () => {
-    Revitarium.navigate("home");
+  const box = document.createElement("div");
+  box.style.padding = "20px";
+  box.style.margin = "20px";
+  box.style.background = "#2c3e50";
+  box.style.color = "white";
+  box.style.borderRadius = "8px";
+  box.innerText = "O app.js está funcionando perfeitamente!";
+  
+  document.body.appendChild(box);
 });
