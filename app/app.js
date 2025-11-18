@@ -1,0 +1,38 @@
+// ========================
+// LOGIN
+// ========================
+if (window.location.pathname.includes("index.html")) {
+    document.getElementById("loginBtn").addEventListener("click", () => {
+        const u = document.getElementById("username").value.trim();
+        const p = document.getElementById("password").value.trim();
+
+        if (!u || !p) {
+            alert("Informe usuário e senha.");
+            return;
+        }
+
+        sessionStorage.setItem("revitarium_user", u);
+        window.location.href = "dashboard.html";
+    });
+}
+
+
+
+// ========================
+// DASHBOARD
+// ========================
+if (window.location.pathname.includes("dashboard.html")) {
+    const user = sessionStorage.getItem("revitarium_user");
+
+    if (!user) {
+        window.location.href = "index.html";
+    }
+
+    document.getElementById("user").innerText = user;
+
+    function logout() {
+        sessionStorage.removeItem("revitarium_user");
+        window.location.href = "index.html";
+    }
+
+    window.logout = logout;
