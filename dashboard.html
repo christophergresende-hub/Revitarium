@@ -9,7 +9,7 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(180deg, #08131F 0%, #000000 100%);
+            background: linear-gradient(180deg, #08131F 0%, #000 100%);
             height: 100vh;
             color: white;
             display: flex;
@@ -20,72 +20,54 @@
 
         h1 {
             color: #00E4FF;
-            margin-bottom: 30px;
-            text-align: center;
+            margin-bottom: 20px;
         }
 
         .box {
             background: rgba(255,255,255,0.06);
             padding: 25px;
-            border-radius: 16px;
+            border-radius: 14px;
             width: 90%;
             max-width: 420px;
             backdrop-filter: blur(6px);
-            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
         }
 
-        button {
-            width: 100%;
+        .btn-logout {
+            margin-top: 30px;
+            width: 90%;
+            max-width: 420px;
             padding: 14px;
-            margin-top: 25px;
-            border: none;
             background: #00E4FF;
-            color: black;
+            border: none;
+            border-radius: 10px;
             font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
             font-weight: bold;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        .user-tag {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #ccc;
-            text-align: center;
+            cursor: pointer;
+            color: black;
         }
     </style>
 </head>
-
 <body>
 
-    <h1>Revitarium Dashboard</h1>
+    <h1>Bem-vindo ao Revitarium</h1>
 
     <div class="box">
-        <div class="user-tag">Bem-vindo, <span id="userName"></span></div>
-
-        <p style="text-align:center; color:#aaa">
-            Área interna do sistema Revitarium.<br>
-            Aqui você pode gerenciar tudo.
-        </p>
-
-        <button onclick="logout()">Sair</button>
+        <h3>Você está logado!</h3>
+        <p>Aqui será exibido o conteúdo do painel.</p>
     </div>
+
+    <button class="btn-logout" onclick="logout()">Sair</button>
 
 <script>
     const user = sessionStorage.getItem("revitUser");
 
     if (!user) {
         window.location.href = "index.html";
-    } else {
-        document.getElementById("userName").innerText = user;
     }
 
     function logout() {
-        sessionStorage.removeItem("revitUser");
+        sessionStorage.clear();
         window.location.href = "index.html";
     }
 </script>
