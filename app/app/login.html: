@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium — Login</title>
+  <style>
+    :root{
+      --bg:#07060a;
+      --card:#0e1014;
+      --glass:rgba(255,255,255,0.04);
+      --accent:#00eaff;
+      --muted:#9aa6b2;
+      --radius:14px;
+      --glass-strong: rgba(255,255,255,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(0,234,255,0.04), transparent),
+                  linear-gradient(180deg,#050507 0%, #0b0b0d 100%);
+      color:#e6eef5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .panel{
+      width:100%;
+      max-width:420px;
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 12px 40px rgba(3,6,18,0.6);
+      padding:28px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    h1{
+      margin:0 0 18px 0;
+      font-size:28px;
+      color:var(--accent);
+      text-align:center;
+      letter-spacing:0.6px;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+    .field input{
+      width:100%;
+      padding:14px 16px;
+      border-radius:10px;
+      border:none;
+      outline:none;
+      background:var(--glass-strong);
+      color: #111827;
+      font-size:15px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .btn{
+      display:block;
+      width:100%;
+      padding:14px;
+      border-radius:12px;
+      background: linear-gradient(90deg, var(--accent), #00c0ff);
+      color:#071014;
+      font-weight:700;
+      font-size:16px;
+      border:none;
+      cursor:pointer;
+      margin-top:8px;
+      box-shadow: 0 10px 30px rgba(0,234,255,0.06), inset 0 -2px 8px rgba(0,0,0,0.2);
+    }
+
+    .small{
+      margin-top:12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .brand-note{
+      text-align:center;
+      color: #9fdcff;
+      margin-bottom:12px;
+      opacity:0.95;
+    }
+
+    @media (max-width:420px){
+      .panel{ padding:20px; border-radius:12px}
+      h1{ font-size:22px }
+    }
+  </style>
+</head>
+<body>
+  <main class="panel" role="main" aria-labelledby="title">
+    <div class="brand-note">Revitarium · Enterprise UI</div>
+    <h1 id="title">Revitarium</h1>
+
+    <label class="field">
+      <input id="username" type="text" inputmode="text" placeholder="Usuário (email ou nome)" aria-label="Usuário">
+    </label>
+
+    <label class="field">
+      <input id="password" type="password" placeholder="Senha" aria-label="Senha">
+    </label>
+
+    <button id="loginBtn" class="btn" aria-live="polite">Entrar</button>
+
+    <div class="small">Ao entrar você será direcionado ao Dashboard — interface profissional.</div>
+  </main>
+
+  <script>
+    // login mínimo — redireciona para dashboard (mock)
+    document.getElementById('loginBtn').addEventListener('click', function(){
+      // validação simples
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+      if(!u || !p){
+        alert('Informe usuário e senha.');
+        return;
+      }
+      // simula autenticação: guarda um flag e redireciona
+      sessionStorage.setItem('revitarium_user', u);
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>
