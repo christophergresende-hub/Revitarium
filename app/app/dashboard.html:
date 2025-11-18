@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Revitarium — Dashboard</title>
+
+  <style>
+    :root{
+      --bg:#030406;
+      --panel:#071019;
+      --card:#0e1418;
+      --accent:#00eaff;
+      --accent-2:#7afff8;
+      --muted:#9aa6b2;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%; margin:0}
+    body{
+      background: linear-gradient(180deg,#04060a 0%, #071018 100%);
+      color:#e6eef5;
+      padding:24px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      width:52px;height:52px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow: 0 8px 30px rgba(0,234,255,0.08);
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#052022;
+      font-size:20px;
+    }
+    h1{ margin:0; font-size:28px; color:var(--accent) }
+
+    nav .logout{
+      background:transparent;border:1px solid rgba(255,255,255,0.04);
+      color:var(--muted); padding:10px 14px;border-radius:10px; cursor:pointer;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+      align-items:start;
+    }
+
+    .main-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: 0 12px 40px rgba(2,6,20,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .stat-row{ display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap }
+    .stat{
+      flex:1; min-width:140px;
+      background:var(--card); padding:14px; border-radius:12px; text-align:left;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .stat .label{ color:var(--muted); font-size:12px; margin-bottom:8px }
+    .stat .value{ font-size:20px; font-weight:700; color:var(--accent) }
+
+    .charts{ display:flex; gap:12px; flex-wrap:wrap }
+    .chart{
+      flex:1; min-width:240px; background:var(--card); padding:12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .chart h3{ margin:0 0 8px 0; font-size:14px; color:var(--muted) }
+
+    .side{
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Sparkline (simple) */
+    .sparkline{ height:48px; width:100%; display:block; }
+
+    footer{ margin-top:20px; text-align:center; color:var(--muted); font-size:13px }
+
+    @media (max-width:980px){
+      .grid{ grid-template-columns: 1fr; }
+      .side{ order:2 }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden>RV</div>
+      <div>
+        <h1>Revitarium</h1>
+        <div style="color:var(--muted);font-size:13px">Enterprise · Dashboard</div>
+      </div>
+    </div>
+
+    <nav>
+      <button id="logoutBtn" class="logout">Sair</button>
+    </nav>
+  </header>
+
+  <section class="grid">
+    <div>
+      <section class="main-card" aria-labelledby="overview">
+        <h2 id="overview" style="margin-top:0;color:var(--muted)">Visão geral</h2>
+
+        <div class="stat-row">
+          <div class="stat">
+            <div class="label">Usuários ativos</div>
+            <div class="value" id="usersCount">—</div>
+          </div>
+
+          <div class="stat">
+            <div class="label">Sessões hoje</div>
+            <div class="value" id="sessionsCount">—</div>
+          </div>
+
+          <div class="stat">
+            <div class="label">Performance</div>
+            <div class="value" id="perfScore">—</div>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="chart">
+            <h3>Traffic (últimas 24h)</h3>
+            <svg class="sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" id="spark1"></svg>
+          </div>
+
+          <div class="chart">
+            <h3>Engajamento</h3>
+            <svg class="sparkline" viewBox="0 0 100 30" preserveAspectRatio="none" id="spark2"></svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="main-card" style="margin-top:14px">
+        <h3 style="margin:0 0 12px 0;color:var(--muted)">Atalhos rápidos</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onclick="location.href='login.html'" style="padding:10px 12px;border-radius:10px;border:none;background:var(--glass);color:var(--muted);cursor:pointer">Voltar ao Login</button>
+          <button onclick="alert('Exportando relatório...')" style="padding:10px 12px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#051417;cursor:pointer">Exportar CSV</button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <div class="card">
+        <h4 style="margin:0 0 8px 0;color:var(--muted)">Perfil</h4>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#031616;font-weight:700">U</div>
+          <div>
+            <div id="usernameDisplay">—</div>
+            <div style="color:var(--muted);font-size:13px">Administrador</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 8px 0;color:var(--muted)">Status do sistema</h4>
+        <ul style="margin:0;padding-left:18px;color:var(--muted);font-size:14px">
+          <li id="statusApi">API: OK</li>
+          <li id="statusDb">DB: OK</li>
+          <li id="statusQueue">Queue: OK</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  <footer>© Revitarium — Interface profissional • Mock demo</footer>
+
+  <script>
+    // Simple client-side "app.js" inline behavior (lightweight)
+    (function(){
+      const user = sessionStorage.getItem('revitarium_user') || 'Convidado';
+      document.getElementById('usernameDisplay').textContent = user;
+      document.getElementById('usersCount').textContent = Math.floor(120 + Math.random()*900);
+      document.getElementById('sessionsCount').textContent = Math.floor(300 + Math.random()*1500);
+      document.getElementById('perfScore').textContent = (80 + Math.random()*19).toFixed(0) + '%';
+
+      function draw(id, values){
+        const svg = document.getElementById(id);
+        const w = 100, h = 30;
+        const max = Math.max(...values);
+        const min = Math.min(...values);
+        const pts = values.map((v,i)=> {
+          const x = (i/(values.length-1)) * w;
+          const y = h - ((v - min) / (max - min || 1)) * h;
+          return `${x},${y}`;
+        }).join(' ');
+        svg.innerHTML = '<polyline points="'+pts+'" fill="none" stroke="'+getComputedStyle(document.documentElement).getPropertyValue('--accent')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />';
+      }
+
+      draw('spark1', Array.from({length:12}, ()=> Math.random()*100));
+      draw('spark2', Array.from({length:12}, ()=> 30 + Math.random()*70));
+
+      // status simulation
+      ['statusApi','statusDb','statusQueue'].forEach(id=>{
+        const el = document.getElementById(id);
+        el.textContent = el.textContent + ' — OK';
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', ()=>{
+        sessionStorage.removeItem('revitarium_user');
+        location.href = 'login.html';
+      });
+
+    })();
+  </script>
+</body>
+</html>
