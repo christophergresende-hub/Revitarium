@@ -38,3 +38,8 @@ if (window.location.pathname.includes("dashboard.html")) {
 
     window.logout = logout;
 }
+</div>
+
+<script src="app/app.js" defer></script>
+</body>
+</html>
