@@ -66,21 +66,6 @@
     <button class="logout-btn" onclick="logout()">Sair</button>
 
   </div>
-
-  <script>
-    const user = localStorage.getItem("revitariumUser");
-
-    if (!user) {
-      window.location.href = "login.html";
-    }
-
-    document.getElementById("user").innerText = user;
-
-    function logout() {
-      localStorage.removeItem("revitariumUser");
-      window.location.href = "login.html";
-    }
-  </script>
-
-</body>
-</html>
+  <script src="app.js" defer></script>
+  </body>
+  </html>
