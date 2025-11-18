@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revitarium – Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #2c3e50;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .logout-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>Revitarium – Dashboard</header>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Bem-vindo ao Revitarium!</h2>
+      <p>Login realizado com sucesso.</p>
+    </div>
+
+    <div class="card">
+      <h3>Seus Dados</h3>
+      <p><strong>Usuário:</strong> <span id="user"></span></p>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">Sair</button>
+
+  </div>
+
+  <script>
+    const user = localStorage.getItem("revitariumUser");
+
+    if (!user) {
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("user").innerText = user;
+
+    function logout() {
+      localStorage.removeItem("revitariumUser");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
