@@ -8,80 +8,101 @@
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(180deg, #08131F 0%, #000000 100%);
+            font-family: "Inter", Arial, sans-serif;
+            background: radial-gradient(circle at top, #0a1220, #000);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            color: white;
         }
 
-        .container {
-            background: rgba(255,255,255,0.06);
-            padding: 40px 30px;
-            border-radius: 16px;
+        .login-box {
             width: 90%;
             max-width: 380px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.4);
-            backdrop-filter: blur(6px);
+            background: rgba(255,255,255,0.06);
+            padding: 40px 30px;
+            border-radius: 18px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
         }
 
         h1 {
             text-align: center;
-            color: #00E4FF;
-            font-size: 28px;
+            color: #00eaff;
+            font-size: 30px;
+            letter-spacing: 1px;
             margin-bottom: 30px;
         }
 
-        label {
-            color: #ddd;
+        .input-label {
+            display: block;
+            margin-bottom: 6px;
             font-size: 14px;
+            color: #c7d4e0;
         }
 
         input {
             width: 100%;
             padding: 14px;
-            margin-top: 6px;
-            margin-bottom: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
-            background: #eee;
-            font-size: 15px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 18px;
         }
 
         button {
             width: 100%;
             padding: 14px;
+            background: #00eaff;
+            color: #000;
             border: none;
-            background: #00E4FF;
-            color: black;
             font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
             font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            margin-top: 10px;
         }
 
         button:hover {
-            opacity: 0.9;
+            filter: brightness(0.9);
         }
     </style>
-
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>Revitarium</h1>
+<div class="login-box">
+    <h1>Revitarium</h1>
 
-        <label>Usuário</label>
-        <input type="text" id="user" placeholder="Seu usuário">
+    <label class="input-label">Usuário</label>
+    <input id="user" type="text" placeholder="Digite seu usuário">
 
-        <label>Senha</label>
-        <input type="password" id="pass" placeholder="Sua senha">
+    <label class="input-label">Senha</label>
+    <input id="pass" type="password" placeholder="Digite sua senha">
 
-        <button onclick="login()">Entrar</button>
-    </div>
+    <button onclick="login()">Entrar</button>
+</div>
 
-<script src="app/app.js"></script>
+
+<script>
+function login() {
+    const user = document.getElementById("user").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+
+    if (!user || !pass) {
+        alert("Preencha os campos.");
+        return;
+    }
+
+    sessionStorage.setItem("revitUser", user);
+    window.location.href = "dashboard.html";
+}
+</script>
 
 </body>
 </html>
