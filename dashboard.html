@@ -1,71 +1,94 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revitarium - Dashboard</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #08131F 0%, #000000 100%);
+            height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+        }
 
-    header {
-      background: #2c3e50;
-      padding: 20px;
-      color: white;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
+        h1 {
+            color: #00E4FF;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-    .container {
-      padding: 20px;
-    }
+        .box {
+            background: rgba(255,255,255,0.06);
+            padding: 25px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+        }
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            border: none;
+            background: #00E4FF;
+            color: black;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-    .logout-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-  </style>
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .user-tag {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #ccc;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
 
-  Dashboard</header>
+    <h1>Revitarium Dashboard</h1>
 
-  <div class="container">
+    <div class="box">
+        <div class="user-tag">Bem-vindo, <span id="userName"></span></div>
 
-    <div class="card">
-      <h2>Bem-vindo ao Revitarium!</h2>
-      <p>Login realizado com sucesso.</p>
+        <p style="text-align:center; color:#aaa">
+            Área interna do sistema Revitarium.<br>
+            Aqui você pode gerenciar tudo.
+        </p>
+
+        <button onclick="logout()">Sair</button>
     </div>
 
-    <div class="card">
-      <h3>Seus Dados</h3>
-      <p><strong>Usuário:</strong> <span id="user"></span></p>
-    </div>
+<script>
+    const user = sessionStorage.getItem("revitUser");
 
-    <button class="logout-btn" onclick="logout()">Sair</button>
+    if (!user) {
+        window.location.href = "index.html";
+    } else {
+        document.getElementById("userName").innerText = user;
+    }
 
-  </div>
-  <script src="app/app.js" defer></script>
-  </body>
-  </html>
+    function logout() {
+        sessionStorage.removeItem("revitUser");
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
