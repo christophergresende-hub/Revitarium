@@ -1,0 +1,21 @@
+// app/app.js — utilities e inicialização leve
+(function(){
+  // expose simple helpers if needed
+  window.Revitarium = {
+    session: {
+      user: sessionStorage.getItem('revitarium_user') || null,
+      setUser(u){ sessionStorage.setItem('revitarium_user', u); this.user = u; }
+    },
+    utils: {
+      randomInt(min,max){ return Math.floor(min + Math.random() * (max-min+1)); }
+    }
+  };
+
+  // auto-redirect if no session and on dashboard page
+  if(location.pathname.endsWith('dashboard.html')){
+    if(!window.Revitarium.session.user){
+      // redirect to login if not logged
+      location.href = 'login.html';
+    }
+  }
+})();
