@@ -125,7 +125,7 @@
         return;
       }
       // simula autenticação: guarda um flag e redireciona
-      sessionStorage.setItem('revitarium_user', u);
+      localStorage.setItem('revitarium_user', u);
       window.location.href = 'dashboard.html';
     });
   </script>
