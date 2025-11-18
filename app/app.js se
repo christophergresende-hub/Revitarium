@@ -1,46 +1,40 @@
-// app/app.js — lógica do dashboard (substitui o inline em dashboard.html)
-(function(){
-  const user = sessionStorage.getItem('revitarium_user') || 'Convidado';
-  const el = id => document.getElementById(id);
+// =========================
+// LOGIN
+// =========================
+if (window.location.pathname.includes("login.html")) {
+    const form = document.getElementById("loginForm");
 
-  // preencher UI
-  if(el('usernameDisplay')) el('usernameDisplay').textContent = user;
-  if(el('usersCount')) el('usersCount').textContent = Math.floor(120 + Math.random()*900);
-  if(el('sessionsCount')) el('sessionsCount').textContent = Math.floor(300 + Math.random()*1500);
-  if(el('perfScore')) el('perfScore').textContent = (80 + Math.random()*19).toFixed(0) + '%';
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-  function draw(id, values){
-    const svg = el(id);
-    if(!svg) return;
-    const w = 100, h = 30;
-    const max = Math.max(...values);
-    const min = Math.min(...values);
-    const pts = values.map((v,i)=> {
-      const x = (i/(values.length-1)) * w;
-      const y = h - ((v - min) / (max - min || 1)) * h;
-      return `${x},${y}`;
-    }).join(' ');
-    svg.innerHTML = '<polyline points="'+pts+'" fill="none" stroke="#00eaff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />';
-  }
+        const user = document.getElementById("usuario").value;
+        const pass = document.getElementById("senha").value;
 
-  draw('spark1', Array.from({length:12}, ()=> Math.random()*100));
-  draw('spark2', Array.from({length:12}, ()=> 30 + Math.random()*70));
+        if (user === "admin" && pass === "1234") {
+            localStorage.setItem("revitariumUser", user);
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Usuário ou senha incorretos.");
+        }
+    });
+}
 
-  ['statusApi','statusDb','statusQueue'].forEach(id=>{
-    const t = el(id);
-    if(t) t.textContent = t.textContent + ' — OK';
-  });
+// =========================
+// DASHBOARD
+// =========================
+if (window.location.pathname.includes("dashboard.html")) {
+    const user = localStorage.getItem("revitariumUser");
 
-  const logout = el('logoutBtn');
-  if(logout) logout.addEventListener('click', ()=>{
-    sessionStorage.removeItem('revitarium_user');
-    location.href = 'login.html';
-  });
-
-  // Se quiser bloquear acesso direto ao dashboard sem login:
-  if(location.pathname.endsWith('dashboard.html')){
-    if(!sessionStorage.getItem('revitarium_user')){
-      location.href = 'login.html';
+    if (!user) {
+        window.location.href = "login.html";
     }
-  }
-})();
+
+    document.getElementById("user").innerText = user;
+
+    function logout() {
+        localStorage.removeItem("revitariumUser");
+        window.location.href = "login.html";
+    }
+
+    window.logout = logout;
+}
