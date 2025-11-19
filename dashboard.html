@@ -1,81 +1,283 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Revitarium</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium - Dashboard</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(180deg, #00111A, #000);
-            height: 100vh;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 40px;
-        }
+  <style>
+    :root{
+      --bg1: #08131F;
+      --bg2: #000000;
+      --glass: rgba(255,255,255,0.06);
+      --neon: #00E4FF;
+      --card: rgba(255,255,255,0.04);
+      --muted: #cfcfcf;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #00E4FF;
-            font-weight: bold;
-        }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, "Arial", sans-serif;
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      min-height:100vh;
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
 
-        .box {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 20px;
-            width: 90%;
-            max-width: 380px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 25px;
-        }
+    .wrap{
+      width:95%;
+      max-width:1100px;
+      margin:36px auto;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:20px;
+      align-items:start;
+      animation:fadeIn .5s ease;
+    }
 
-        .box h3 {
-            margin: 0;
-            margin-bottom: 10px;
-        }
+    @media(min-width:900px){
+      .wrap{grid-template-columns: 300px 1fr;}
+    }
 
-        .btn-logout {
-            width: 90%;
-            max-width: 380px;
-            padding: 15px;
-            background: #00E4FF;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            color: black;
-        }
-    </style>
+    .panel{
+      background:var(--glass);
+      padding:22px;
+      border-radius:14px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    header.site-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .logo{
+      width:56px;height:56px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(0,226,255,0.12), rgba(0,226,255,0.06));
+      display:flex;align-items:center;justify-content:center;
+      color:var(--neon); font-weight:700; font-size:18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    h1.title{
+      margin:0;
+      color:var(--neon);
+      font-size:22px;
+      letter-spacing:0.6px;
+    }
+
+    .user-block{
+      text-align:right;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .user-block button{
+      margin-top:8px;
+      padding:10px 14px;
+      border-radius:10px;
+      border:none;
+      background:var(--neon);
+      color:#000;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .profile-info{font-size:13px;color:#dfefff;margin-top:6px}
+
+    /* stats */
+    .stats{
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      flex-wrap:wrap;
+    }
+
+    .stat{
+      flex:1 1 120px;
+      background:var(--card);
+      padding:12px;
+      border-radius:10px;
+      min-width:0;
+    }
+
+    .stat h3{margin:0;color:var(--neon);font-size:18px}
+    .stat p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    /* content column */
+    .content-col{display:flex;flex-direction:column;gap:18px}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:20px;border-radius:12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card h2{margin:0 0 10px 0;color:var(--neon);font-size:18px}
+    .card p{color:var(--muted);margin:0 0 14px 0}
+
+    .grid-2{
+      display:grid;gap:12px;
+      grid-template-columns:1fr;
+    }
+    @media(min-width:900px){ .grid-2{grid-template-columns:1fr 1fr} }
+
+    .card small{color:#aebbd0}
+
+    /* table like */
+    .list{
+      margin-top:12px;
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .list-item{
+      display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:8px;background:rgba(0,0,0,0.15)
+    }
+    .btn{
+      padding:10px 14px;border-radius:10px;border:none;background:var(--neon);color:#000;font-weight:700;cursor:pointer;
+    }
+
+    footer.note{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  </style>
 </head>
 <body>
 
-    <h1>Revitarium</h1>
+  <div class="wrap">
+    <!-- left panel -->
+    <aside class="panel">
+      <header class="site-title">
+        <div class="brand">
+          <div class="logo">R</div>
+          <div>
+            <h1 class="title">Revitarium</h1>
+            <div class="profile-info" id="welcome">Bem-vindo</div>
+          </div>
+        </div>
 
-    <div class="box">
-        <h3>Você está logado!</h3>
-        <p>Aqui será exibido o conteúdo do painel futuramente.</p>
-    </div>
+        <div class="user-block">
+          <div id="userEmail" style="font-weight:700"></div>
+          <button id="btnLogout" onclick="logout()">Sair</button>
+        </div>
+      </header>
 
-    <button class="btn-logout" onclick="logout()">Sair da conta</button>
+      <div class="stats" style="margin-top:18px">
+        <div class="stat">
+          <h3 id="stat1">—</h3>
+          <p>Atividades hoje</p>
+        </div>
+        <div class="stat">
+          <h3 id="stat2">—</h3>
+          <p>Usuários online</p>
+        </div>
+        <div class="stat">
+          <h3 id="stat3">—</h3>
+          <p>Notificações</p>
+        </div>
+      </div>
 
-    <script>
-        const user = sessionStorage.getItem("user");
-        if (!user) {
-            window.location.href = "index.html";
-        }
+      <div style="margin-top:18px;font-size:13px;color:var(--muted)">
+        <strong>Quick actions</strong>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" onclick="alert('Nova ação')">Nova</button>
+          <button class="btn" style="background:rgba(255,255,255,0.08);color:var(--neon)" onclick="alert('Export')">Export</button>
+        </div>
+      </div>
+    </aside>
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = "index.html";
-        }
-    </script>
+    <!-- right / content -->
+    <main class="content-col">
+      <section class="card">
+        <h2>Visão Geral</h2>
+        <p>Resumo rápido do sistema. Aqui você pode mostrar métricas, gráficos e atalhos.</p>
+
+        <div class="grid-2" style="margin-top:12px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="card" style="padding:12px">
+              <small>Resumo de Tarefas</small>
+              <div class="list" style="margin-top:8px">
+                <div class="list-item">
+                  <div>
+                    <strong>Backups</strong><div style="color:var(--muted);font-size:13px">Agendado</div>
+                  </div>
+                  <div><button class="btn" onclick="alert('Start backup')">Executar</button></div>
+                </div>
+
+                <div class="list-item">
+                  <div>
+                    <strong>Atualizar Sistema</strong><div style="color:var(--muted);font-size:13px">Versão v1.0</div>
+                  </div>
+                  <div><button class="btn" onclick="alert('Update')">Atualizar</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <small>Últimas Ações</small>
+              <div style="margin-top:10px;color:var(--muted)">
+                <div>• Arquivo de configuração atualizado</div>
+                <div>• Usuário demo criado</div>
+                <div>• Merge recente concluído</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Área de Conteúdo</h2>
+        <p>Insira aqui painéis específicos, gráficos, relatórios ou o conteúdo principal do dashboard.</p>
+
+        <div style="margin-top:12px">
+          <div class="list">
+            <div class="list-item"><div><strong>Relatório mensal</strong></div><div><button class="btn" onclick="alert('Abrir relatório')">Abrir</button></div></div>
+            <div class="list-item"><div><strong>Configurações</strong></div><div><button class="btn" onclick="alert('Ir para configurações')">Abrir</button></div></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="card" style="text-align:center">
+        <div style="color:var(--muted)">Você está logado como <strong id="footerUser">—</strong></div>
+        <div style="margin-top:8px;color:#9fbfdc;font-size:13px">Revitarium • Painel administrativo</div>
+      </footer>
+    </main>
+  </div>
+
+<script>
+  // redirect to login if session missing
+  const user = sessionStorage.getItem('revitUser');
+  if (!user) {
+    // not logged, go to index (login)
+    window.location.href = 'index.html';
+  } else {
+    // populate UI pieces
+    document.getElementById('welcome').textContent = 'Bem-vindo, ' + user;
+    document.getElementById('userEmail').textContent = user;
+    document.getElementById('footerUser').textContent = user;
+
+    // example stats (replace with real data later)
+    document.getElementById('stat1').textContent = '12';
+    document.getElementById('stat2').textContent = '3';
+    document.getElementById('stat3').textContent = '1';
+  }
+
+  function logout(){
+    sessionStorage.clear();
+    window.location.href = 'index.html';
+  }
+</script>
 
 </body>
 </html>
