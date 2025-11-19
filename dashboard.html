@@ -1,75 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Revitarium - Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Revitarium</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #08131F 0%, #000 100%);
-      height: 100vh;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 40px;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #00111A, #000);
+            height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+        }
 
-    h1 {
-      color: #00E4FF;
-      margin-bottom: 20px;
-    }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #00E4FF;
+            font-weight: bold;
+        }
 
-    .box {
-      background: rgba(255,255,255,0.06);
-      padding: 25px;
-      border-radius: 14px;
-      width: 90%;
-      max-width: 420px;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 0 30px rgba(0,0,0,0.4);
-    }
+        .box {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            width: 90%;
+            max-width: 380px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-    .btn-logout {
-      margin-top: 30px;
-      width: 90%;
-      max-width: 420px;
-      padding: 14px;
-      background: #00E4FF;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      color: black;
-    }
-  </style>
+        .box h3 {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        .btn-logout {
+            width: 90%;
+            max-width: 380px;
+            padding: 15px;
+            background: #00E4FF;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: black;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Bem-vindo ao Revitarium</h1>
+    <h1>Revitarium</h1>
 
-  <div class="box">
-    <h3>Você está logado!</h3>
-    <p>Aqui será exibido o conteúdo do painel.</p>
-  </div>
+    <div class="box">
+        <h3>Você está logado!</h3>
+        <p>Aqui será exibido o conteúdo do painel futuramente.</p>
+    </div>
 
-  <button class="btn-logout" onclick="logout()">Sair</button>
+    <button class="btn-logout" onclick="logout()">Sair da conta</button>
 
-  <script>
-    const user = sessionStorage.getItem("revitUser");
-    if (!user) {
-      window.location.href = "index.html";
-    }
+    <script>
+        const user = sessionStorage.getItem("user");
+        if (!user) {
+            window.location.href = "index.html";
+        }
 
-    function logout() {
-      sessionStorage.clear();
-      window.location.href = "index.html";
-    }
-  </script>
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "index.html";
+        }
+    </script>
 
 </body>
 </html>
