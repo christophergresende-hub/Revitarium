@@ -8,86 +8,94 @@
     <style>
         body {
             margin: 0;
-            font-family: "Inter", Arial, sans-serif;
-            background: radial-gradient(circle at top, #0a1220, #000);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #08131F 0%, #000 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
         }
 
-        .login-box {
-            width: 90%;
-            max-width: 380px;
+        .container {
             background: rgba(255,255,255,0.06);
             padding: 40px 30px;
-            border-radius: 18px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.45);
             backdrop-filter: blur(10px);
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+            animation: fadeIn 0.7s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
             text-align: center;
-            color: #00eaff;
-            font-size: 30px;
-            letter-spacing: 1px;
+            color: #00E4FF;
+            font-size: 32px;
             margin-bottom: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
-        .input-label {
-            display: block;
-            margin-bottom: 6px;
+        label {
+            color: #ccc;
             font-size: 14px;
-            color: #c7d4e0;
         }
 
         input {
             width: 100%;
             padding: 14px;
+            margin-top: 6px;
+            margin-bottom: 20px;
             border-radius: 10px;
             border: none;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
+            font-size: 15px;
             color: white;
-            font-size: 16px;
             outline: none;
-            margin-bottom: 18px;
+        }
+
+        input::placeholder {
+            color: #cfcfcf;
         }
 
         button {
             width: 100%;
             padding: 14px;
-            background: #00eaff;
-            color: #000;
             border: none;
+            background: #00E4FF;
+            color: black;
             font-size: 18px;
-            font-weight: bold;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: 0.2s ease;
-            margin-top: 10px;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
         button:hover {
-            filter: brightness(0.9);
+            transform: scale(1.02);
+            opacity: 0.95;
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-box">
-    <h1>Revitarium</h1>
+    <div class="container">
+        <h1>Revitarium</h1>
 
-    <label class="input-label">Usuário</label>
-    <input id="user" type="text" placeholder="Digite seu usuário">
+        <label>Usuário</label>
+        <input type="text" id="user" placeholder="Digite seu usuário">
 
-    <label class="input-label">Senha</label>
-    <input id="pass" type="password" placeholder="Digite sua senha">
+        <label>Senha</label>
+        <input type="password" id="pass" placeholder="Digite sua senha">
 
-    <button onclick="login()">Entrar</button>
-</div>
-
+        <button onclick="login()">Entrar</button>
+    </div>
 
 <script>
 function login() {
@@ -95,7 +103,7 @@ function login() {
     const pass = document.getElementById("pass").value.trim();
 
     if (!user || !pass) {
-        alert("Preencha os campos.");
+        alert("Preencha todos os campos.");
         return;
     }
 
@@ -105,4 +113,4 @@ function login() {
 </script>
 
 </body>
-</html>
+</html>h
