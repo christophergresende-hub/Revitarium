@@ -1,89 +1,112 @@
-/* -------------------------------
-   REVITARIUM — LOGIN PAGE STYLE
-   Layout profissional, limpo e moderno
---------------------------------*/
+/* ===== REVTARIUM LOGIN PAGE - DESIGN PREMIUM ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background: linear-gradient(180deg, #07121d 0%, #000000 100%);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 20%, #001F3F, #000814);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-/* ---------- CARD ---------- */
-
+/* --- CARD PRINCIPAL --- */
 .login-container {
-    width: 100%;
-    max-width: 380px;
-    background: rgba(255, 255, 255, 0.06);
-    padding: 40px 30px;
-    border-radius: 18px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+  background: rgba(10, 15, 25, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.1);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
 }
 
-/* ---------- TÍTULO ---------- */
-
-.login-title {
-    text-align: center;
-    color: #00e4ff;
-    font-size: 30px;
-    font-weight: 700;
-    margin-bottom: 35px;
-    letter-spacing: 1px;
+.login-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
 }
 
-/* ---------- LABELS ---------- */
-
-label {
-    display: block;
-    color: #dcdcdc;
-    font-size: 15px;
-    margin-bottom: 6px;
-    margin-top: 12px;
+/* --- TÍTULO --- */
+.login-container h1 {
+  font-size: 2em;
+  font-weight: 600;
+  color: #00E5FF;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
 }
 
-/* ---------- INPUTS ---------- */
-
-input {
-    width: 100%;
-    padding: 15px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(255,255,255,0.85);
-    font-size: 16px;
+/* --- INPUTS --- */
+.login-container input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  font-size: 1em;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transition: 0.3s;
 }
 
-/* ---------- BOTÃO ---------- */
-
-.btn-login {
-    margin-top: 25px;
-    width: 100%;
-    padding: 16px;
-    background: #00e4ff;
-    color: #000;
-    font-size: 18px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    transition: 0.2s ease;
+.login-container input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
 }
 
-.btn-login:hover {
-    opacity: 0.88;
-    transform: scale(1.02);
+/* --- BOTÃO --- */
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00E5FF, #00B8D4);
+  color: #001;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.btn-login:active {
-    transform: scale(0.97);
+.login-container button:hover {
+  background: linear-gradient(90deg, #00B8D4, #00E5FF);
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+/* --- EFEITO DE LUZ --- */
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #00E5FF, transparent, #00E5FF);
+  z-index: -1;
+  opacity: 0.2;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 420px) {
+  .login-container {
+    padding: 25px;
+    border-radius: 16px;
+  }
+
+  .login-container h1 {
+    font-size: 1.7em;
+  }
 }
