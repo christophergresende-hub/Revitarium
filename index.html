@@ -2,35 +2,29 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-
-    <!-- Forçar atualização sempre -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revitarium - Login</title>
+    <title>Revitarium – Login</title>
 
-    <!-- Link do CSS PREMIUM -->
-    <link rel="stylesheet" href="app/style-index.css" />
+    <!-- Importando CSS correto -->
+    <link rel="stylesheet" href="Revitarium/app/style-index.css">
+
 </head>
-
 <body>
 
     <div class="login-container">
-        <h1>Revitarium</h1>
+        <div class="login-card">
+            <h1 class="title">Revitarium</h1>
 
-        <label for="user">Usuário</label>
-        <input type="text" id="user" placeholder="Seu usuário">
+            <label for="usuario">Usuário</label>
+            <input type="text" id="usuario" placeholder="Digite seu usuário">
 
-        <label for="pass">Senha</label>
-        <input type="password" id="pass" placeholder="Sua senha">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" placeholder="Digite sua senha">
 
-        <button onclick="login()">Entrar</button>
+            <button class="btn" onclick="login()">Entrar</button>
+        </div>
     </div>
 
-    <!-- JS -->
-    <script src="app/app.js"></script>
-
+    <script src="Revitarium/app/app.js"></script>
 </body>
 </html>
