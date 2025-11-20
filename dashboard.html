@@ -10,20 +10,52 @@
 
 <body>
 
-    <h1>Revitarium</h1>
+    <!-- MENU LATERAL -->
+    <aside class="sidebar">
+        <h2 class="logo">R</h2>
 
-    <div class="box">
-        <h3>Você está logado!</h3>
-        <p>Esta é a área do painel. Conteúdo e módulos avançados serão adicionados aqui.</p>
-    </div>
+        <nav class="menu">
+            <a class="menu-item active">🏠 Início</a>
+            <a class="menu-item">📊 Progresso</a>
+            <a class="menu-item">📁 Arquivos</a>
+            <a class="menu-item">⚙️ Configurações</a>
+        </nav>
 
-    <button class="btn-logout" onclick="logout()">Sair da conta</button>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="content">
+
+        <header class="topbar">
+            <h1>Revitarium</h1>
+            <span id="userLabel"></span>
+        </header>
+
+        <section class="panel">
+            <h2>Painel Principal</h2>
+            <p>Bem-vindo ao seu painel Revitarium.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Funções</h2>
+
+            <div class="cards">
+                <div class="card">🔥 Ação rápida</div>
+                <div class="card">📈 Relatórios</div>
+                <div class="card">🎯 Metas</div>
+            </div>
+        </section>
+
+    </main>
 
 <script>
     const user = sessionStorage.getItem("revitUser");
 
     if (!user) {
         window.location.href = "index.html";
+    } else {
+        document.getElementById("userLabel").textContent = "Bem-vindo, " + user;
     }
 
     function logout() {
