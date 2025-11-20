@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revitarium - Login</title>
+    <title>Revitarium – Login</title>
 
-    <!-- LINK CORRETO DO CSS DENTRO DA PASTA app -->
+    <!-- Importando CSS correto -->
     <link rel="stylesheet" href="Revitarium/app/style-index.css">
+
 </head>
-
 <body>
-    <div class="container">
+
+    <div class="login-container">
         <div class="login-card">
-            <h1>Revitarium</h1>
+            <h1 class="title">Revitarium</h1>
 
-            <label for="user">Usuário</label>
-            <input id="user" type="text" placeholder="Digite seu usuário">
+            <label for="usuario">Usuário</label>
+            <input type="text" id="usuario" placeholder="Digite seu usuário">
 
-            <label for="pass">Senha</label>
-            <input id="pass" type="password" placeholder="Digite sua senha">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" placeholder="Digite sua senha">
 
-            <button onclick="login()">Entrar</button>
+            <button class="btn" onclick="login()">Entrar</button>
         </div>
     </div>
 
