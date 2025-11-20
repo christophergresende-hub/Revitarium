@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- Forçar atualização (anti-cache) -->
+    <!-- Forçar atualização sempre -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -11,9 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revitarium - Login</title>
 
-    <!-- CSS externo -->
-    <link rel="stylesheet" href="app/style-index.css">
-
+    <!-- Link do CSS PREMIUM -->
+    <link rel="stylesheet" href="app/style-index.css" />
 </head>
 
 <body>
@@ -21,16 +20,16 @@
     <div class="login-container">
         <h1>Revitarium</h1>
 
-        <label for="user" style="color:#fff; font-size:14px;">Usuário</label>
+        <label for="user">Usuário</label>
         <input type="text" id="user" placeholder="Seu usuário">
 
-        <label for="pass" style="color:#fff; font-size:14px;">Senha</label>
+        <label for="pass">Senha</label>
         <input type="password" id="pass" placeholder="Sua senha">
 
         <button onclick="login()">Entrar</button>
     </div>
 
-    <!-- Script -->
+    <!-- JS -->
     <script src="app/app.js"></script>
 
 </body>
