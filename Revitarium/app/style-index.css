@@ -48,69 +48,158 @@ input {
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 10px;
   font-size: 15px;
-  color: white;
+  color: /* === Botão === */
+
 }
 
-/* === Botão === */
+/* ============================
+   RESET GLOBAL
+============================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
 
+/* ============================
+   BACKGROUND PREMIUM
+============================ */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #032b60, #00111f);
+  overflow: hidden;
+}
+
+/* Aura luminosa */
+body::before {
+  content: "";
+  position: absolute;
+  width: 850px;
+  height: 850px;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.4), transparent 70%);
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  filter: blur(90px);
+  opacity: 0.7;
+}
+
+/* ============================
+   CONTAINER PRINCIPAL
+============================ */
+.page {
+  width: 100%;
+  max-width: 480px;
+  padding: 25px;
+  z-index: 2;
+}
+
+/* ============================
+   CARD DO LOGIN — VERSÃO AVANÇADA
+============================ */
+.login-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  padding: 55px 40px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 26px;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  backdrop-filter: blur(18px);
+
+  /* Brilho moderno dinâmico */
+  box-shadow:
+    0 0 40px rgba(0, 255, 255, 0.25),
+    inset 0 0 40px rgba(0, 120, 255, 0.25);
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Título */
+#login-title {
+  font-size: 42px;
+  font-weight: 700;
+  text-align: center;
+  color: #00e7ff;
+  margin-bottom: 40px;
+  text-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
+}
+
+/* ============================
+   CAMPOS
+============================ */
+.label {
+  font-size: 16px;
+  color: #ffffffd9;
+  margin-bottom: 8px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 28px;
+  outline: none;
+  transition: 0.25s;
+  backdrop-filter: blur(4px);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+input:focus {
+  border-color: #00eaff;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
+}
+
+/* ============================
+   BOTÃO AVANÇADO
+============================ */
+.btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #003344;
+  background: linear-gradient(90deg, #00eaff, #0099ff);
+  transition: 0.25s ease;
+  box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
 }
 
 .btn:hover {
   transform: scale(1.03);
-}
-/* CARD MELHORADO */
-.login-card {
-    width: 90%;
-    max-width: 480px;
-    padding: 55px 40px;
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 26px;
-
-    /* novo brilho dinâmico */
-    box-shadow:
-        0 0 40px rgba(0, 255, 255, 0.25),
-        inset 0 0 40px rgba(0, 180, 255, 0.12);
-
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(0, 255, 255, 0.08);
-
-    animation: fadeIn 0.8s ease-out;
+  box-shadow: 0 0 28px rgba(0, 200, 255, 0.55);
 }
 
-/* animação suave ao aparecer */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* BOTÃO AVANÇADO */
-.btn {
-    width: 100%;
-    padding: 18px;
-    margin-top: 25px;
-    background: linear-gradient(92deg, #00eaff 0%, #0099ff 100%);
-    border: none;
-    border-radius: 14px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #001018;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* efeito hover real de botão premium */
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 22px rgba(0, 200, 255, 0.35);
-}
-
-/* clique suave */
 .btn:active {
-    transform: scale(0.97);
+  transform: scale(0.97);
+}
+
+/* ============================
+   ANIMAÇÃO
+============================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
