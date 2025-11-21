@@ -1,31 +1,95 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revitarium – Login</title>
-  <link rel="stylesheet" href="Revitarium/app/style-index.css" />
-</head>
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
 
-<body>
-  <main class="page">
-    <section class="login-wrap">
-      <div class="login-card">
-        <h1 class="brand">Revitarium</h1>
+/* ===== FUNDO ===== */
+body {
+  background: radial-gradient(circle at top, #001f33 0%, #000814 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
 
-        <form id="loginForm">
-          <label>Usuário</label>
-          <input id="user" type="text" placeholder="Digite seu usuário" />
+/* ===== CARD ===== */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 50px rgba(0, 255, 255, 0.25),
+    inset 0 0 50px rgba(0, 180, 255, 0.20);
+  animation: fadeIn 0.8s ease-out;
+}
 
-          <label>Senha</label>
-          <input id="pass" type="password" placeholder="Digite sua senha" />
+/* ===== TÍTULO ===== */
+.brand {
+  text-align: center;
+  font-size: 32px;
+  color: #00eaff;
+  margin-bottom: 28px;
+  font-weight: 700;
+}
 
-          <button class="btn" type="submit">Entrar</button>
-        </form>
-      </div>
-    </section>
-  </main>
+/* ===== FORM ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  <script src="Revitarium/app/app.js" defer></script>
-</body>
-</html>
+/* ===== LABEL ===== */
+label {
+  font-size: 16px;
+  color: #e0e0e0;
+}
+
+/* ===== INPUT ===== */
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+/* ===== BOTÃO ===== */
+.btn {
+  margin-top: 10px;
+  padding: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  background: linear-gradient(90deg, #00eaff, #008cff);
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+/* ===== ANIMAÇÃO ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
