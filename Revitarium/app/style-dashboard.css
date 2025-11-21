@@ -1,116 +1,50 @@
-/* Layout geral */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+/* style-dashboard.css - versão compacta mas avançada */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto; }
+:root{
+  --bg:#041726; --card:#071924; --accent1:#00e6ff; --accent2:#0086ff;
+  --muted: rgba(255,255,255,0.18);
 }
+.app{ display:flex; min-height:100vh; background:linear-gradient(180deg,#022733 0%, #021520 60%); color:#e8f6fb; }
 
-/* Sidebar */
-.sidebar {
-  width: 230px;
-  background: #0a0f16;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
+/* SIDEBAR */
+.sidebar{ width:260px; padding:28px 20px; border-right:1px solid rgba(255,255,255,0.02); }
+.brand{ font-size:22px; font-weight:700; color:var(--accent1); margin-bottom:18px; }
+.nav{ display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+.nav-item{ background:transparent; color:#fff; padding:10px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; transition:.18s; }
+.nav-item:hover{ background:rgba(255,255,255,0.02); transform:translateX(6px); }
+.nav-item.active{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#001b24; }
 
-.sidebar .brand {
-  font-size: 22px;
-  margin-bottom: 30px;
-  text-align: center;
-}
+/* MAIN */
+.main{ flex:1; padding:24px 28px 80px; }
+.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+#page-title{ font-size:26px; font-weight:700; color:var(--accent1); }
 
-.sidebar nav ul {
-  list-style: none;
-  padding: 0;
-}
+/* BUTTONS */
+.btn{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#001b24; border:none; padding:16px 22px; border-radius:14px; font-weight:800; cursor:pointer; }
+.btn.small{ padding:8px 12px; border-radius:10px; }
+.btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; }
 
-.sidebar nav ul li {
-  padding: 12px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  border-radius: 6px;
-}
+/* CONTENT */
+.content{ display:grid; gap:20px; max-width:1100px; margin:0 auto; }
+.cards{ display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+.card{ background:rgba(255,255,255,0.02); padding:20px; border-radius:16px; }
+.card h4{ font-size:14px; color:var(--muted); }
+.card .value{ font-size:20px; font-weight:800; }
 
-.sidebar nav ul li.active,
-.sidebar nav ul li:hover {
-  background: #1b242f;
-}
+/* CHARTS */
+.charts{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.chart-card{ background:var(--card); border-radius:14px;padding:18px; }
 
-.logout {
-  margin-top: auto;
-  padding: 12px;
-  background: #b30000;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+/* PANELS */
+.panels{ display:grid; grid-template-columns: 1fr 320px; gap:18px; }
+.panel{ background:var(--card); padding:18px;border-radius:12px; }
+.activity-list, .todo-list{ list-style:none; margin-top:12px; }
+.activity-list li, .todo-list li{ background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; }
 
-/* Conteúdo principal */
-.content {
-  flex: 1;
-  background: #121b25;
-  color: white;
-  overflow-y: auto;
-}
+/* Users */
+.hidden{ display:none; }
+.user-controls{ display:flex; gap:8px; margin-bottom:12px; }
+input{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:#cfeffb; padding:12px; border-radius:10px; width:100%; margin-top:10px; }
 
-/* Topbar */
-.topbar {
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  background: #18222e;
-  position: sticky;
-  top: 0;
-}
-
-/* Cards */
-.cards {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-
-.card {
-  flex: 1;
-  padding: 30px;
-  background: #1d2733;
-  border-radius: 10px;
-}
-
-/* Gráficos */
-.charts {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-
-.graph-box {
-  flex: 1;
-  height: 250px;
-  background: #1d2733;
-  border-radius: 10px;
-}
-
-/* Listas */
-.lists {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-}
-
-.list-box {
-  flex: 1;
-  background: #1d2733;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.list-box ul {
-  margin: 0;
-  padding-left: 20px;
-}
+/* Switch theme */
+.switch{ width:48px; height:26px; }
