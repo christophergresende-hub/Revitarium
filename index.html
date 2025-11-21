@@ -1,35 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium — Login</title>
-
-  <!-- CSS principal (arquivo separado) -->
-  <!-- Coloque style-index.css em: Revitarium/app/style-index.css -->
-  <link rel="stylesheet" href="Revitarium/app/style-index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revitarium – Login</title>
+  <link rel="stylesheet" href="Revitarium/app/style-index.css" />
 </head>
+
 <body>
   <main class="page">
     <section class="login-wrap">
-      <div class="login-card" role="region" aria-labelledby="login-title">
-        <h1 id="login-title" class="brand">Revitarium</h1>
+      <div class="login-card">
+        <h1 class="brand">Revitarium</h1>
 
-        <form id="loginForm" class="login-form" onsubmit="event.preventDefault(); login();">
-          <label for="user" class="label">Usuário</label>
-          <input id="user" name="user" type="text" inputmode="text" autocomplete="username" placeholder="Digite seu usuário" class="input">
+        <form id="loginForm">
+          <label>Usuário</label>
+          <input id="user" type="text" placeholder="Digite seu usuário" />
 
-          <label for="pass" class="label">Senha</label>
-          <input id="pass" name="pass" type="password" inputmode="text" autocomplete="current-password" placeholder="Digite sua senha" class="input">
+          <label>Senha</label>
+          <input id="pass" type="password" placeholder="Digite sua senha" />
 
-          <button type="submit" class="btn">Entrar</button>
+          <button class="btn" type="submit">Entrar</button>
         </form>
       </div>
     </section>
   </main>
 
-  <!-- JS (arquivo separado) -->
-  <!-- Coloque app.js em: Revitarium/app/app.js -->
   <script src="Revitarium/app/app.js" defer></script>
 </body>
 </html>
