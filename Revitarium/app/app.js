@@ -1,98 +1,129 @@
-/* ==========================
-    FUNÇÕES DO DASHBOARD
-========================== */
+/* app.js - controlador simples do dashboard (frontend only, mock data) */
+document.addEventListener("DOMContentLoaded", function(){
+  // Elements
+  const visitsCtx = document.getElementById('visitsChart').getContext('2d');
+  const convCtx = document.getElementById('conversionsChart') ?
+                  document.getElementById('conversionsChart').getContext('2d') : null;
+  const recentActions = document.getElementById('recentActions');
+  const todoForm = document.getElementById('todoForm');
+  const todoInput = document.getElementById('todoInput');
+  const todoList = document.getElementById('todoList');
+  const userForm = document.getElementById('userForm');
+  const usersList = document.getElementById('usersList');
+  const exportBtn = document.getElementById('exportCsv');
+  const addActionBtn = document.getElementById('addActionBtn');
+  const autoRefresh = document.getElementById('autoRefresh');
 
-/* ----- LOGOUT ----- */
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  window.location.href = "index.html";
-});
+  // Mock data
+  const visitsData = [120, 150, 180, 140, 210, 230, 200]; // 7 dias
+  const conversionsData = [12, 20, 15, 18, 30, 28, 22];
 
-/* ----- EXPORTAR CSV ----- */
-document.getElementById("exportCSV").addEventListener("click", () => {
-  const data = [
-    ["Dia", "Visitas"],
-    ["Seg", 120],
-    ["Ter", 87],
-    ["Qua", 95],
-    ["Qui", 130],
-    ["Sex", 160],
-    ["Sab", 200],
-    ["Dom", 180]
-  ];
+  // Chart: Visits
+  const visitsChart = new Chart(visitsCtx, {
+    type: 'line',
+    data: {
+      labels: ['6d','5d','4d','3d','2d','1d','Hoje'],
+      datasets: [{
+        label: 'Visitas',
+        data: visitsData,
+        fill: true,
+        backgroundColor: 'linear-gradient(90deg, rgba(0,224,255,0.16), rgba(0,163,255,0.08))',
+        borderColor: '#00e0ff',
+        tension: 0.35,
+        pointRadius: 2
+      }]
+    },
+    options: { responsive: true, plugins:{legend:{display:false}}}
+  });
 
-  let csv = "";
-  data.forEach(row => csv += row.join(",") + "\n");
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "relatorio.csv";
-  a.click();
-});
-
-/* ----- CHARTS ----- */
-const chartVisits = new Chart(document.getElementById("chartVisits"), {
-  type: "line",
-  data: {
-    labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"],
-    datasets: [{
-      label: "Visitas",
-      data: [120, 87, 95, 130, 160, 200, 180],
-      borderColor: "cyan",
-      borderWidth: 3,
-      fill: false
-    }]
+  // Chart: Conversions (if present)
+  let conversionsChart = null;
+  if(convCtx){
+    conversionsChart = new Chart(convCtx,{
+      type:'bar',
+      data:{ labels:['6d','5d','4d','3d','2d','1d','Hoje'], datasets:[{label:'Conversões', data:conversionsData, backgroundColor:'#00d2ff'}]},
+      options:{ responsive:true, plugins:{legend:{display:false}}}
+    });
   }
-});
 
-const chartConversions = new Chart(document.getElementById("chartConversions"), {
-  type: "bar",
-  data: {
-    labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-    datasets: [{
-      label: "Conversões",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: "cyan"
-    }]
+  // Utilities to add list item
+  function addListItem(el, text){
+    const li = document.createElement('li');
+    li.textContent = text;
+    el.prepend(li);
   }
-});
 
-/* ----- ÚLTIMAS AÇÕES ----- */
-document.getElementById("addActionBtn").addEventListener("click", () => {
-  const text = prompt("Descreva a ação:");
-  if (!text) return;
-  const li = document.createElement("li");
-  li.innerText = text;
-  document.getElementById("actionsList").appendChild(li);
-});
+  // Populate initial
+  ['Item A','Item B','Item C'].forEach(t => addListItem(recentActions,t));
+  ['Tarefa 1','Tarefa 2'].forEach(t => addListItem(todoList,t));
+  ['Admin, Owner'].forEach(u => addListItem(usersList,u));
 
-/* ----- TAREFAS ----- */
-document.getElementById("addTaskBtn").addEventListener("click", () => {
-  const task = document.getElementById("taskInput").value;
-  if (!task) return;
-  const li = document.createElement("li");
-  li.innerText = task;
-  document.getElementById("tasksList").appendChild(li);
-  document.getElementById("taskInput").value = "";
-});
+  // Add action btn
+  addActionBtn?.addEventListener('click', () => {
+    const action = `Ação adicionada em ${new Date().toLocaleTimeString()}`;
+    addListItem(recentActions, action);
+  });
 
-/* ----- USUÁRIOS ----- */
-document.getElementById("addUserBtn").addEventListener("click", () => {
-  const name = document.getElementById("newUserName").value;
-  const role = document.getElementById("newUserRole").value;
-  if (!name || !role) return;
-  const li = document.createElement("li");
-  li.innerText = `${name} – ${role}`;
-  document.getElementById("usersList").appendChild(li);
-  document.getElementById("newUserName").value = "";
-  document.getElementById("newUserRole").value = "";
-});
+  // Todo add
+  todoForm?.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const val = todoInput.value.trim();
+    if(!val) return;
+    addListItem(todoList, val);
+    todoInput.value = '';
+  });
 
-/* ----- RESUMO ----- */
-document.getElementById("summaryBox").innerHTML = `
-  <li>Visitas totais: 8.450</li>
-  <li>Conversões totais: 720</li>
-  <li>Taxa de conversão: 8.5%</li>
-`;
+  // Users add
+  userForm?.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('userName').value.trim();
+    const role = document.getElementById('userRole').value.trim();
+    if(!name) return;
+    addListItem(usersList, `${name} ${role ? '('+role+')' : ''}`);
+    document.getElementById('userName').value='';
+    document.getElementById('userRole').value='';
+  });
+
+  // Export CSV (simple mock export)
+  exportBtn?.addEventListener('click', ()=>{
+    const rows = [
+      ['dia','visitas','conversoes'],
+      ...visitsData.map((v,i)=>[i, v, conversionsData[i] || 0])
+    ];
+    const csv = rows.map(r=>r.join(',')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'revitarium-visits.csv'; document.body.appendChild(a); a.click();
+    a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // Auto-refresh mock (re-renders data)
+  let autoRefreshInterval = null;
+  autoRefresh?.addEventListener('change', function(e){
+    if(this.checked){
+      autoRefreshInterval = setInterval(()=> {
+        // simulate data change
+        visitsData.push(Math.round(150 + Math.random()*100));
+        visitsData.shift();
+        visitsChart.data.datasets[0].data = visitsData;
+        visitsChart.update();
+      }, 5000);
+    } else {
+      clearInterval(autoRefreshInterval);
+      autoRefreshInterval = null;
+    }
+  });
+
+  // Logout button (simple redirect to index)
+  document.getElementById('btn-logout')?.addEventListener('click', function(){
+    window.location.href = 'index.html';
+  });
+
+  // Accessibility: keyboard shortcuts (optional)
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey && e.key === 'e') {
+      exportBtn?.click();
+    }
+  });
+});
