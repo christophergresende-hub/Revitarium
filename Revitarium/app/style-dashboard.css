@@ -1,66 +1,151 @@
-:root{
-  --bg:#071722;
-  --card:#071a22;
-  --accent1:#00e0ff;
-  --accent2:#00a3ff;
-  --muted:rgba(255,255,255,0.12);
-  --glass:rgba(255,255,255,0.03);
-  --radius:18px;
-  --shadow: 0 14px 40px rgba(0,0,0,0.6);
-  --gap:18px;
-  font-synthesis: none;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: radial-gradient(ellipse at top, #052634 0%, #02141a 50%, #001018 100%); color:#e7f6fb}
-a{color:var(--accent1); text-decoration:none}
-.container{max-width:1100px;margin:28px auto;padding:22px}
+/* ================================
+   REVITARIUM – DASHBOARD (FINAL)
+   Design premium / clean / moderno
+   ================================ */
 
-/* Topbar */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 6px 28px rgba(0,0,0,0.6)}
-.brand{font-weight:700;font-size:20px;color:var(--accent1);text-shadow:0 0 14px rgba(0,224,255,0.18)}
-.main-nav{display:flex;gap:10px;align-items:center}
-.nav-btn{padding:8px 12px;border-radius:999px;background:transparent;color:#bfeeff;border:1px solid rgba(255,255,255,0.03)}
-.nav-btn.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#042224;border:none;box-shadow:0 8px 24px rgba(0,160,255,0.12)}
-.nav-logout{margin-left:12px;padding:8px 10px;border-radius:8px;background:#fff;color:#022;margin-left:12px}
-
-/* Title */
-.page-title{font-size:28px;margin:18px 0 12px;color:#dffaff}
-
-/* controls */
-.controls{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-.pill{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#012; padding:10px 14px;border-radius:999px;cursor:pointer; font-weight:600}
-.pill-outline{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#bfeeff;padding:8px 12px;border-radius:999px;cursor:pointer}
-.switch{display:flex;align-items:center;gap:8px}
-
-/* layout grid */
-.grid{display:grid;grid-template-columns: 1fr 340px; gap:var(--gap)}
-.col{padding:0}
-.main-col{display:flex;flex-direction:column;gap:18px}
-.side-col{display:flex;flex-direction:column;gap:18px}
-
-/* cards */
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03)}
-.card.small{height:120px}
-.card h2{margin:0 0 12px;color:#dffaff}
-
-/* panel */
-.panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:16px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-.panel h3{margin:0 0 10px;color:#dffaff}
-
-/* forms and lists */
-.todo-form, .user-form{display:flex;gap:8px}
-input, textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#dffaff}
-.list{list-style:none;margin:8px 0;padding:0}
-.list li{padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02);color:#dffaff}
-
-/* responsive */
-@media (max-width:1000px){
-  .grid{grid-template-columns:1fr}
-  .side-col{order:2}
+/* ---------- GLOBAL ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
 }
 
-/* charts container tuning */
-canvas{width:100% !important; height:220px !important; display:block}
+body {
+  background: #0b1522;
+  color: #e7f6ff;
+  min-height: 100vh;
+}
 
-/* small helpers */
-.small-muted{font-size:13px;color:rgba(255,255,255,0.55)}
+/* ---------- HEADER ---------- */
+.header {
+  background: rgba(255,255,255,0.04);
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px);
+}
+
+.header .brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: #00e0ff;
+}
+
+.header button {
+  background: #ff3b3b;
+  border: none;
+  padding: 10px 18px;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ---------- MAIN LAYOUT ---------- */
+.dashboard-container {
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+/* ---------- CARDS ---------- */
+.card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 18px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 18px rgba(0,0,0,0.25);
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #00d2ff;
+}
+
+/* Canvas do gráfico */
+.card canvas {
+  width: 100%;
+  height: 280px !important;
+}
+
+/* ---------- LISTAS ---------- */
+ul {
+  list-style: none;
+  margin-top: 10px;
+}
+
+ul li {
+  background: rgba(255,255,255,0.08);
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/* ---------- FORMS ---------- */
+form input,
+form select {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #00e0ff;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ---------- TOGGLE ---------- */
+.toggle-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.toggle-area input {
+  transform: scale(1.2);
+}
+
+/* ---------- ACTION BUTTON ---------- */
+.btn-action {
+  background: #00ffa6;
+  color: #00261a;
+  font-weight: bold;
+  width: 100%;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (min-width: 780px) {
+  .dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1180px) {
+  .dashboard-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
