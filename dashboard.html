@@ -1,59 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard • Revitarium</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium — Dashboard</title>
 
-    <!-- CSS do dashboard -->
-    <link rel="stylesheet" href="app/style-dashboard.css" />
+  <!-- CSS do dashboard (coloque em: Revitarium/app/style-dashboard.css) -->
+  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
 </head>
-
 <body>
+  <!-- checa sessão; se não logado volta pro index -->
+  <script>
+    const user = sessionStorage.getItem('user');
+    if (!user) {
+      window.location.href = 'index.html';
+    }
+  </script>
 
-    <div class="container">
-        <header class="topbar">
-            <h1 class="logo">Revitarium</h1>
-
-            <button class="logout-btn" onclick="logout()">
-                Sair
-            </button>
-        </header>
-
-        <section class="content-box">
-            <h2>Bem-vindo!</h2>
-            <p>Seu acesso foi autenticado com sucesso.</p>
-
-            <div class="cards">
-                <div class="card">
-                    <h3>Status</h3>
-                    <p>Sessão ativa</p>
-                </div>
-
-                <div class="card">
-                    <h3>Próximas funções</h3>
-                    <p>Em construção</p>
-                </div>
-
-                <div class="card">
-                    <h3>Configurações</h3>
-                    <p>Ajustes futuros</p>
-                </div>
-            </div>
-        </section>
+  <header class="topbar">
+    <div class="brand">Revitarium</div>
+    <div class="top-actions">
+      <span class="user-name" id="userName"></span>
+      <button id="logoutBtn" class="btn-ghost">Sair</button>
     </div>
+  </header>
 
-    <script>
-        // proteção de página
-        const user = sessionStorage.getItem("user");
-        if (!user) {
-            window.location.href = "index.html";
-        }
+  <div class="layout">
+    <aside class="sidebar">
+      <nav>
+        <ul>
+          <li class="active"><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="#relatorios">Relatórios</a></li>
+          <li><a href="#perfil">Perfil</a></li>
+          <li><a href="#config">Configurações</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = "index.html";
-        }
-    </script>
+    <main class="content">
+      <section class="cards">
+        <article class="card">
+          <h3>Performance</h3>
+          <p id="metricA">—</p>
+        </article>
+
+        <article class="card">
+          <h3>Notificações</h3>
+          <p id="metricB">—</p>
+        </article>
+
+        <article class="card">
+          <h3>Status do Sistema</h3>
+          <p id="metricC">—</p>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Resumo rápido</h2>
+        <div class="panel-grid">
+          <div class="panel-item">
+            <h4>Tarefas pendentes</h4>
+            <ul id="todoList">
+              <li>Carregando…</li>
+            </ul>
+          </div>
+
+          <div class="panel-item">
+            <h4>Últimas ações</h4>
+            <div id="activity">Sem atividades</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- JS do app (coloque Revitarium/app/app.js) -->
+  <script src="Revitarium/app/app.js" defer></script>
+
+  <!-- script local extra para dashboard (em caso queira separar pode mover para app.js) -->
+  <script>
+    // mostra nome do usuário e popula cards mínimos
+    (function () {
+      const raw = sessionStorage.getItem('user');
+      const user = raw ? JSON.parse(raw) : null;
+      if (user && user.name) {
+        document.getElementById('userName').textContent = user.name;
+      } else {
+        document.getElementById('userName').textContent = 'Usuário';
+      }
+
+      // Exemplo de preenchimento rápido
+      document.getElementById('metricA').textContent = 'Rendimento: 92%';
+      document.getElementById('metricB').textContent = '2 novas';
+      document.getElementById('metricC').textContent = 'Operacional';
+
+      const todo = ['Revisar relatórios', 'Aprovar usuários', 'Gerar backup'];
+      const ul = document.getElementById('todoList');
+      ul.innerHTML = todo.map(t => `<li>${t}</li>`).join('');
+
+      const act = document.getElementById('activity');
+      act.innerHTML = '<small>Última sincronização: agora</small>';
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+      });
+    })();
+  </script>
 </body>
 </html>
