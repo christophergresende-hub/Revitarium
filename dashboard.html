@@ -1,81 +1,74 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Revitarium – Dashboard</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #00111f, #000814);
-      color: white;
-    }
-
-    .topbar {
-      background: rgba(0, 255, 255, 0.1);
-      padding: 20px;
-      text-align: center;
-      font-size: 26px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0,255,255,0.3);
-    }
-
-    .container {
-      padding: 25px;
-      text-align: center;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.05);
-      padding: 25px;
-      border-radius: 18px;
-      max-width: 420px;
-      margin: 20px auto;
-      box-shadow: 0 0 25px rgba(0,255,255,0.15);
-      backdrop-filter: blur(10px);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 16px;
-      margin-top: 18px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #00e1ff, #0077ff);
-      color: #000;
-      font-size: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    .btn:hover {
-      transform: scale(1.03);
-    }
-  </style>
+  <link rel="stylesheet" href="app/style-dashboard.css">
 </head>
 
 <body>
 
-  <div class="topbar">Revitarium – Dashboard</div>
+  <!-- MENU LATERAL -->
+  <aside class="sidebar">
+    <div class="brand">Revitarium</div>
 
-  <div class="container">
-    <div class="card">
-      <h2>Bem-vindo!</h2>
-      <p>Login realizado com sucesso.</p>
-      <button class="btn" onclick="logout()">Sair</button>
-    </div>
-  </div>
+    <nav>
+      <ul>
+        <li class="active">Início</li>
+        <li>Relatórios</li>
+        <li>Usuários</li>
+        <li>Configurações</li>
+      </ul>
+    </nav>
 
-  <script>
-    function logout() {
-      window.location.href = "index.html";
-    }
-  </script>
+    <button id="logout" class="logout">Sair</button>
+  </aside>
 
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="content">
+
+    <!-- TOPO -->
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <div class="user-info">Administrador</div>
+    </header>
+
+    <!-- CARDS -->
+    <section class="cards">
+      <div class="card">Card 1</div>
+      <div class="card">Card 2</div>
+      <div class="card">Card 3</div>
+    </section>
+
+    <!-- GRÁFICOS -->
+    <section class="charts">
+      <div class="graph-box">Gráfico A</div>
+      <div class="graph-box">Gráfico B</div>
+    </section>
+
+    <!-- LISTAS -->
+    <section class="lists">
+      <div class="list-box">
+        <h3>Últimas ações</h3>
+        <ul>
+          <li>Item A</li>
+          <li>Item B</li>
+          <li>Item C</li>
+        </ul>
+      </div>
+
+      <div class="list-box">
+        <h3>Atividades pendentes</h3>
+        <ul>
+          <li>Tarefa 1</li>
+          <li>Tarefa 2</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app/dashboard.js"></script>
 </body>
 </html>
