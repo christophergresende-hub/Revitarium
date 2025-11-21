@@ -109,3 +109,35 @@ body {
   filter: brightness(1.15);
   box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
 }
+/* Animação suave do card */
+@keyframes fadeScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.login-card {
+    animation: fadeScale 0.6s ease-out forwards;
+}
+
+/* Glow respirando no título */
+@keyframes neonGlow {
+    0% {
+        text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+    }
+    50% {
+        text-shadow: 0 0 20px #00cfff, 0 0 35px #00e5ff;
+    }
+    100% {
+        text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+    }
+}
+
+.title {
+    animation: neonGlow 3s ease-in-out infinite;
+}
