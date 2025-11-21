@@ -1,15 +1,17 @@
-function login() {
-    const usuario = document.getElementById("usuario").value.trim();
-    const senha = document.getElementById("senha").value.trim();
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+  event.preventDefault();
 
-    if (usuario === "" || senha === "") {
-        alert("Preencha usuário e senha.");
-        return;
-    }
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value.trim();
 
-    // Aqui você pode futuramente adicionar validação real
-    sessionStorage.setItem("user", usuario);
+  if (user === "" || pass === "") {
+    alert("Preencha todos os campos!");
+    return;
+  }
 
-    // Redireciona para o dashboard
+  if (user === "admin" && pass === "123") {
     window.location.href = "dashboard.html";
-}
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
+});
