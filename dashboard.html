@@ -1,93 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Revitarium – Dashboard</title>
 
-  <!-- CSS FINAL PREMIUM -->
-  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css">
+  <!-- CSS principal do dashboard -->
+  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
 
-  <!-- Charts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js CDN (utilitário para gráficos) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <!-- Biblioteca leve para ícones (opcional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css" />
 </head>
-
 <body>
-  <!-- TOPBAR -->
-  <header class="topbar">
+  <header id="topbar" class="topbar">
     <div class="brand">Revitarium</div>
-    <nav class="main-nav">
-      <a class="nav-btn" data-nav="home">Início</a>
-      <a class="nav-btn" data-nav="reports">Relatórios</a>
-      <a class="nav-btn" data-nav="users">Usuários</a>
-      <a class="nav-btn" data-nav="settings">Configurações</a>
+    <nav id="main-nav" class="main-nav" aria-label="Navegação principal">
+      <a href="dashboard.html" data-nav="home" class="nav-btn active">Início</a>
+      <a href="#" data-nav="reports" class="nav-btn">Relatórios</a>
+      <a href="#" data-nav="users" class="nav-btn">Usuários</a>
+      <a href="#" data-nav="settings" class="nav-btn">Configurações</a>
+      <button id="btn-logout" class="nav-logout">Sair</button>
     </nav>
-    <button id="logoutBtn" class="logout-btn">Sair</button>
   </header>
 
   <main class="container">
-    <h1 class="dashboard-title">Dashboard</h1>
+    <h1 class="page-title">Dashboard</h1>
 
-    <!-- TOOLS -->
-    <div class="tools">
-      <button id="exportCSV" class="btn-export">Exportar CSV</button>
+    <section class="controls">
+      <button id="exportCsv" class="pill">Exportar CSV</button>
       <label class="switch">
-        <input type="checkbox" id="autoRefresh">
-        <span class="slider"></span>
+        <input id="autoRefresh" type="checkbox">
+        <span class="switch-label">Auto-refresh</span>
       </label>
-      <span class="auto-label">Auto-refresh</span>
-    </div>
+    </section>
 
-    <!-- GRID -->
     <section class="grid">
+      <div class="col main-col">
+        <article class="card">
+          <h2>Visitas (últimos 7 dias)</h2>
+          <canvas id="visitsChart" aria-label="Gráfico de visitas" role="img"></canvas>
+        </article>
 
-      <!-- CARD VISITAS -->
-      <div class="card">
-        <h2>Visitas (últimos 7 dias)</h2>
-        <canvas id="chartVisits"></canvas>
+        <article class="card">
+          <h2>Conversões</h2>
+          <canvas id="conversionsChart" aria-label="Gráfico de conversões" role="img"></canvas>
+        </article>
+
+        <article class="card small">
+          <h2>Resumo</h2>
+          <div id="summary">Carregando resumo...</div>
+        </article>
       </div>
 
-      <!-- CARD CONVERSÕES -->
-      <div class="card">
-        <h2>Conversões</h2>
-        <canvas id="chartConversions"></canvas>
-      </div>
+      <aside class="col side-col">
+        <section class="panel">
+          <h3>Últimas ações</h3>
+          <ul id="recentActions" class="list"></ul>
+          <button id="addActionBtn" class="pill-outline">Adicionar ação</button>
+        </section>
 
-      <!-- RESUMO -->
-      <div class="card">
-        <h2>Resumo</h2>
-        <ul class="summary-list" id="summaryBox"></ul>
-      </div>
+        <section class="panel">
+          <h3>Atividades pendentes</h3>
+          <form id="todoForm" class="todo-form">
+            <input id="todoInput" placeholder="Nova tarefa..." />
+            <button class="pill" type="submit">Adicionar</button>
+          </form>
+          <ul id="todoList" class="list"></ul>
+        </section>
 
-      <!-- ÚLTIMAS AÇÕES -->
-      <div class="card side">
-        <h2>Últimas ações</h2>
-        <button id="addActionBtn" class="btn-small">Adicionar ação</button>
-        <ul id="actionsList"></ul>
-      </div>
-
-      <!-- TAREFAS -->
-      <div class="card side">
-        <h2>Atividades pendentes</h2>
-        <div class="task-row">
-          <input id="taskInput" type="text" placeholder="Nova tarefa...">
-          <button id="addTaskBtn" class="btn-small">Adicionar</button>
-        </div>
-        <ul id="tasksList"></ul>
-      </div>
-
-      <!-- USUÁRIOS -->
-      <div class="card side">
-        <h2>Usuários</h2>
-        <input id="newUserName" type="text" placeholder="Nome">
-        <input id="newUserRole" type="text" placeholder="Cargo/Role">
-        <button id="addUserBtn" class="btn-small">Adicionar</button>
-        <ul id="usersList"></ul>
-      </div>
-
+        <section class="panel">
+          <h3>Usuários</h3>
+          <form id="userForm" class="user-form">
+            <input id="userName" placeholder="Nome" />
+            <input id="userRole" placeholder="Cargo/Role" />
+            <button class="pill" type="submit">Adicionar</button>
+          </form>
+          <ul id="usersList" class="list"></ul>
+        </section>
+      </aside>
     </section>
   </main>
 
-  <script src="Revitarium/app/app.js"></script>
+  <script src="Revitarium/app/app.js" defer></script>
 </body>
 </html>
