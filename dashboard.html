@@ -1,111 +1,81 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium — Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revitarium – Dashboard</title>
 
-  <!-- CSS do dashboard (coloque em: Revitarium/app/style-dashboard.css) -->
-  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #00111f, #000814);
+      color: white;
+    }
+
+    .topbar {
+      background: rgba(0, 255, 255, 0.1);
+      padding: 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,255,255,0.3);
+    }
+
+    .container {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 25px;
+      border-radius: 18px;
+      max-width: 420px;
+      margin: 20px auto;
+      box-shadow: 0 0 25px rgba(0,255,255,0.15);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #00e1ff, #0077ff);
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+  </style>
 </head>
+
 <body>
-  <!-- checa sessão; se não logado volta pro index -->
+
+  <div class="topbar">Revitarium – Dashboard</div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Bem-vindo!</h2>
+      <p>Login realizado com sucesso.</p>
+      <button class="btn" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
   <script>
-    const user = sessionStorage.getItem('user');
-    if (!user) {
-      window.location.href = 'index.html';
+    function logout() {
+      window.location.href = "index.html";
     }
   </script>
 
-  <header class="topbar">
-    <div class="brand">Revitarium</div>
-    <div class="top-actions">
-      <span class="user-name" id="userName"></span>
-      <button id="logoutBtn" class="btn-ghost">Sair</button>
-    </div>
-  </header>
-
-  <div class="layout">
-    <aside class="sidebar">
-      <nav>
-        <ul>
-          <li class="active"><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="#relatorios">Relatórios</a></li>
-          <li><a href="#perfil">Perfil</a></li>
-          <li><a href="#config">Configurações</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-      <section class="cards">
-        <article class="card">
-          <h3>Performance</h3>
-          <p id="metricA">—</p>
-        </article>
-
-        <article class="card">
-          <h3>Notificações</h3>
-          <p id="metricB">—</p>
-        </article>
-
-        <article class="card">
-          <h3>Status do Sistema</h3>
-          <p id="metricC">—</p>
-        </article>
-      </section>
-
-      <section class="panel">
-        <h2>Resumo rápido</h2>
-        <div class="panel-grid">
-          <div class="panel-item">
-            <h4>Tarefas pendentes</h4>
-            <ul id="todoList">
-              <li>Carregando…</li>
-            </ul>
-          </div>
-
-          <div class="panel-item">
-            <h4>Últimas ações</h4>
-            <div id="activity">Sem atividades</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- JS do app (coloque Revitarium/app/app.js) -->
-  <script src="Revitarium/app/app.js" defer></script>
-
-  <!-- script local extra para dashboard (em caso queira separar pode mover para app.js) -->
-  <script>
-    // mostra nome do usuário e popula cards mínimos
-    (function () {
-      const raw = sessionStorage.getItem('user');
-      const user = raw ? JSON.parse(raw) : null;
-      if (user && user.name) {
-        document.getElementById('userName').textContent = user.name;
-      } else {
-        document.getElementById('userName').textContent = 'Usuário';
-      }
-
-      // Exemplo de preenchimento rápido
-      document.getElementById('metricA').textContent = 'Rendimento: 92%';
-      document.getElementById('metricB').textContent = '2 novas';
-      document.getElementById('metricC').textContent = 'Operacional';
-
-      const todo = ['Revisar relatórios', 'Aprovar usuários', 'Gerar backup'];
-      const ul = document.getElementById('todoList');
-      ul.innerHTML = todo.map(t => `<li>${t}</li>`).join('');
-
-      const act = document.getElementById('activity');
-      act.innerHTML = '<small>Última sincronização: agora</small>';
-
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        sessionStorage.clear();
-        window.location.href = 'index.html';
-      });
-    })();
-  </script>
 </body>
 </html>
