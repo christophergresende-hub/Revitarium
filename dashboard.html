@@ -1,74 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Revitarium – Dashboard</title>
-  <link rel="stylesheet" href="app/style-dashboard.css">
+
+  <!-- Estilo do Dashboard -->
+  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
+  <div id="app" class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Revitarium</div>
+      <nav class="nav">
+        <button data-route="home" class="nav-item active">Início</button>
+        <button data-route="reports" class="nav-item">Relatórios</button>
+        <button data-route="users" class="nav-item">Usuários</button>
+        <button data-route="settings" class="nav-item">Configurações</button>
+      </nav>
 
-  <!-- MENU LATERAL -->
-  <aside class="sidebar">
-    <div class="brand">Revitarium</div>
-
-    <nav>
-      <ul>
-        <li class="active">Início</li>
-        <li>Relatórios</li>
-        <li>Usuários</li>
-        <li>Configurações</li>
-      </ul>
-    </nav>
-
-    <button id="logout" class="logout">Sair</button>
-  </aside>
-
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="content">
-
-    <!-- TOPO -->
-    <header class="topbar">
-      <h1>Dashboard</h1>
-      <div class="user-info">Administrador</div>
-    </header>
-
-    <!-- CARDS -->
-    <section class="cards">
-      <div class="card">Card 1</div>
-      <div class="card">Card 2</div>
-      <div class="card">Card 3</div>
-    </section>
-
-    <!-- GRÁFICOS -->
-    <section class="charts">
-      <div class="graph-box">Gráfico A</div>
-      <div class="graph-box">Gráfico B</div>
-    </section>
-
-    <!-- LISTAS -->
-    <section class="lists">
-      <div class="list-box">
-        <h3>Últimas ações</h3>
-        <ul>
-          <li>Item A</li>
-          <li>Item B</li>
-          <li>Item C</li>
-        </ul>
+      <div class="sidebar-footer">
+        <button id="btn-logout" class="btn-ghost">Sair</button>
       </div>
+    </aside>
 
-      <div class="list-box">
-        <h3>Atividades pendentes</h3>
-        <ul>
-          <li>Tarefa 1</li>
-          <li>Tarefa 2</li>
-        </ul>
-      </div>
-    </section>
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <h1 id="page-title">Dashboard</h1>
+        <div class="top-actions">
+          <button id="btn-export" class="btn small">Exportar CSV</button>
+          <label class="switch">
+            <input id="toggle-theme" type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </header>
 
-  </main>
+      <section class="content">
+        <!-- GRID DE CARDS -->
+        <section class="cards" id="cards">
+          <!-- Cards serão renderizados pelo JS -->
+        </section>
 
-  <script src="app/dashboard.js"></script>
+        <!-- GRÁFICOS -->
+        <section class="charts">
+          <div class="chart-card">
+            <h3>Visitas (últimos 7 dias)</h3>
+            <canvas id="chart-visits" height="140"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <h3>Conversões</h3>
+            <canvas id="chart-conversions" height="140"></canvas>
+          </div>
+        </section>
+
+        <!-- ATIVIDADES E AÇÕES -->
+        <section class="panels">
+          <div class="panel">
+            <h3>Últimas ações</h3>
+            <ul id="activity-list" class="activity-list"></ul>
+            <button id="btn-add-activity" class="btn small">Adicionar ação</button>
+          </div>
+
+          <div class="panel">
+            <h3>Atividades pendentes</h3>
+            <ul id="todo-list" class="todo-list"></ul>
+            <input id="todo-input" placeholder="Nova tarefa..." />
+            <button id="btn-add-todo" class="btn small">Adicionar</button>
+          </div>
+        </section>
+
+        <!-- USERS SECTION -->
+        <section id="users-section" class="hidden content-block">
+          <h2>Usuários</h2>
+          <div class="user-controls">
+            <input id="new-user-name" placeholder="Nome" />
+            <input id="new-user-pass" placeholder="Senha" />
+            <button id="btn-create-user" class="btn small">Criar usuário</button>
+          </div>
+          <ul id="users-list"></ul>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="settings-section" class="hidden content-block">
+          <h2>Configurações</h2>
+          <label>Mock API:
+            <input id="toggle-mock-api" type="checkbox" />
+          </label>
+          <p>Outras configurações ficarão aqui.</p>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Script do Dashboard -->
+  <script src="Revitarium/app/dashboard.js" defer></script>
 </body>
 </html>
