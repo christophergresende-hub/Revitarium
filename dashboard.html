@@ -1,110 +1,104 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium – Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revitarium — Dashboard</title>
 
-  <!-- CSS principal do dashboard (substituir style-dashboard.css) -->
+  <!-- CSS principal -->
   <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
 
-  <!-- Chart.js CDN (gráficos) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- ícones (opcional leve) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
+
 <body>
-  <div id="app">
-    <!-- Sidebar Pro -->
-    <aside id="sidebar" class="sidebar closed" aria-hidden="true">
-      <div class="sidebar-top">
-        <img src="/mnt/data/221F2CBC-F047-4618-BA35-46E00B4F6A31.jpeg" alt="Revitarium" class="brand-logo" />
-        <button id="btn-collapse" aria-label="Toggle sidebar" class="icon-btn">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-      </div>
 
-      <nav class="nav">
-        <a href="dashboard.html" data-nav="home" class="nav-item active"><i class="fa-solid fa-house"></i><span>Início</span></a>
-        <a href="#" data-nav="reports" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Relatórios</span></a>
-        <a href="#" data-nav="users" class="nav-item"><i class="fa-solid fa-users"></i><span>Usuários</span></a>
-        <a href="#" data-nav="settings" class="nav-item"><i class="fa-solid fa-gear"></i><span>Configurações</span></a>
-      </nav>
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">R</div>
 
-      <div class="sidebar-footer">
-        <button id="btn-logout" class="btn-ghost">Sair</button>
-      </div>
-    </aside>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-nav="dashboard"><i class="fa-solid fa-house"></i></a>
+      <a class="nav-item" data-nav="reports"><i class="fa-solid fa-chart-line"></i></a>
+      <a class="nav-item" data-nav="users"><i class="fa-solid fa-users"></i></a>
+      <a class="nav-item" data-nav="settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
 
-    <!-- Topbar -->
-    <header id="topbar" class="topbar">
-      <button id="btn-open" class="icon-btn" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button>
-      <div class="title">Dashboard</div>
+    <button id="btn-logout" class="logout-btn">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </aside>
+
+  <!-- ================= CONTENT AREA ================= -->
+  <main class="content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <h1>Dashboard</h1>
+
       <div class="top-actions">
-        <button id="exportCsv" class="chip">Exportar CSV</button>
+        <button id="exportCsv" class="btn">Exportar CSV</button>
+
         <label class="switch">
-          <input id="autoRefresh" type="checkbox" />
+          <input type="checkbox" id="autoRefresh" />
           <span class="slider"></span>
         </label>
+        <span class="switch-label">Auto-refresh</span>
       </div>
     </header>
 
-    <!-- Main content -->
-    <main class="container" id="main">
-      <h1 class="page-title">Dashboard</h1>
+    <!-- PRINCIPAL -->
+    <section class="grid">
 
-      <section class="grid">
-        <article class="card">
-          <h2>Visitas (últimos 7 dias)</h2>
-          <canvas id="visitsChart" width="400" height="240" aria-label="Gráfico de visitas"></canvas>
-        </article>
+      <!-- CARD 1 -->
+      <div class="card">
+        <h2>Visitas (últimos 7 dias)</h2>
+        <canvas id="visitsChart"></canvas>
+      </div>
 
-        <aside class="side-col">
-          <section class="panel">
-            <h3>Últimas ações</h3>
-            <ul id="recentActions" class="mini-list"></ul>
-            <button id="addActionBtn" class="chip">Adicionar ação</button>
-          </section>
+      <!-- CARD 2 -->
+      <div class="card">
+        <h2>Conversões</h2>
+        <canvas id="conversionsChart"></canvas>
+      </div>
 
-          <section class="panel">
-            <h3>Atividades pendentes</h3>
-            <form id="todoForm" class="inline-form">
-              <input id="todoInput" placeholder="Nova tarefa..." />
-              <button class="chip" type="submit">Adicionar</button>
-            </form>
-            <ul id="todoList" class="mini-list"></ul>
-          </section>
-        </aside>
+      <!-- ÚLTIMAS AÇÕES -->
+      <div class="card">
+        <h2>Últimas ações</h2>
+        <button id="addActionBtn" class="btn small">Adicionar ação</button>
+        <ul id="recentActions" class="list"></ul>
+      </div>
 
-        <article class="card">
-          <h2>Conversões</h2>
-          <canvas id="conversionsChart" width="400" height="200" aria-label="Gráfico de conversões"></canvas>
-        </article>
-
-        <article class="card small">
-          <h2>Resumo</h2>
-          <ul>
-            <li>Total de usuários: <strong id="totalUsers">124</strong></li>
-            <li>Ativos: <strong id="activeUsers">97</strong></li>
-          </ul>
-        </article>
-      </section>
-
-      <!-- form users (quick add) -->
-      <section class="panel">
-        <h3>Usuários</h3>
-        <form id="userForm" class="inline-form">
-          <input id="userName" placeholder="Nome" />
-          <input id="userRole" placeholder="Cargo/Role" />
-          <button class="chip" type="submit">Adicionar</button>
+      <!-- TAREFAS -->
+      <div class="card">
+        <h2>Atividades pendentes</h2>
+        <form id="todoForm" class="inline">
+          <input id="todoInput" type="text" placeholder="Nova tarefa..." />
+          <button class="btn small" type="submit">Adicionar</button>
         </form>
-        <ul id="usersList" class="mini-list"></ul>
-      </section>
-    </main>
-  </div>
+        <ul id="todoList" class="list"></ul>
+      </div>
 
-  <!-- JS principal do dashboard -->
-  <script src="Revitarium/app/app.js" defer></script>
+      <!-- USUÁRIOS -->
+      <div class="card full">
+        <h2>Usuários</h2>
+        <form id="userForm" class="inline">
+          <input id="userName" type="text" placeholder="Nome" />
+          <input id="userRole" type="text" placeholder="Cargo/Role" />
+          <button class="btn small" type="submit">Adicionar</button>
+        </form>
+        <ul id="usersList" class="list"></ul>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- JS -->
+  <script src="Revitarium/app/app.js"></script>
+
 </body>
 </html>
