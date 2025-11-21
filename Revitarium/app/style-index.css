@@ -1,88 +1,198 @@
-/* ===== RESET ===== */
-* {
+/* === Fundo geral === */
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
-
-/* ===== FUNDO ===== */
-body {
-  background: radial-gradient(circle at top, #001f33 0%, #000814 90%);
+  background: radial-gradient(circle at top, #012a46, #000814);
+  font-family: 'Inter', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+/* === Container do cartão === */
+.login-wrap {
+  display: flex;
+  justify-content: center;
   padding: 20px;
 }
 
-/* ===== CARD ===== */
-.login-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 40px;
-  background: rgba(0, 0, 0, 0.45);
-  border-radius: 22px;
-  backdrop-filter: blur(18px);
-  box-shadow:
-    0 0 50px rgba(0, 255, 255, 0.25),
-    inset 0 0 50px rgba(0, 180, 255, 0.20);
-  animation: fadeIn 0.8s ease-out;
+
 }
 
-/* ===== TÍTULO ===== */
-.brand {
+/* === Título === */
+#login-title {
   text-align: center;
   font-size: 32px;
-  color: #00eaff;
-  margin-bottom: 28px;
-  font-weight: 700;
+  font-weight: 600;
+  margin-bottom: 30px;
+  background: linear-gradient(90deg, #00eaff, #00bcd4);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-/* ===== FORM ===== */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* ===== LABEL ===== */
-label {
+/* === Labels === */
+.label {
   font-size: 16px;
-  color: #e0e0e0;
+  color: #d1d1d1;
+  margin-bottom: 6px;
+  display: block;
 }
 
-/* ===== INPUT ===== */
+/* === Inputs === */
 input {
   width: 100%;
   padding: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  font-size: 15px;
+  color: /* === Botão === */
+
 }
 
-/* ===== BOTÃO ===== */
-.btn {
-  margin-top: 10px;
-  padding: 16px;
+/* ============================
+   RESET GLOBAL
+============================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ============================
+   BACKGROUND PREMIUM
+============================ */
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #032b60, #00111f);
+  overflow: hidden;
+}
+
+/* Aura luminosa */
+body::before {
+  content: "";
+  position: absolute;
+  width: 850px;
+  height: 850px;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.4), transparent 70%);
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  filter: blur(90px);
+  opacity: 0.7;
+}
+
+/* ============================
+   CONTAINER PRINCIPAL
+============================ */
+.page {
   width: 100%;
+  max-width: 480px;
+  padding: 25px;
+  z-index: 2;
+}
+
+/* ============================
+   CARD DO LOGIN — VERSÃO AVANÇADA
+============================ */
+.login-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  padding: 55px 40px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 26px;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  backdrop-filter: blur(18px);
+
+  /* Brilho moderno dinâmico */
+  box-shadow:
+    0 0 40px rgba(0, 255, 255, 0.25),
+    inset 0 0 40px rgba(0, 120, 255, 0.25);
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Título */
+#login-title {
+  font-size: 42px;
+  font-weight: 700;
+  text-align: center;
+  color: #00e7ff;
+  margin-bottom: 40px;
+  text-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
+}
+
+/* ============================
+   CAMPOS
+============================ */
+.label {
+  font-size: 16px;
+  color: #ffffffd9;
+  margin-bottom: 8px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 28px;
+  outline: none;
+  transition: 0.25s;
+  backdrop-filter: blur(4px);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+input:focus {
+  border-color: #00eaff;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
+}
+
+/* ============================
+   BOTÃO AVANÇADO
+============================ */
+.btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
   border: none;
   border-radius: 14px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #000;
-  background: linear-gradient(90deg, #00eaff, #008cff);
   cursor: pointer;
-  transition: 0.25s;
+  font-weight: 700;
+  color: #003344;
+  background: linear-gradient(90deg, #00eaff, #0099ff);
+  transition: 0.25s ease;
+  box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
 }
 
 .btn:hover {
   transform: scale(1.03);
+  box-shadow: 0 0 28px rgba(0, 200, 255, 0.55);
 }
 
-/* ===== ANIMAÇÃO ===== */
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* ============================
+   ANIMAÇÃO
+============================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -91,5 +201,46 @@ input {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+/* ========================= */
+/* TÍTULO NEON PROFISSIONAL */
+/* ========================= */
+
+#login-title {
+  font-size: 42px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #00eaff;
+  text-shadow:
+    0 0 8px #00eaff,
+    0 0 16px #00eaff,
+    0 0 24px rgba(0, 234, 255, 0.9),
+    0 0 40px rgba(0, 234, 255, 0.8);
+  animation: neonPulse 2.6s infinite ease-in-out;
+}
+
+@keyframes neonPulse {
+  0% {
+    text-shadow:
+      0 0 6px #00eaff,
+      0 0 14px #00eaff,
+      0 0 22px rgba(0, 234, 255, 0.9),
+      0 0 32px rgba(0, 234, 255, 0.6);
+  }
+  50% {
+    text-shadow:
+      0 0 12px #00eaff,
+      0 0 22px #00ffff,
+      0 0 38px rgba(0, 255, 255, 1),
+      0 0 55px rgba(0, 255, 255, 0.9);
+  }
+  100% {
+    text-shadow:
+      0 0 6px #00eaff,
+      0 0 14px #00eaff,
+      0 0 22px rgba(0, 234, 255, 0.9),
+      0 0 32px rgba(0, 234, 255, 0.6);
   }
 }
