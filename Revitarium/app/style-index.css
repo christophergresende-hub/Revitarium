@@ -1,198 +1,119 @@
-/* === Fundo geral === */
+/* ======================== */
+/*     FUNDO AVANÇADO       */
+/* ======================== */
+
 body {
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at top, #012a46, #000814);
-  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at center, #02253a 0%, #00111a 100%);
+  font-family: "Poppins", sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
-
-/* === Container do cartão === */
-.login-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-
-}
-
-/* === Título === */
-#login-title {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 30px;
-  background: linear-gradient(90deg, #00eaff, #00bcd4);
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-/* === Labels === */
-.label {
-  font-size: 16px;
-  color: #d1d1d1;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* === Inputs === */
-input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 20px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 10px;
-  font-size: 15px;
-  color: /* === Botão === */
-
-}
-
-/* ============================
-   RESET GLOBAL
-============================ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-/* ============================
-   BACKGROUND PREMIUM
-============================ */
-body {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at top, #032b60, #00111f);
   overflow: hidden;
+  color: white;
 }
 
-/* Aura luminosa */
-body::before {
-  content: "";
-  position: absolute;
-  width: 850px;
-  height: 850px;
-  background: radial-gradient(circle, rgba(0, 200, 255, 0.4), transparent 70%);
-  top: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  filter: blur(90px);
-  opacity: 0.7;
-}
+/* ======================== */
+/*     CONTAINER DO LOGIN   */
+/* ======================== */
 
-/* ============================
-   CONTAINER PRINCIPAL
-============================ */
 .page {
   width: 100%;
-  max-width: 480px;
-  padding: 25px;
-  z-index: 2;
-}
-
-/* ============================
-   CARD DO LOGIN — VERSÃO AVANÇADA
-============================ */
-.login-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
+/* ======================== */
+/*        CARTÃO LOGIN      */
+/* ======================== */
+
 .login-card {
-  width: 100%;
+  width: 90%;
+  max-width: 480px;
   padding: 55px 40px;
   background: rgba(0, 0, 0, 0.35);
   border-radius: 26px;
-  border: 1px solid rgba(0, 255, 255, 0.25);
-  backdrop-filter: blur(18px);
 
-  /* Brilho moderno dinâmico */
   box-shadow:
     0 0 40px rgba(0, 255, 255, 0.25),
-    inset 0 0 40px rgba(0, 120, 255, 0.25);
+    inset 0 0 40px rgba(0, 180, 255, 0.15);
+
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 255, 255, 0.25);
+
   animation: fadeIn 0.8s ease-out;
 }
 
-/* Título */
+/* ======================== */
+/*      TÍTULO DO LOGIN     */
+/* ======================== */
+
 #login-title {
-  font-size: 42px;
-  font-weight: 700;
   text-align: center;
-  color: #00e7ff;
-  margin-bottom: 40px;
-  text-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
+  font-size: 36px;
+  color: #26d9ff;
+  font-weight: 700;
+  margin-bottom: 25px;
 }
 
-/* ============================
-   CAMPOS
-============================ */
+/* ======================== */
+/*       LABELS / INPUTS    */
+/* ======================== */
+
 .label {
-  font-size: 16px;
-  color: #ffffffd9;
+  font-size: 18px;
   margin-bottom: 8px;
   display: block;
 }
 
-input {
+.input {
   width: 100%;
+  background: rgba(255, 255, 255, 0.08);
   padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
   font-size: 16px;
-  margin-bottom: 28px;
+  color: white;
   outline: none;
-  transition: 0.25s;
-  backdrop-filter: blur(4px);
+  transition: 0.25s ease;
 }
 
-input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+.input:focus {
+  border-color: rgba(0, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.35);
 }
 
-input:focus {
-  border-color: #00eaff;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.45);
-}
+/* ======================== */
+/*       BOTÃO AVANÇADO     */
+/* ======================== */
 
-/* ============================
-   BOTÃO AVANÇADO
-============================ */
 .btn {
   width: 100%;
   padding: 18px;
-  font-size: 20px;
+  margin-top: 28px;
+  background: linear-gradient(to right, #00eaff, #008cff);
   border: none;
-  border-radius: 14px;
-  cursor: pointer;
+  border-radius: 16px;
+  font-size: 22px;
   font-weight: 700;
-  color: #003344;
-  background: linear-gradient(90deg, #00eaff, #0099ff);
-  transition: 0.25s ease;
-  box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+  cursor: pointer;
+  color: black;
+  transition: 0.25s ease-in-out;
 }
 
 .btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 28px rgba(0, 200, 255, 0.55);
+  transform: scale(1.04);
+  box-shadow: 0 0 22px rgba(0, 255, 255, 0.45);
 }
 
-.btn:active {
-  transform: scale(0.97);
-}
+/* ======================== */
+/* ANIMAÇÃO DE APARECER     */
+/* ======================== */
 
-/* ============================
-   ANIMAÇÃO
-============================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -201,46 +122,5 @@ input:focus {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-/* ========================= */
-/* TÍTULO NEON PROFISSIONAL */
-/* ========================= */
-
-#login-title {
-  font-size: 42px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #00eaff;
-  text-shadow:
-    0 0 8px #00eaff,
-    0 0 16px #00eaff,
-    0 0 24px rgba(0, 234, 255, 0.9),
-    0 0 40px rgba(0, 234, 255, 0.8);
-  animation: neonPulse 2.6s infinite ease-in-out;
-}
-
-@keyframes neonPulse {
-  0% {
-    text-shadow:
-      0 0 6px #00eaff,
-      0 0 14px #00eaff,
-      0 0 22px rgba(0, 234, 255, 0.9),
-      0 0 32px rgba(0, 234, 255, 0.6);
-  }
-  50% {
-    text-shadow:
-      0 0 12px #00eaff,
-      0 0 22px #00ffff,
-      0 0 38px rgba(0, 255, 255, 1),
-      0 0 55px rgba(0, 255, 255, 0.9);
-  }
-  100% {
-    text-shadow:
-      0 0 6px #00eaff,
-      0 0 14px #00eaff,
-      0 0 22px rgba(0, 234, 255, 0.9),
-      0 0 32px rgba(0, 234, 255, 0.6);
   }
 }
