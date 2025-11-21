@@ -1,106 +1,213 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium – Dashboard</title>
-
-  <!-- Estilo do Dashboard -->
-  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Revitarium — Dashboard (Premium)</title>
 
   <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ======= Reset & base ======= */
+    :root{
+      --bg:#071923;
+      --panel:#06222b;
+      --glass: rgba(255,255,255,0.04);
+      --accent-1: #00f0ff;
+      --accent-2: #00b6ff;
+      --text: #e6f7fb;
+      --muted: rgba(230,247,251,0.65);
+      --radius-lg: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:var(--text);background: radial-gradient(ellipse at 50% 10%, rgba(0,45,60,0.35), transparent 10%), linear-gradient(180deg,#041621 0%, #001520 60%), var(--bg);}
+    a{color:inherit;text-decoration:none}
+
+    /* Background image (use local uploaded file) */
+    body::before{
+      content: '';
+      position: fixed;inset:0;z-index:0;
+      background-image: url('/mnt/data/2AB3ECB0-D7F5-4665-9404-722EF46EADBF.jpeg');
+      background-size: cover;background-position:center;opacity:0.07;filter:blur(4px) saturate(120%);
+      pointer-events:none;
+    }
+
+    /* ======= Layout ======= */
+    .app {min-height:100vh;display:flex;gap:28px;padding:28px;position:relative;z-index:1}
+    .sidebar{width:84px;background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(255,255,255,0.02));border-radius:14px;padding:18px;backdrop-filter: blur(8px);box-shadow: 0 8px 30px rgba(0,0,0,0.6) inset, 0 8px 30px rgba(0,0,0,0.6)}
+    .sidebar nav{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .logo{font-weight:700;color:var(--accent-1);font-size:14px}
+    .icon-btn{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--glass), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+
+    .main{flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;margin-bottom:18px}
+    .brand{font-size:28px;font-weight:700;color:var(--accent-1);text-shadow:0 6px 18px rgba(0,200,255,0.08)}
+
+    .content{display:grid;grid-template-columns: 1fr 360px;gap:20px}
+
+    /* Left column panels */
+    .panel{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));padding:22px;border-radius:var(--radius-lg);box-shadow: 0 20px 40px rgba(2,20,30,0.55);border:1px solid rgba(255,255,255,0.03)}
+    .grid-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:14px}
+    .card{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);min-height:88px;display:flex;flex-direction:column;justify-content:space-between}
+    .card h3{margin:0;font-size:13px;color:var(--muted)}
+    .card p{margin:6px 0 0;font-weight:700;font-size:18px}
+
+    .chart-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    canvas{width:100% !important;height:220px !important}
+
+    /* Right column */
+    .sidebar-panel{position:sticky;top:28px}
+    .title-lg{font-size:34px;margin:0 0 12px}
+    .muted{color:var(--muted);font-size:14px}
+
+    /* simple lists */
+    .list{padding-left:18px}
+
+    /* Button
+     */
+    .btn-primary{display:inline-block;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#001; padding:14px 22px;border-radius:14px;font-weight:800;border:none;cursor:pointer;box-shadow:0 10px 30px rgba(0,182,255,0.16)}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .content{grid-template-columns:1fr}
+      .grid-cards{grid-template-columns:repeat(2,1fr)}
+      .sidebar{display:none}
+    }
+    @media (max-width:520px){
+      .grid-cards{grid-template-columns:1fr}
+      canvas{height:180px !important}
+    }
+  </style>
 </head>
 <body>
-  <div id="app" class="app">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">Revitarium</div>
-      <nav class="nav">
-        <button data-route="home" class="nav-item active">Início</button>
-        <button data-route="reports" class="nav-item">Relatórios</button>
-        <button data-route="users" class="nav-item">Usuários</button>
-        <button data-route="settings" class="nav-item">Configurações</button>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">R</div>
+      <nav>
+        <button class="icon-btn" title="Home">🏠</button>
+        <button class="icon-btn" title="Relatórios">📊</button>
+        <button class="icon-btn" title="Usuários">👥</button>
+        <button class="icon-btn" title="Config">⚙️</button>
       </nav>
-
-      <div class="sidebar-footer">
-        <button id="btn-logout" class="btn-ghost">Sair</button>
-      </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
-      <header class="topbar">
-        <h1 id="page-title">Dashboard</h1>
-        <div class="top-actions">
-          <button id="btn-export" class="btn small">Exportar CSV</button>
-          <label class="switch">
-            <input id="toggle-theme" type="checkbox">
-            <span class="slider"></span>
-          </label>
+      <div class="topbar">
+        <div class="brand">Revitarium</div>
+        <div>
+          <button class="btn-primary" id="btn-logout">Sair</button>
         </div>
-      </header>
+      </div>
 
       <section class="content">
-        <!-- GRID DE CARDS -->
-        <section class="cards" id="cards">
-          <!-- Cards serão renderizados pelo JS -->
-        </section>
-
-        <!-- GRÁFICOS -->
-        <section class="charts">
-          <div class="chart-card">
-            <h3>Visitas (últimos 7 dias)</h3>
-            <canvas id="chart-visits" height="140"></canvas>
-          </div>
-
-          <div class="chart-card">
-            <h3>Conversões</h3>
-            <canvas id="chart-conversions" height="140"></canvas>
-          </div>
-        </section>
-
-        <!-- ATIVIDADES E AÇÕES -->
-        <section class="panels">
+        <div>
           <div class="panel">
-            <h3>Últimas ações</h3>
-            <ul id="activity-list" class="activity-list"></ul>
-            <button id="btn-add-activity" class="btn small">Adicionar ação</button>
+            <h2 class="title-lg">Dashboard</h2>
+            <p class="muted">Visão geral rápida do sistema</p>
+
+            <div class="grid-cards" style="margin-top:18px">
+              <div class="card">
+                <h3>Usuários ativos</h3>
+                <p id="stat-users">1.240</p>
+              </div>
+              <div class="card">
+                <h3>Relatórios (30d)</h3>
+                <p id="stat-reports">8.320</p>
+              </div>
+              <div class="card">
+                <h3>Performance</h3>
+                <p id="stat-perf">98%</p>
+              </div>
+            </div>
+
+            <div class="chart-wrap">
+              <div class="panel" style="padding:12px">
+                <h3 style="margin-top:0">Visitas (últimos 7 dias)</h3>
+                <canvas id="chart-visits"></canvas>
+              </div>
+              <div class="panel" style="padding:12px">
+                <h3 style="margin-top:0">Conversões</h3>
+                <canvas id="chart-conv"></canvas>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:12px;padding:12px">
+              <h3 style="margin:0 0 8px">Atividades Pendentes</h3>
+              <ul class="list" id="tasks">
+                <li>Tarefa 1</li>
+                <li>Tarefa 2</li>
+                <li>Tarefa 3</li>
+              </ul>
+            </div>
           </div>
 
+        </div>
+
+        <aside class="sidebar-panel">
           <div class="panel">
-            <h3>Atividades pendentes</h3>
-            <ul id="todo-list" class="todo-list"></ul>
-            <input id="todo-input" placeholder="Nova tarefa..." />
-            <button id="btn-add-todo" class="btn small">Adicionar</button>
+            <h3 style="margin-top:0">Bem-vindo(a), <span id="user-name">Administrador</span></h3>
+            <p class="muted">Resumo rápido</p>
+
+            <div style="margin-top:12px">
+              <p style="margin:6px 0"><strong>Alertas</strong>: <span id="alerts">3</span></p>
+              <p style="margin:6px 0"><strong>Novas mensagens</strong>: <span id="messages">5</span></p>
+            </div>
+
+            <hr style="opacity:0.06;margin:16px 0">
+
+            <h4 style="margin:6px 0">Últimas ações</h4>
+            <ul class="list" id="latest-actions">
+              <li>Item A</li>
+              <li>Item B</li>
+              <li>Item C</li>
+            </ul>
+
+            <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+              <button class="btn-primary" id="quick-report">Gerar relatório</button>
+            </div>
           </div>
-        </section>
-
-        <!-- USERS SECTION -->
-        <section id="users-section" class="hidden content-block">
-          <h2>Usuários</h2>
-          <div class="user-controls">
-            <input id="new-user-name" placeholder="Nome" />
-            <input id="new-user-pass" placeholder="Senha" />
-            <button id="btn-create-user" class="btn small">Criar usuário</button>
-          </div>
-          <ul id="users-list"></ul>
-        </section>
-
-        <!-- SETTINGS -->
-        <section id="settings-section" class="hidden content-block">
-          <h2>Configurações</h2>
-          <label>Mock API:
-            <input id="toggle-mock-api" type="checkbox" />
-          </label>
-          <p>Outras configurações ficarão aqui.</p>
-        </section>
-
+        </aside>
       </section>
+
     </main>
   </div>
 
-  <!-- Script do Dashboard -->
-  <script src="Revitarium/app/dashboard.js" defer></script>
+  <script>
+    // Simple data simulation and ChartJS configs
+    const visitsData = [120, 180, 150, 220, 300, 250, 320];
+    const convData = [8, 12, 9, 14, 20, 17, 25];
+
+    function createChart(ctxId, labels, data, color){
+      const ctx = document.getElementById(ctxId).getContext('2d');
+      return new Chart(ctx, {
+        type: 'line',
+        data: {labels, datasets:[{label:'',data,color,backgroundColor: 'transparent',borderColor: color,borderWidth:3,tension:0.35,pointRadius:2}]},
+        options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,0.03)'}},x:{grid:{display:false}}},responsive:true,maintainAspectRatio:false}
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const days = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+      createChart('chart-visits', days, visitsData, 'rgba(0,240,255,0.95)');
+      createChart('chart-conv', days, convData, 'rgba(0,182,255,0.95)');
+
+      // dynamic stats (example)
+      document.getElementById('stat-users').textContent = '1.426';
+      document.getElementById('stat-reports').textContent = '8.934';
+      document.getElementById('stat-perf').textContent = '99%';
+
+      // quick interactions
+      document.getElementById('btn-logout').addEventListener('click', ()=>{ if(confirm('Sair do sistema?')) location.href='index.html'; });
+      document.getElementById('quick-report').addEventListener('click', ()=>{ alert('Relatório gerado (simulado).'); });
+
+      // sample real-time push (demo)
+      setInterval(()=>{
+        const alertsEl = document.getElementById('alerts');
+        const current = Number(alertsEl.textContent);
+        alertsEl.textContent = current; // no change, placeholder
+      }, 5000);
+    });
+  </script>
 </body>
 </html>
