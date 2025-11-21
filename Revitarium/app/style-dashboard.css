@@ -1,83 +1,116 @@
-/* -----------------------------------------
-   REVITARIUM — DASHBOARD STYLE (PROFISSIONAL)
-   Layout limpo, moderno e responsivo
-------------------------------------------*/
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", Arial, sans-serif;
-}
-
+/* Layout geral */
 body {
-    background: linear-gradient(180deg, #07121d 0%, #000000 100%);
-    min-height: 100vh;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 20px;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* -------- TÍTULO -------- */
-
-h1 {
-    font-size: 32px;
-    color: #00e4ff;
-    font-weight: 700;
-    margin-bottom: 25px;
-    text-align: center;
-    letter-spacing: 1px;
+/* Sidebar */
+.sidebar {
+  width: 230px;
+  background: #0a0f16;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
-/* -------- CARD PRINCIPAL -------- */
-
-.box {
-    background: rgba(255, 255, 255, 0.06);
-    padding: 30px 25px;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 420px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 35px rgba(0, 0, 0, 0.45);
-    text-align: center;
+.sidebar .brand {
+  font-size: 22px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
-.box h3 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #00e4ff;
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
 }
 
-.box p {
-    font-size: 15px;
-    color: #dcdcdc;
+.sidebar nav ul li {
+  padding: 12px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  border-radius: 6px;
 }
 
-/* -------- BOTÃO DE LOGOUT -------- */
-
-.btn-logout {
-    margin-top: 30px;
-    background: #00e4ff;
-    color: #000;
-    padding: 14px 18px;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 420px;
-    cursor: pointer;
-    transition: 0.2s ease;
+.sidebar nav ul li.active,
+.sidebar nav ul li:hover {
+  background: #1b242f;
 }
 
-.btn-logout:hover {
-    opacity: 0.88;
-    transform: scale(1.02);
+.logout {
+  margin-top: auto;
+  padding: 12px;
+  background: #b30000;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.btn-logout:active {
-    transform: scale(0.97);
+/* Conteúdo principal */
+.content {
+  flex: 1;
+  background: #121b25;
+  color: white;
+  overflow-y: auto;
+}
+
+/* Topbar */
+.topbar {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  background: #18222e;
+  position: sticky;
+  top: 0;
+}
+
+/* Cards */
+.cards {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  flex: 1;
+  padding: 30px;
+  background: #1d2733;
+  border-radius: 10px;
+}
+
+/* Gráficos */
+.charts {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.graph-box {
+  flex: 1;
+  height: 250px;
+  background: #1d2733;
+  border-radius: 10px;
+}
+
+/* Listas */
+.lists {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.list-box {
+  flex: 1;
+  background: #1d2733;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.list-box ul {
+  margin: 0;
+  padding-left: 20px;
 }
