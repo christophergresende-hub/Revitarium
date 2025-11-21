@@ -1,112 +1,111 @@
-/* ===== REVTARIUM LOGIN PAGE - DESIGN PREMIUM ===== */
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
+/* ====== RESET GLOBAL ====== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 body {
-  height: 100vh;
-  background: radial-gradient(circle at 50% 20%, #001F3F, #000814);
+  background: radial-gradient(circle at center, #001428, #00060f 85%);
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  min-height: 100vh;
+  color: #fff;
 }
 
-/* --- CARD PRINCIPAL --- */
-.login-container {
-  background: rgba(10, 15, 25, 0.95);
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(0, 255, 255, 0.1);
-  width: 90%;
-  max-width: 400px;
+/* ====== CONTAINER PRINCIPAL ====== */
+.page {
+  width: 100%;
+  padding: 20px;
+}
+
+.login-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(0, 20, 40, 0.6);
+  backdrop-filter: blur(16px);
+  padding: 32px;
+  border-radius: 22px;
+  box-shadow: 0 0 25px rgba(0, 200, 255, 0.25);
+  border: 1px solid rgba(0, 200, 255, 0.2);
+  animation: fadeIn 0.9s ease forwards;
+}
+
+/* ====== ANIMAÇÃO ====== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== TÍTULO ====== */
+.brand {
   text-align: center;
-  position: relative;
-  transition: all 0.4s ease;
-  backdrop-filter: blur(10px);
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #14e4ff;
+  text-shadow: 0 0 10px rgba(20, 228, 255, 0.6);
 }
 
-.login-container:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
+/* ====== FORM ====== */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-/* --- TÍTULO --- */
-.login-container h1 {
-  font-size: 2em;
-  font-weight: 600;
-  color: #00E5FF;
-  margin-bottom: 25px;
-  letter-spacing: 1px;
+.label {
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
-/* --- INPUTS --- */
-.login-container input {
+.input {
   width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 18px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 16px;
   outline: none;
-  font-size: 1em;
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  transition: 0.3s;
+  transition: 0.25s;
 }
 
-.login-container input:focus {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+.input::placeholder {
+  color: rgba(255,255,255,0.45);
 }
 
-/* --- BOTÃO --- */
-.login-container button {
+.input:focus {
+  background: rgba(255,255,255,0.22);
+  box-shadow: 0 0 10px rgba(20, 228, 255, 0.3);
+}
+
+/* ====== BOTÃO ====== */
+.btn {
+  margin-top: 8px;
   width: 100%;
-  padding: 12px;
-  font-size: 1.1em;
-  font-weight: 600;
+  padding: 16px;
+  border-radius: 12px;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #00E5FF, #00B8D4);
-  color: #001;
+  background: linear-gradient(90deg, #00eaff, #00b7ff);
+  color: #000;
+  font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.25s;
 }
 
-.login-container button:hover {
-  background: linear-gradient(90deg, #00B8D4, #00E5FF);
-  transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
-}
-
-/* --- EFEITO DE LUZ --- */
-.login-container::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 20px;
-  background: linear-gradient(45deg, #00E5FF, transparent, #00E5FF);
-  z-index: -1;
-  opacity: 0.2;
-}
-
-/* --- RESPONSIVIDADE --- */
-@media (max-width: 420px) {
-  .login-container {
-    padding: 25px;
-    border-radius: 16px;
-  }
-
-  .login-container h1 {
-    font-size: 1.7em;
-  }
+.btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
 }
