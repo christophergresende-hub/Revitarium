@@ -17,14 +17,7 @@ body {
   padding: 20px;
 }
 
-.login-card {
-  background: rgba(0, 20, 40, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 40px;
-  width: 340px;
-  box-shadow: 0 0 35px rgba(0, 255, 255, 0.15);
-  border: 1px solid rgba(0, 255, 255, 0.2);
+
 }
 
 /* === Título === */
@@ -59,18 +52,65 @@ input {
 }
 
 /* === Botão === */
-.btn {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(90deg, #00eaff, #00bfff);
-  color: #000;
-  font-size: 18px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s;
+
 }
 
 .btn:hover {
   transform: scale(1.03);
+}
+/* CARD MELHORADO */
+.login-card {
+    width: 90%;
+    max-width: 480px;
+    padding: 55px 40px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 26px;
+
+    /* novo brilho dinâmico */
+    box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.25),
+        inset 0 0 40px rgba(0, 180, 255, 0.12);
+
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(0, 255, 255, 0.08);
+
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* animação suave ao aparecer */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* BOTÃO AVANÇADO */
+.btn {
+    width: 100%;
+    padding: 18px;
+    margin-top: 25px;
+    background: linear-gradient(92deg, #00eaff 0%, #0099ff 100%);
+    border: none;
+    border-radius: 14px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #001018;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* efeito hover real de botão premium */
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 200, 255, 0.35);
+}
+
+/* clique suave */
+.btn:active {
+    transform: scale(0.97);
 }
