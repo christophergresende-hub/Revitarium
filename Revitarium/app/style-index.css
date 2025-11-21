@@ -1,112 +1,76 @@
-/* ======= FUNDO ======= */
+/* === Fundo geral === */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: radial-gradient(circle at center, #001a33 0%, #000915 100%);
-    overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #012a46, #000814);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* ======= BRILHO DINÂMICO DE FUNDO ======= */
-body::before {
-    content: "";
-    position: absolute;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(0,255,255,0.18), transparent 70%);
-    filter: blur(120px);
-    top: -200px;
-    left: -200px;
-    pointer-events: none;
-}
-
-/* ======= CARD DE LOGIN ======= */
-.login-container {
-    width: 92%;
-    max-width: 420px;
+/* === Container do cartão === */
+.login-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
 }
 
 .login-card {
-    background: rgba(0, 20, 40, 0.55);
-    border-radius: 28px;
-    padding: 45px 35px;
-    box-shadow:
-        0 0 22px rgba(0,255,255,0.12),
-        inset 0 0 35px rgba(0,255,255,0.05),
-        0 10px 25px rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(0,255,255,0.12);
+  background: rgba(0, 20, 40, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 40px;
+  width: 340px;
+  box-shadow: 0 0 35px rgba(0, 255, 255, 0.15);
+  border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
-/* ======= TÍTULO ======= */
-.title {
-    text-align: center;
-    font-size: 38px;
-    font-weight: 700;
-    margin-bottom: 30px;
-    background: linear-gradient(90deg, #00eaff, #00bfff);
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 20px rgba(0,255,255,0.35);
+/* === Título === */
+#login-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  background: linear-gradient(90deg, #00eaff, #00bcd4);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-/* ======= LABELS ======= */
-label {
-    font-size: 16px;
-    color: #d9e7f1;
-    display: block;
-    margin-bottom: 8px;
-    margin-top: 18px;
+/* === Labels === */
+.label {
+  font-size: 16px;
+  color: #d1d1d1;
+  margin-bottom: 6px;
+  display: block;
 }
 
-/* ======= INPUTS ======= */
+/* === Inputs === */
 input {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.15);
-    font-size: 17px;
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    outline: none;
-    transition: 0.25s;
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  font-size: 15px;
+  color: white;
 }
 
-input::placeholder {
-    color: #c7c7c7;
-}
-
-input:focus {
-    border-color: #00d9ff;
-    box-shadow: 0 0 12px rgba(0,255,255,0.25);
-    background: rgba(255,255,255,0.18);
-}
-
-/* ======= BOTÃO ======= */
+/* === Botão === */
 .btn {
-    width: 100%;
-    margin-top: 28px;
-    padding: 16px;
-    font-size: 20px;
-    font-weight: 600;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    color: #000;
-    background: linear-gradient(135deg, #00eaff, #00b7ff);
-    transition: 0.25s;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg, #00eaff, #00bfff);
+  color: #000;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 20px rgba(0,255,255,0.3);
-}
-
-.btn:active {
-    transform: scale(0.97);
+  transform: scale(1.03);
 }
