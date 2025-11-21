@@ -1,50 +1,230 @@
-/* style-dashboard.css - versão compacta mas avançada */
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto; }
-:root{
-  --bg:#041726; --card:#071924; --accent1:#00e6ff; --accent2:#0086ff;
-  --muted: rgba(255,255,255,0.18);
+/* dashboard.js - funcionalidades do dashboard */
+
+/* ---------- Estado ---------- */
+const STATE = {
+  activities: [],
+  todos: [],
+  users: [],
+  stats: {
+    visits: [120,150,170,140,200,240,220],
+    conversions: [5,8,6,9,12,7,10],
+    labels: []
+  },
+  mockApi: true
+};
+
+/* Labels últimos 7 dias */
+(function(){
+  const l=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    l.push(d.toLocaleDateString());
+  }
+  STATE.stats.labels=l;
+})();
+
+const qs=s=>document.querySelector(s);
+const qsa=s=>document.querySelectorAll(s);
+
+/* ---------- Persistência ---------- */
+const saveState=()=>localStorage.setItem('rev_state',JSON.stringify(STATE));
+const loadState=()=>{
+  const r=localStorage.getItem('rev_state');
+  if(!r) return;
+  try{ Object.assign(STATE,JSON.parse(r)); }catch(e){}
+};
+
+/* Mock fetch */
+const fetchMock=(type)=>new Promise(r=>setTimeout(()=>{
+  if(type==='cards') r({users:STATE.users.length, visits:STATE.stats.visits.reduce((a,b)=>a+b,0), tasks:STATE.todos.length});
+  if(type==='activities') r(STATE.activities.slice(-6).reverse());
+  if(type==='users') r(STATE.users);
+  if(type==='todos') r(STATE.todos);
+},300));
+
+/* Proteção */
+function requireAuth(){
+  if(!sessionStorage.getItem('rev_logged')){
+    window.location.href="index.html"; return false;
+  }
+  return true;
 }
-.app{ display:flex; min-height:100vh; background:linear-gradient(180deg,#022733 0%, #021520 60%); color:#e8f6fb; }
 
-/* SIDEBAR */
-.sidebar{ width:260px; padding:28px 20px; border-right:1px solid rgba(255,255,255,0.02); }
-.brand{ font-size:22px; font-weight:700; color:var(--accent1); margin-bottom:18px; }
-.nav{ display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
-.nav-item{ background:transparent; color:#fff; padding:10px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; transition:.18s; }
-.nav-item:hover{ background:rgba(255,255,255,0.02); transform:translateX(6px); }
-.nav-item.active{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#001b24; }
+/* ---------- Render ---------- */
+async function renderCards(){
+  const el=qs('#cards'); el.innerHTML='';
+  const d=await fetchMock('cards');
+  [{t:'Usuários',v:d.users},{t:'Visitas',v:d.visits},{t:'Tarefas',v:d.tasks}]
+  .forEach(c=>{
+    const x=document.createElement('div');
+    x.className='card';
+    x.innerHTML=`<h4>${c.t}</h4><div class="value">${c.v}</div>`;
+    el.appendChild(x);
+  });
+}
 
-/* MAIN */
-.main{ flex:1; padding:24px 28px 80px; }
-.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
-#page-title{ font-size:26px; font-weight:700; color:var(--accent1); }
+async function renderActivityList(){
+  const el=qs('#activity-list'); el.innerHTML='';
+  const a=await fetchMock('activities');
+  a.forEach(x=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span>${x.text}</span><small>${new Date(x.time).toLocaleString()}</small>`;
+    el.appendChild(li);
+  });
+}
 
-/* BUTTONS */
-.btn{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#001b24; border:none; padding:16px 22px; border-radius:14px; font-weight:800; cursor:pointer; }
-.btn.small{ padding:8px 12px; border-radius:10px; }
-.btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:10px; }
+async function renderTodos(){
+  const el=qs('#todo-list'); el.innerHTML='';
+  const t=await fetchMock('todos');
+  t.forEach((x,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span>${x.text}</span>
+    <div>
+      <button class="btn-ghost btn-tick" data-idx="${i}">✔</button>
+      <button class="btn-ghost btn-del" data-idx="${i}">✖</button>
+    </div>`;
+    el.appendChild(li);
+  });
+}
 
-/* CONTENT */
-.content{ display:grid; gap:20px; max-width:1100px; margin:0 auto; }
-.cards{ display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
-.card{ background:rgba(255,255,255,0.02); padding:20px; border-radius:16px; }
-.card h4{ font-size:14px; color:var(--muted); }
-.card .value{ font-size:20px; font-weight:800; }
+async function renderUsers(){
+  const el=qs('#users-list'); el.innerHTML='';
+  const u=await fetchMock('users');
+  u.forEach((x,i)=>{
+    const li=document.createElement('li');
+    li.style="display:flex;justify-content:space-between;align-items:center;";
+    li.innerHTML=`<span>${x.name}</span>
+      <div>
+        <button class="btn-ghost btn-edit" data-idx="${i}">✎</button>
+        <button class="btn-ghost btn-user-del" data-idx="${i}">🗑</button>
+      </div>`;
+    el.appendChild(li);
+  });
+}
 
-/* CHARTS */
-.charts{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-.chart-card{ background:var(--card); border-radius:14px;padding:18px; }
+/* Gráficos */
+let c1,c2;
+function renderCharts(){
+  if(c1) c1.destroy();
+  if(c2) c2.destroy();
 
-/* PANELS */
-.panels{ display:grid; grid-template-columns: 1fr 320px; gap:18px; }
-.panel{ background:var(--card); padding:18px;border-radius:12px; }
-.activity-list, .todo-list{ list-style:none; margin-top:12px; }
-.activity-list li, .todo-list li{ background:rgba(255,255,255,0.02); padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; }
+  c1=new Chart(qs('#chart-visits'),{
+    type:'line',
+    data:{
+      labels:STATE.stats.labels,
+      datasets:[{
+        data:STATE.stats.visits,
+        borderColor:'rgba(0,230,255,0.9)',
+        backgroundColor:'rgba(0,230,255,0.12)',
+        tension:0.3
+      }]
+    },
+    options:{plugins:{legend:{display:false}}}
+  });
 
-/* Users */
-.hidden{ display:none; }
-.user-controls{ display:flex; gap:8px; margin-bottom:12px; }
-input{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:#cfeffb; padding:12px; border-radius:10px; width:100%; margin-top:10px; }
+  c2=new Chart(qs('#chart-conversions'),{
+    type:'bar',
+    data:{
+      labels:STATE.stats.labels,
+      datasets:[{
+        data:STATE.stats.conversions,
+        backgroundColor:'rgba(0,140,255,0.9)'
+      }]
+    },
+    options:{plugins:{legend:{display:false}}}
+  });
+}
 
-/* Switch theme */
-.switch{ width:48px; height:26px; }
+/* ---------- Eventos ---------- */
+function bindEvents(){
+  qs('#btn-logout').onclick=()=>{sessionStorage.removeItem('rev_logged');location.href='index.html';};
+
+  qsa('.nav-item').forEach(x=>x.onclick=e=>{
+    qsa('.nav-item').forEach(n=>n.classList.remove('active'));
+    e.target.classList.add('active');
+    const r=e.target.dataset.route;
+    routeChange(r);
+  });
+
+  qs('#btn-export').onclick=exportCSV;
+
+  qs('#btn-add-activity').onclick=()=>{
+    STATE.activities.push({text:`Ação ${Math.floor(Math.random()*999)}`, time:Date.now()});
+    saveState(); renderActivityList();
+  };
+
+  qs('#btn-add-todo').onclick=()=>{
+    const i=qs('#todo-input');
+    if(!i.value.trim()) return;
+    STATE.todos.push({text:i.value.trim(), created:Date.now()});
+    i.value=''; saveState(); renderTodos(); renderCards();
+  };
+
+  qs('#todo-list').onclick=e=>{
+    const i=Number(e.target.dataset.idx);
+    if(e.target.classList.contains('btn-tick')){
+      STATE.todos.splice(i,1);
+      saveState(); renderTodos(); renderCards();
+    }
+    if(e.target.classList.contains('btn-del')){
+      STATE.todos.splice(i,1);
+      saveState(); renderTodos(); renderCards();
+    }
+  };
+
+  qs('#btn-create-user').onclick=()=>{
+    const n=qs('#new-user-name').value.trim();
+    const p=qs('#new-user-pass').value.trim();
+    if(!n||!p) return alert('Preencha os campos');
+    STATE.users.push({name:n,pass:p,id:Date.now()});
+    saveState(); renderUsers(); renderCards();
+    qs('#new-user-name').value=''; qs('#new-user-pass').value='';
+  };
+
+  qs('#users-list').onclick=e=>{
+    const i=Number(e.target.dataset.idx);
+    if(e.target.classList.contains('btn-user-del')){
+      STATE.users.splice(i,1);
+      saveState(); renderUsers(); renderCards();
+    }
+    if(e.target.classList.contains('btn-edit')){
+      alert('Editar será adicionado depois');
+    }
+  };
+}
+
+function routeChange(r){
+  qsa('.content-block').forEach(s=>s.classList.add('hidden'));
+  qs('#page-title').textContent=r==='home'?'Dashboard':r.charAt(0).toUpperCase()+r.slice(1);
+  if(r==='users') qs('#users-section').classList.remove('hidden');
+  if(r==='settings') qs('#settings-section').classList.remove('hidden');
+}
+
+function exportCSV(){
+  let rows=[['Tipo','Valor']];
+  rows.push(['Usuários',STATE.users.length]);
+  rows.push(['Tarefas',STATE.todos.length]);
+  rows.push(['Atividades',STATE.activities.length]);
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='revitarium_export.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- Init ---------- */
+async function init(){
+  if(!requireAuth()) return;
+  loadState();
+  bindEvents();
+  await renderCards();
+  await renderActivityList();
+  await renderTodos();
+  await renderUsers();
+  renderCharts();
+  saveState();
+}
+
+document.addEventListener('DOMContentLoaded', init);
