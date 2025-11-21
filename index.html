@@ -1,35 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Revitarium — Login</title>
 
-  <!-- CSS principal (arquivo dentro da pasta app/) -->
-  <link rel="stylesheet" href="app/style-index.css">
+  <!-- CSS principal (arquivo separado) -->
+  <!-- Coloque style-index.css em: Revitarium/app/style-index.css -->
+  <link rel="stylesheet" href="Revitarium/app/style-index.css">
 </head>
 <body>
-
   <main class="page">
     <section class="login-wrap">
-      <div class="login-card" role="region" aria-label="Login Revitarium">
-        <h1 class="brand">Revitarium</h1>
+      <div class="login-card" role="region" aria-labelledby="login-title">
+        <h1 id="login-title" class="brand">Revitarium</h1>
 
-        <label for="user" class="label">Usuário</label>
-        <input id="user" name="user" type="text" inputmode="text" autocomplete="username"
-               class="input" placeholder="Digite seu usuário" />
+        <form id="loginForm" class="login-form" onsubmit="event.preventDefault(); login();">
+          <label for="user" class="label">Usuário</label>
+          <input id="user" name="user" type="text" inputmode="text" autocomplete="username" placeholder="Digite seu usuário" class="input">
 
-        <label for="pass" class="label">Senha</label>
-        <input id="pass" name="pass" type="password" inputmode="text" autocomplete="current-password"
-               class="input" placeholder="Digite sua senha" />
+          <label for="pass" class="label">Senha</label>
+          <input id="pass" name="pass" type="password" inputmode="text" autocomplete="current-password" placeholder="Digite sua senha" class="input">
 
-        <button id="btn-login" class="btn" type="button" aria-label="Entrar">Entrar</button>
+          <button type="submit" class="btn">Entrar</button>
+        </form>
       </div>
     </section>
   </main>
 
-  <!-- JS (arquivo dentro da pasta app/) -->
-  <script src="app/app.js" defer></script>
-
+  <!-- JS (arquivo separado) -->
+  <!-- Coloque app.js em: Revitarium/app/app.js -->
+  <script src="Revitarium/app/app.js" defer></script>
 </body>
 </html>
