@@ -1,126 +1,31 @@
-/* ======================== */
-/*     FUNDO AVANÇADO       */
-/* ======================== */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revitarium – Login</title>
+  <link rel="stylesheet" href="Revitarium/app/style-index.css" />
+</head>
 
-body {
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at center, #02253a 0%, #00111a 100%);
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-  color: white;
-}
+<body>
+  <main class="page">
+    <section class="login-wrap">
+      <div class="login-card">
+        <h1 class="brand">Revitarium</h1>
 
-/* ======================== */
-/*     CONTAINER DO LOGIN   */
-/* ======================== */
+        <form id="loginForm">
+          <label>Usuário</label>
+          <input id="user" type="text" placeholder="Digite seu usuário" />
 
-.page {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+          <label>Senha</label>
+          <input id="pass" type="password" placeholder="Digite sua senha" />
 
-/* ======================== */
-/*        CARTÃO LOGIN      */
-/* ======================== */
+          <button class="btn" type="submit">Entrar</button>
+        </form>
+      </div>
+    </section>
+  </main>
 
-.login-card {
-  width: 90%;
-  max-width: 480px;
-  padding: 55px 40px;
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 26px;
-
-  box-shadow:
-    0 0 40px rgba(0, 255, 255, 0.25),
-    inset 0 0 40px rgba(0, 180, 255, 0.15);
-
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(0, 255, 255, 0.25);
-
-  animation: fadeIn 0.8s ease-out;
-}
-
-/* ======================== */
-/*      TÍTULO DO LOGIN     */
-/* ======================== */
-
-#login-title {
-  text-align: center;
-  font-size: 36px;
-  color: #26d9ff;
-  font-weight: 700;
-  margin-bottom: 25px;
-}
-
-/* ======================== */
-/*       LABELS / INPUTS    */
-/* ======================== */
-
-.label {
-  font-size: 18px;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
-  font-size: 16px;
-  color: white;
-  outline: none;
-  transition: 0.25s ease;
-}
-
-.input:focus {
-  border-color: rgba(0, 255, 255, 0.65);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.35);
-}
-
-/* ======================== */
-/*       BOTÃO AVANÇADO     */
-/* ======================== */
-
-.btn {
-  width: 100%;
-  padding: 18px;
-  margin-top: 28px;
-  background: linear-gradient(to right, #00eaff, #008cff);
-  border: none;
-  border-radius: 16px;
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-  color: black;
-  transition: 0.25s ease-in-out;
-}
-
-.btn:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 22px rgba(0, 255, 255, 0.45);
-}
-
-/* ======================== */
-/* ANIMAÇÃO DE APARECER     */
-/* ======================== */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+  <script src="Revitarium/app/app.js" defer></script>
+</body>
+</html>
