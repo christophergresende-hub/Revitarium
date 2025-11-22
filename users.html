@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revitarium – Usuários</title>
+  <link rel="stylesheet" href="style-dashboard.css">
+
+  <script>
+    if (!localStorage.getItem("rev_user")) {
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <style>
+    .card {
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 24px;
+    }
+    .user-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: #d8f3ff;
+    }
+    .user-row button {
+      background: #009dff;
+      border: 0;
+      padding: 6px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .user-row button.delete {
+      background: #ff3b3b;
+    }
+    #formAddUser input, #formAddUser select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 0;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 16px;
+    }
+  </style>
+
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="logo">R</div>
+
+    <a href="dashboard.html" class="side-btn">🏠</a>
+    <a href="reports.html" class="side-btn">📊</a>
+    <a href="users.html" class="side-btn active">👥</a>
+    <a href="settings.html" class="side-btn">⚙️</a>
+
+    <a id="logoutBtn" class="side-btn logout">↩️</a>
+  </aside>
+
+  <main class="content">
+
+    <h1>Usuários</h1>
+    <p class="subtitle">Gerenciamento avançado de usuários do sistema</p>
+
+    <div class="card">
+      <h2>Cadastrar Usuário</h2>
+
+      <form id="formAddUser">
+        <input id="userName" placeholder="Nome do Usuário">
+        <input id="userEmail" placeholder="Email">
+        <select id="userRole">
+          <option value="admin">Administrador</option>
+          <option value="padrao">Padrão</option>
+        </select>
+        <button type="submit" class="btn">Salvar Usuário</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Lista de Usuários</h2>
+      <div id="usersList"></div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="users.js"></script>
+
+<script>
+  document.getElementById("logoutBtn").onclick = function () {
+    localStorage.removeItem("rev_user");
+    window.location.href = "index.html";
+  };
+</script>
+
+</body>
+</html>
