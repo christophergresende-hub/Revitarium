@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium — Full App</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Styles: mobile-first, premium dark theme -->
+  <style>
+    :root{
+      --bg:#04141a;
+      --card:#071822;
+      --accent:#00f0ff;
+      --accent-2:#00a6ff;
+      --muted:#98a6ad;
+      --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(0,0,0,0.38);
+      --radius:18px;
+      --gap:18px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.6);
+      --glass-border: rgba(0,180,255,0.08);
+      --text: #dbeef6;
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(ellipse at 30% 10%, rgba(0,50,70,0.18), transparent 10%),
+                  radial-gradient(ellipse at 80% 90%, rgba(0,100,120,0.10), transparent 10%),
+                  linear-gradient(180deg, #042028 0%, #021217 80%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.25;
+    }
+
+    /* Layout */
+    .app {
+      display:flex;
+      min-height:100vh;
+      gap:0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width:72px;
+      background: linear-gradient(180deg, rgba(6,20,22,0.8), rgba(4,12,14,0.85));
+      border-right:1px solid rgba(255,255,255,0.02);
+      padding:14px 8px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:0;
+      z-index:50;
+    }
+    .brand-ico {
+      width:40px;height:40px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;color:var(--accent);font-size:18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    .nav-btn {
+      width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      color: rgba(255,255,255,0.9);cursor:pointer;border:1px solid rgba(255,255,255,0.02);
+      transition: all .18s ease;
+    }
+    .nav-btn.active, .nav-btn:hover { background: rgba(0,224,255,0.06); transform:translateX(4px); color:var(--accent-2); box-shadow: 0 6px 18px rgba(0,160,255,0.06);}
+
+    /* Main area */
+    .main {
+      flex:1;
+      padding:24px;
+    }
+
+    /* Topbar (title + controls) */
+    .topbar {
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .page-title {
+      font-size:28px;
+      font-weight:700;
+      letter-spacing: -0.5px;
+      color:var(--text);
+    }
+    .controls { display:flex; gap:12px; align-items:center; }
+
+    .btn {
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#021217;font-weight:700;border:none;padding:8px 14px;border-radius:14px;
+      box-shadow: 0 8px 30px rgba(0,160,255,0.12);
+      cursor:pointer; font-size:14px;
+    }
+    .btn.ghost {
+      background: rgba(255,255,255,0.03); color:var(--text); border:1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Grid layout for dashboard cards: responsive */
+    .grid {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+      margin-top:10px;
+    }
+    @media(min-width:880px){
+      .grid { grid-template-columns: 1fr 380px; align-items:start; }
+      .left-col { display:grid; gap:16px; }
+      .right-col { display:flex; flex-direction:column; gap:16px; }
+    }
+
+    /* Card */
+    .card {
+      background: linear-gradient(180deg, rgba(0,8,12,0.45), rgba(0,0,0,0.44));
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+      padding:18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      position:relative;
+      overflow:hidden;
+    }
+    .card h3 { margin:0 0 12px 0; color:var(--accent); font-size:20px; }
+    .card canvas { width:100%; height:220px; display:block; }
+
+    /* List items */
+    .list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+    .list li { background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(255,255,255,0.01)); padding:10px 12px; border-radius:10px; color:var(--text); border: 1px solid rgba(255,255,255,0.02); }
+
+    /* Small UI */
+    .switch { display:flex; align-items:center; gap:8px; }
+    .export { display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.03); color:var(--text); cursor:pointer; }
+
+    /* Form elements */
+    input[type="text"], input[type="password"] { width:100%; padding:12px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color:var(--text); }
+    .small { font-size:13px; color:var(--muted); }
+
+    /* Page footer spacer */
+    .spacer { height:60px; }
+
+    /* Dashboard-specific layout niceties */
+    .kpi { display:flex; gap:12px; }
+    .kpi .mini { flex:1; padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.07)); border:1px solid rgba(255,255,255,0.02); text-align:center; }
+    .kpi .mini h4 { margin:0; font-size:18px; color:var(--accent); }
+    .kpi .mini p { margin:4px 0 0 0; color:var(--muted); font-size:13px; }
+
+    /* Large screen: full layout */
+    @media(min-width:1200px){
+      .sidebar { width:88px; padding:18px; }
+      .page-title { font-size:32px; }
+      .card canvas { height:260px; }
+    }
+
+    /* Tiny tweaks */
+    .logo-caption { display:none; }
+    @media(min-width:980px){ .logo-caption{ display:inline-block; margin-left:8px; color:var(--accent); font-weight:700; } }
+
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Barra lateral">
+      <div class="brand-ico" title="Revitarium">R</div>
+      <div class="nav-btn active" data-nav="dashboard" title="Dashboard" aria-pressed="true">🏠</div>
+      <div class="nav-btn" data-nav="reports" title="Relatórios">📈</div>
+      <div class="nav-btn" data-nav="users" title="Usuários">👥</div>
+      <div class="nav-btn" data-nav="settings" title="Configurações">⚙️</div>
+      <div style="flex:1"></div>
+      <div class="nav-btn" id="btn-logout" title="Sair">⤴️</div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main" id="mainArea">
+      <div class="topbar">
+        <div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="page-title">Dashboard</div>
+            <div class="logo-caption">Revitarium</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="exportCsv">Exportar CSV</button>
+          <label class="switch small"><input type="checkbox" id="autoRefresh" /> <span class="small">Auto-refresh</span></label>
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div class="grid" id="grid">
+        <!-- Left column -->
+        <div class="left-col">
+          <section class="card">
+            <h3>Visitas (últimos 7 dias)</h3>
+            <canvas id="visitsChart" aria-label="Gráfico de visitas"></canvas>
+          </section>
+
+          <section class="card">
+            <h3>Conversões</h3>
+            <canvas id="conversionsChart" aria-label="Gráfico de conversões"></canvas>
+          </section>
+
+          <section class="card">
+            <h3>Resumo</h3>
+            <ul class="list">
+              <li>Total de usuários: <strong id="statUsers">-</strong></li>
+              <li>Total de sessões: <strong id="statSessions">-</strong></li>
+              <li>Taxa conversão: <strong id="statConversion">-</strong></li>
+            </ul>
+          </section>
+        </div>
+
+        <!-- Right column -->
+        <aside class="right-col">
+          <section class="card">
+            <h3>Últimas ações</h3>
+            <button class="btn ghost" id="addActionBtn">Adicionar ação</button>
+            <ul class="list" id="recentActions" style="margin-top:12px;"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Atividades pendentes</h3>
+            <form id="todoForm" style="display:flex; gap:8px; align-items:center;">
+              <input id="todoInput" placeholder="Nova tarefa..." />
+              <button class="btn ghost" type="submit">Adicionar</button>
+            </form>
+            <ul class="list" id="todoList" style="margin-top:12px;"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Usuários</h3>
+            <form id="userForm" style="display:flex;flex-direction:column;gap:8px;">
+              <input id="userName" placeholder="Nome" />
+              <input id="userRole" placeholder="Cargo/Role" />
+              <div style="display:flex; gap:8px;">
+                <button class="btn" type="submit">Adicionar</button>
+              </div>
+            </form>
+            <ul class="list" id="usersList" style="margin-top:12px;"></ul>
+          </section>
+        </aside>
+      </div>
+
+      <div class="spacer"></div>
+    </main>
+  </div>
+
+  <!-- App JS (embedded, single-file) -->
+  <script>
+  /* revitarium-full.js - single-file controller (frontend only, mock data) */
+  (function(){
+    // Query elements
+    const visitsCtxEl = document.getElementById('visitsChart');
+    const convCtxEl = document.getElementById('conversionsChart');
+    const recentActions = document.getElementById('recentActions');
+    const todoForm = document.getElementById('todoForm');
+    const todoInput = document.getElementById('todoInput');
+    const todoList = document.getElementById('todoList');
+    const userForm = document.getElementById('userForm');
+    const usersList = document.getElementById('usersList');
+    const exportBtn = document.getElementById('exportCsv');
+    const addActionBtn = document.getElementById('addActionBtn');
+    const autoRefresh = document.getElementById('autoRefresh');
+    const statUsers = document.getElementById('statUsers');
+    const statSessions = document.getElementById('statSessions');
+    const statConversion = document.getElementById('statConversion');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // Simulated data
+    let visitsData = [120,150,180,140,210,230,200];
+    let conversionsData = [12,20,15,18,30,28,22];
+    let usersTotal = 124;
+    let sessionsTotal = 987;
+
+    // Setup stats initial
+    function updateStats(){
+      statUsers.textContent = usersTotal;
+      statSessions.textContent = sessionsTotal;
+      const convRate = Math.round((conversionsData.reduce((a,b)=>a+b,0)/visitsData.reduce((a,b)=>a+b,1))*100);
+      statConversion.textContent = convRate + '%';
+    }
+    updateStats();
+
+    // Utility to create/chart gradient (works even if canvas size changes)
+    function createGradient(ctx, color1, color2){
+      const w = ctx.canvas.width;
+      const h = ctx.canvas.height;
+      const g = ctx.createLinearGradient(0,0,0,h);
+      g.addColorStop(0, color1);
+      g.addColorStop(1, color2);
+      return g;
+    }
+
+    // Create charts when canvases available
+    let visitsChart = null, convChart = null;
+    function createCharts(){
+      if(visitsCtxEl){
+        const ctx = visitsCtxEl.getContext('2d');
+        const fillG = createGradient(ctx, 'rgba(0,224,255,0.12)', 'rgba(0,163,255,0.03)');
+        if(visitsChart) visitsChart.destroy();
+        visitsChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['6d','5d','4d','3d','2d','1d','Hoje'],
+            datasets: [{
+              label:'Visitas',
+              data: visitsData,
+              fill:true,
+              backgroundColor: fillG,
+              borderColor: '#00e0ff',
+              pointBackgroundColor: '#00e0ff',
+              tension: 0.36,
+              pointRadius: 3,
+              borderWidth:2
+            }]
+          },
+          options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{ legend:{display:false} },
+            scales:{
+              x:{ ticks:{ color:'rgba(255,255,255,0.55)'} },
+              y:{ ticks:{ color:'rgba(255,255,255,0.45)'} }
+            }
+          }
+        });
+      }
+
+      if(convCtxEl){
+        const ctx2 = convCtxEl.getContext('2d');
+        if(convChart) convChart.destroy();
+        convChart = new Chart(ctx2, {
+          type:'bar',
+          data:{
+            labels: ['6d','5d','4d','3d','2d','1d','Hoje'],
+            datasets:[{
+              label:'Conversões', data:conversionsData,
+              backgroundColor: '#00d2ff', borderRadius:6, barThickness:20
+            }]
+          },
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{ legend:{display:false} },
+            scales:{
+              x:{ ticks:{ color:'rgba(255,255,255,0.6)'} },
+              y:{ ticks:{ color:'rgba(255,255,255,0.45)'} }
+            }
+          }
+        });
+      }
+    }
+
+    // Initialize UI lists with sample items
+    function addListItem(el, text){
+      const li = document.createElement('li');
+      li.textContent = text;
+      el.prepend(li);
+    }
+
+    // Populate initial
+    ['Item C','Item B','Item A'].forEach(t => addListItem(recentActions,t));
+    ['Tarefa 2','Tarefa 1'].forEach(t => addListItem(todoList,t));
+    ['Admin (Owner)'].forEach(u => addListItem(usersList,u));
+
+    // Handlers
+    addActionBtn?.addEventListener('click', ()=>{
+      const action = `Ação adicionada em ${new Date().toLocaleTimeString()}`;
+      addListItem(recentActions, action);
+    });
+
+    todoForm?.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const val = (todoInput.value||'').trim();
+      if(!val) return;
+      addListItem(todoList, val);
+      todoInput.value='';
+    });
+
+    userForm?.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const name = (document.getElementById('userName').value||'').trim();
+      const role = (document.getElementById('userRole').value||'').trim();
+      if(!name) return;
+      addListItem(usersList, `${name}${role? ' ('+role+')':''}`);
+      usersTotal++;
+      updateStats();
+      document.getElementById('userName').value='';
+      document.getElementById('userRole').value='';
+    });
+
+    // Export CSV
+    exportBtn?.addEventListener('click', ()=>{
+      const rows = [
+        ['dia','visitas','conversoes'],
+        ...visitsData.map((v,i)=>[i+1, v, conversionsData[i] || 0])
+      ];
+      const csv = rows.map(r=>r.join(',')).join('\\n');
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'revitarium-data.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Auto-refresh simulation
+    let autoInterval = null;
+    autoRefresh?.addEventListener('change', function(){
+      if(this.checked){
+        autoInterval = setInterval(()=> {
+          // rotate mock data
+          visitsData.push(Math.round(130 + Math.random()*120));
+          visitsData.shift();
+          conversionsData.push(Math.round(8 + Math.random()*25));
+          conversionsData.shift();
+          // update charts
+          if(visitsChart){ visitsChart.data.datasets[0].data = visitsData; visitsChart.update(); }
+          if(convChart){ convChart.data.datasets[0].data = conversionsData; convChart.update(); }
+          // update stats
+          sessionsTotal += Math.round(Math.random()*10);
+          updateStats();
+        }, 4500);
+      } else {
+        clearInterval(autoInterval); autoInterval = null;
+      }
+    });
+
+    // Simple logout -> redirect to index.html (if exists)
+    btnLogout?.addEventListener('click', ()=> {
+      // optional: clear sessionStorage token
+      localStorage.removeItem('rev_user');
+      window.location.href = 'index.html';
+    });
+
+    // Navigation (sidebar)
+    document.querySelectorAll('.nav-btn').forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const nav = btn.dataset.nav;
+        if(nav === 'dashboard'){ /* already */ }
+        // you can add logic to swap views when implementing multiple pages
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e){
+      if((e.ctrlKey || e.metaKey) && e.key === 'e') exportBtn?.click();
+    });
+
+    // Build charts when DOM and Chart.js ready
+    function init(){
+      createCharts();
+      // responsive: re-create on resize for gradients; Chart.js usually handles but some devices need update
+      window.addEventListener('resize', ()=> { createCharts(); });
+    }
+
+    // Wait until Chart is loaded (synchronous since we included CDN before)
+    if(typeof Chart !== 'undefined'){
+      init();
+    } else {
+      // fallback: try again after short delay
+      setTimeout(()=>{ init(); }, 300);
+    }
+  })();
+  </script>
+</body>
+</html>
