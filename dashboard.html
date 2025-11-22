@@ -1,110 +1,113 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Revitarium — Dashboard</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium – Dashboard</title>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- CSS do Dashboard -->
-  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css"/>
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
 </head>
-
 <body>
-
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand-ico">R</div>
-    <div class="nav-btn active" data-nav="dashboard">🏠</div>
-    <div class="nav-btn" data-nav="reports">📈</div>
-    <div class="nav-btn" data-nav="users">👥</div>
-    <div class="nav-btn" data-nav="settings">⚙️</div>
-    <div style="flex:1"></div>
-    <div class="nav-btn" id="btn-logout">⤴️</div>
-  </aside>
-
-  <!-- ÁREA PRINCIPAL -->
-  <main class="main">
-
-    <div class="topbar">
-      <div class="page-title">Dashboard</div>
-
-      <div class="controls">
-        <button class="btn" id="exportCsv">Exportar CSV</button>
-        <label class="switch small">
-          <input type="checkbox" id="autoRefresh"/>
-          <span>Auto-refresh</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- GRID -->
-    <div class="grid">
-
-      <div class="left-col">
-
-        <section class="card">
-          <h3>Visitas (últimos 7 dias)</h3>
-          <canvas id="visitsChart"></canvas>
-        </section>
-
-        <section class="card">
-          <h3>Conversões</h3>
-          <canvas id="conversionsChart"></canvas>
-        </section>
-
-        <section class="card">
-          <h3>Resumo</h3>
-          <ul class="list">
-            <li>Total de usuários: <strong id="statUsers"></strong></li>
-            <li>Total de sessões: <strong id="statSessions"></strong></li>
-            <li>Taxa conversão: <strong id="statConversion"></strong></li>
-          </ul>
-        </section>
-
+  <!-- Simple auth check: will be validated by app.js; if not logged, it will redirect -->
+  <div class="app">
+    <aside class="sidebar" aria-label="Barra lateral">
+      <div class="brand">
+        <div class="brand-ico">R</div>
+        <div class="brand-name">Revitarium</div>
       </div>
 
-      <div class="right-col">
+      <nav class="side-nav" role="navigation" aria-label="Navegação principal">
+        <button class="nav-btn active" data-nav="dashboard" title="Dashboard">🏠</button>
+        <button class="nav-btn" data-nav="reports" title="Relatórios">📈</button>
+        <button class="nav-btn" data-nav="users" title="Usuários">👥</button>
+        <button class="nav-btn" data-nav="settings" title="Configurações">⚙️</button>
+      </nav>
 
-        <section class="card">
-          <h3>Últimas ações</h3>
-          <button class="btn ghost" id="addActionBtn">Adicionar ação</button>
-          <ul class="list" id="recentActions"></ul>
-        </section>
-
-        <section class="card">
-          <h3>Atividades pendentes</h3>
-          <form id="todoForm">
-            <input id="todoInput" placeholder="Nova tarefa..."/>
-            <button class="btn ghost">Adicionar</button>
-          </form>
-          <ul class="list" id="todoList"></ul>
-        </section>
-
-        <section class="card">
-          <h3>Usuários</h3>
-          <form id="userForm">
-            <input id="userName" placeholder="Nome"/>
-            <input id="userRole" placeholder="Cargo/Role"/>
-            <button class="btn">Adicionar</button>
-          </form>
-          <ul class="list" id="usersList"></ul>
-        </section>
-
+      <div class="sidebar-bottom">
+        <button id="btn-logout" title="Sair" class="nav-btn logout">⤴️</button>
       </div>
+    </aside>
 
-    </div>
+    <main class="main">
+      <header class="topbar">
+        <div class="left">
+          <h1 class="page-title">Dashboard</h1>
+        </div>
 
-  </main>
+        <div class="controls">
+          <button id="exportCsv" class="btn small">Exportar CSV</button>
+          <label class="switch">
+            <input type="checkbox" id="autoRefresh" />
+            <span class="switch-label">Auto-refresh</span>
+          </label>
+        </div>
+      </header>
 
-</div>
+      <section class="grid">
+        <div class="left-col">
+          <section class="card">
+            <h3>Visitas (últimos 7 dias)</h3>
+            <div class="chart-wrap">
+              <canvas id="visitsChart" aria-label="Gráfico de visitas"></canvas>
+            </div>
+          </section>
 
-<!-- JS -->
-<script src="Revitarium/app/app.js"></script>
+          <section class="card">
+            <h3>Conversões</h3>
+            <div class="chart-wrap">
+              <canvas id="conversionsChart" aria-label="Gráfico de conversões"></canvas>
+            </div>
+          </section>
 
+          <section class="card">
+            <h3>Resumo</h3>
+            <ul class="summary-list">
+              <li>Total de usuários: <strong id="statUsers">-</strong></li>
+              <li>Total de sessões: <strong id="statSessions">-</strong></li>
+              <li>Taxa conversão: <strong id="statConversion">-</strong></li>
+            </ul>
+          </section>
+        </div>
+
+        <aside class="right-col">
+          <section class="card">
+            <h3>Últimas ações</h3>
+            <button id="addActionBtn" class="btn ghost">Adicionar ação</button>
+            <ul id="recentActions" class="list"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Atividades pendentes</h3>
+            <form id="todoForm" class="inline-form">
+              <input id="todoInput" placeholder="Nova tarefa..." />
+              <button class="btn ghost" type="submit">Adicionar</button>
+            </form>
+            <ul id="todoList" class="list"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Usuários</h3>
+            <form id="userForm" class="stack-form">
+              <input id="userName" placeholder="Nome" />
+              <input id="userRole" placeholder="Cargo/Role" />
+              <div class="row">
+                <button class="btn" type="submit">Adicionar</button>
+              </div>
+            </form>
+            <ul id="usersList" class="list"></ul>
+          </section>
+        </aside>
+      </section>
+
+      <div class="spacer"></div>
+    </main>
+  </div>
+
+  <!-- App script -->
+  <script src="Revitarium/app/app.js" defer></script>
 </body>
 </html>
