@@ -1,86 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Revitarium – Relatórios</title>
-
-  <!-- CSS principal -->
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revitarium - Relatórios</title>
   <link rel="stylesheet" href="style-dashboard.css">
-
-  <!-- Proteção de rota -->
-  <script>
-    if (!localStorage.getItem("rev_user")) {
-      window.location.href = "index.html";
-    }
-  </script>
-
-  <style>
-    .report-card {
-      background: rgba(255,255,255,0.04);
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    canvas {
-      margin-top: 10px;
-      width: 100% !important;
-    }
-    .subtitle {
-      opacity: 0.7;
-      margin-top: -8px;
-      margin-bottom: 20px;
-    }
-  </style>
+  <script> if(localStorage.getItem('rev_user')!=='ok') window.location.href='index.html'; </script>
 </head>
-
 <body>
-
-<div class="layout">
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">R</div>
-
-    <a href="dashboard.html" class="side-btn">🏠</a>
-    <a href="reports.html" class="side-btn active">📊</a>
-    <a href="#" class="side-btn">👥</a>
-    <a href="#" class="side-btn">⚙️</a>
-
-    <a id="logoutBtn" class="side-btn logout">↩️</a>
-  </aside>
-
-  <!-- Conteúdo -->
-  <main class="content">
-
-    <h1>Relatórios</h1>
-    <p class="subtitle">Análises e exportações avançadas</p>
-
-    <div class="report-card">
-      <h2>Exportação Geral</h2>
-      <button id="exportFull" class="btn">Exportar Tudo (CSV)</button>
-    </div>
-
-    <div class="report-card">
-      <h2>Histórico de Visitas</h2>
-      <canvas id="chartVisitsHistory" height="140"></canvas>
-    </div>
-
-    <div class="report-card">
-      <h2>Histórico de Conversões</h2>
-      <canvas id="chartConversionsHistory" height="140"></canvas>
-    </div>
-
-  </main>
-
-</div>
-
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Arquivo JS exclusivo dos relatórios -->
-<script src="reports.js"></script>
-
+  <div class="app">
+    <aside class="sidebar"> <!-- reuse sidebar markup from dashboard.html -->
+      <div class="brand">R</div>
+      <a href="dashboard.html">🏠</a>
+      <a class="active">📊</a>
+      <div style="flex:1"></div>
+      <button id="btn-logout">⤴️</button>
+    </aside>
+    <main class="main">
+      <header class="topbar"><h1>Relatórios</h1></header>
+      <section class="card"><h3>Exportar tudo</h3><button id="exportFull" class="btn">Exportar CSV</button></section>
+      <section class="card"><h3>Visitas (histórico)</h3><canvas id="chartVisitsHistory"></canvas></section>
+      <section class="card"><h3>Conversões (histórico)</h3><canvas id="chartConversionsHistory"></canvas></section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // minimal demo: reuse data from dashboard (mock)
+    const visits=[120,150,180,140,210,230,200]; const conv=[12,20,15,18,30,28,22];
+    new Chart(document.getElementById('chartVisitsHistory').getContext('2d'),{type:'line',data:{labels:['6d','5d','4d','3d','2d','1d','Hoje'],datasets:[{data:visits,fill:true,borderColor:'#00e0ff',backgroundColor:'rgba(0,224,255,0.08)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+    new Chart(document.getElementById('chartConversionsHistory').getContext('2d'),{type:'bar',data:{labels:['6d','5d','4d','3d','2d','1d','Hoje'],datasets:[{data:conv,backgroundColor:'#00d2ff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+    document.getElementById('btn-logout').addEventListener('click',()=>{localStorage.removeItem('rev_user');location.href='index.html'});
+    document.getElementById('exportFull').addEventListener('click',()=>{ const rows=[['dia','visitas','conversoes'],...visits.map((v,i)=>[i+1,v,conv[i]||0])]; const csv=rows.map(r=>r.join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='revitarium-full.csv'; a.click(); a.remove();});
+  </script>
 </body>
 </html>
