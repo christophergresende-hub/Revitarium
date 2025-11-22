@@ -1,104 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revitarium — Dashboard</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Revitarium — Login</title>
 
-  <!-- CSS principal -->
-  <link rel="stylesheet" href="Revitarium/app/style-dashboard.css" />
+  <style>
+    body{
+      margin:0; padding:0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      background: radial-gradient(circle at center, #05202a 0%, #021217 100%);
+      color:#dffaff;
+      display:flex; justify-content:center; align-items:center;
+      height:100vh;
+    }
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .box{
+      width:90%; max-width:420px;
+      background:rgba(0,10,20,0.6);
+      padding:40px;
+      border-radius:22px;
+      box-shadow:0 0 40px rgba(0,255,255,0.08);
+      text-align:center;
+      border:1px solid rgba(0,255,255,0.08);
+    }
 
-  <!-- Ícones -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    h1{
+      margin:0 0 30px 0;
+      font-size:42px;
+      font-weight:700;
+      color:#00eaff;
+    }
+
+    input{
+      width:100%;
+      padding:14px;
+      margin:10px 0;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.05);
+      color:white;
+      font-size:16px;
+    }
+
+    button{
+      width:100%;
+      padding:16px;
+      font-size:20px;
+      font-weight:700;
+      border-radius:14px;
+      border:none;
+      background:linear-gradient(90deg,#00f0ff,#00a6ff);
+      color:#021217;
+      cursor:pointer;
+      transition:0.25s;
+      margin-top:10px;
+    }
+
+    button:hover{
+      transform:scale(1.03);
+      box-shadow:0 0 20px rgba(0,255,255,0.25);
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- ================= SIDEBAR ================= -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">R</div>
+<div class="box">
+  <h1>Revitarium</h1>
 
-    <nav class="sidebar-nav">
-      <a class="nav-item active" data-nav="dashboard"><i class="fa-solid fa-house"></i></a>
-      <a class="nav-item" data-nav="reports"><i class="fa-solid fa-chart-line"></i></a>
-      <a class="nav-item" data-nav="users"><i class="fa-solid fa-users"></i></a>
-      <a class="nav-item" data-nav="settings"><i class="fa-solid fa-gear"></i></a>
-    </nav>
+  <input id="user" placeholder="Digite seu usuário"/>
+  <input id="pass" type="password" placeholder="Digite sua senha"/>
 
-    <button id="btn-logout" class="logout-btn">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
-  </aside>
+  <button id="loginBtn">Entrar</button>
+</div>
 
-  <!-- ================= CONTENT AREA ================= -->
-  <main class="content">
+<script>
+document.getElementById("loginBtn").addEventListener("click", function(){
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
 
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <h1>Dashboard</h1>
-
-      <div class="top-actions">
-        <button id="exportCsv" class="btn">Exportar CSV</button>
-
-        <label class="switch">
-          <input type="checkbox" id="autoRefresh" />
-          <span class="slider"></span>
-        </label>
-        <span class="switch-label">Auto-refresh</span>
-      </div>
-    </header>
-
-    <!-- PRINCIPAL -->
-    <section class="grid">
-
-      <!-- CARD 1 -->
-      <div class="card">
-        <h2>Visitas (últimos 7 dias)</h2>
-        <canvas id="visitsChart"></canvas>
-      </div>
-
-      <!-- CARD 2 -->
-      <div class="card">
-        <h2>Conversões</h2>
-        <canvas id="conversionsChart"></canvas>
-      </div>
-
-      <!-- ÚLTIMAS AÇÕES -->
-      <div class="card">
-        <h2>Últimas ações</h2>
-        <button id="addActionBtn" class="btn small">Adicionar ação</button>
-        <ul id="recentActions" class="list"></ul>
-      </div>
-
-      <!-- TAREFAS -->
-      <div class="card">
-        <h2>Atividades pendentes</h2>
-        <form id="todoForm" class="inline">
-          <input id="todoInput" type="text" placeholder="Nova tarefa..." />
-          <button class="btn small" type="submit">Adicionar</button>
-        </form>
-        <ul id="todoList" class="list"></ul>
-      </div>
-
-      <!-- USUÁRIOS -->
-      <div class="card full">
-        <h2>Usuários</h2>
-        <form id="userForm" class="inline">
-          <input id="userName" type="text" placeholder="Nome" />
-          <input id="userRole" type="text" placeholder="Cargo/Role" />
-          <button class="btn small" type="submit">Adicionar</button>
-        </form>
-        <ul id="usersList" class="list"></ul>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- JS -->
-  <script src="Revitarium/app/app.js"></script>
+  if(u === "admin" && p === "123"){
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
+});
+</script>
 
 </body>
 </html>
