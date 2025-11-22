@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a242b, #020b10 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  color: #dff9fb;
+}
+
+.card {
+  width: 90%;
+  max-width: 380px;
+  padding: 30px;
+  background: rgba(0, 20, 30, 0.55);
+  border-radius: 22px;
+  border: 1px solid rgba(0, 200, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+h1 {
+  text-align: center;
+  color: #00eaff;
+  margin-bottom: 28px;
+  font-size: 32px;
+}
+
+.input-box {
+  margin-bottom: 16px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  outline: none;
+  color: #eaffff;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  color: #021217;
+  background: linear-gradient(90deg, #00ffe5, #00a6ff);
+  box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3);
+  transition: .2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0,150,255,0.4);
+}
