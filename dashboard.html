@@ -1,61 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Revitarium — Dashboard</title>
   <link rel="stylesheet" href="style-dashboard.css">
-
   <script>
-  if (localStorage.getItem("rev_user") !== "ok") {
-    window.location.href = "index.html";
-  }
+    // rota segura mínima: se não estiver logado vai pro login
+    if(localStorage.getItem('rev_user') !== 'ok'){
+      window.location.href = 'index.html';
+    }
   </script>
-<!-- Botão Relatórios -->
-<a href="reports.html" class="side-btn" title="Relatórios">
-  📊
-</a>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">R</div>
+      <button class="nav" data-target="dashboard">🏠</button>
+      <button class="nav" data-target="reports">📊</button>
+      <button class="nav" data-target="users">👥</button>
+      <button class="nav" data-target="settings">⚙️</button>
+      <div style="flex:1"></div>
+      <button id="btn-logout" class="nav logout">⤴️</button>
+    </aside>
 
-  <div class="sidebar">
-    <div class="logo">R</div>
-    <a class="item active">🏠</a>
-    <a class="item">📊</a>
-    <a class="item">👥</a>
-    <a class="item">⚙️</a>
-    <a class="item" id="logoutBtn">⤴️</a>
+    <main class="main">
+      <header class="topbar">
+        <h1 class="page-title">Dashboard <span class="brand-caption">Revitarium</span></h1>
+        <div class="controls">
+          <button id="exportCsv" class="btn small">Exportar CSV</button>
+          <label class="small"><input type="checkbox" id="autoRefresh"> Auto-refresh</label>
+          <button id="toggleTheme" class="btn ghost small">Light</button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="card">
+          <h3>Visitas (últimos 7 dias)</h3>
+          <canvas id="visitsChart"></canvas>
+        </section>
+
+        <aside class="right-col">
+          <section class="card">
+            <h3>Últimas ações</h3>
+            <button id="addActionBtn" class="btn ghost small">Adicionar ação</button>
+            <ul id="recentActions" class="list"></ul>
+          </section>
+
+          <section class="card">
+            <h3>Atividades pendentes</h3>
+            <form id="todoForm" class="todo-form"><input id="todoInput" placeholder="Nova tarefa..."><button class="btn ghost small" type="submit">Adicionar</button></form>
+            <ul id="todoList" class="list"></ul>
+          </section>
+        </aside>
+
+        <section class="card">
+          <h3>Conversões</h3>
+          <canvas id="conversionsChart"></canvas>
+        </section>
+
+        <section class="card">
+          <h3>Resumo</h3>
+          <ul class="list stats">
+            <li>Total de usuários: <strong id="statUsers">-</strong></li>
+            <li>Total de sessões: <strong id="statSessions">-</strong></li>
+            <li>Taxa conversão: <strong id="statConversion">-</strong></li>
+          </ul>
+        </section>
+      </div>
+
+    </main>
   </div>
 
-  <main class="content">
-    <h1>Dashboard <span class="sub">Revitarium</span></h1>
-
-    <div class="cards">
-
-      <section class="card">
-        <h3>Visitas (últimos 7 dias)</h3>
-        <canvas id="visitsChart"></canvas>
-      </section>
-
-      <section class="card">
-        <h3>Conversões</h3>
-        <canvas id="convChart"></canvas>
-      </section>
-
-      <section class="card">
-        <h3>Resumo</h3>
-        <ul class="list">
-          <li>Total de usuários: <strong id="statUsers">-</strong></li>
-          <li>Total de sessões: <strong id="statSessions">-</strong></li>
-          <li>Taxa conversão: <strong id="statConversion">-</strong></li>
-        </ul>
-      </section>
-
-    </div>
-
-  </main>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>
