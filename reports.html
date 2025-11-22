@@ -1,127 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium — Relatórios Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revitarium – Relatórios</title>
+  <link rel="stylesheet" href="style-dashboard.css">
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- jsPDF for PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <link rel="stylesheet" href="style-reports.css">
-</head>
-<body>
-  <!-- Guard: require login token -->
   <script>
-    if (localStorage.getItem('rev_user') !== 'ok') {
-      window.location.href = 'index.html';
+    if (!localStorage.getItem("rev_user")) {
+      window.location.href = "index.html";
     }
   </script>
 
-  <div class="app">
-    <aside class="sidebar" aria-hidden="false">
-      <div class="brand-ico">R</div>
-      <div class="nav-btn" data-nav="dashboard">🏠</div>
-      <div class="nav-btn active" data-nav="reports">📊</div>
-      <div class="nav-btn" data-nav="users">👥</div>
-      <div class="nav-btn" data-nav="settings">⚙️</div>
-      <div style="flex:1"></div>
-      <div class="nav-btn" id="btn-logout">⤴️</div>
-    </aside>
+  <style>
+    .report-card {
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    table th, table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: #cfe8ff;
+    }
+  </style>
 
-    <main class="main">
-      <div class="topbar">
-        <div class="page-left">
-          <h1 class="page-title">Relatórios <small>Revitarium</small></h1>
-        </div>
-        <div class="controls">
-          <button class="btn" id="btn-reset-filters">Limpar</button>
-          <button class="btn" id="btn-export-csv">Exportar CSV</button>
-          <button class="btn" id="btn-export-pdf">Exportar PDF</button>
-        </div>
-      </div>
+</head>
+<body>
 
-      <section class="filters card">
-        <div class="filter-row">
-          <label>Período
-            <input type="date" id="fromDate">
-            <input type="date" id="toDate">
-          </label>
+<div class="layout">
 
-          <label>Tipo
-            <select id="typeFilter">
-              <option value="all">Todos</option>
-              <option value="visit">Visita</option>
-              <option value="conversion">Conversão</option>
-            </select>
-          </label>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">R</div>
 
-          <label>Usuário
-            <input type="text" id="userFilter" placeholder="Nome do usuário">
-          </label>
+    <a href="dashboard.html" class="side-btn">🏠</a>
+    <a href="reports.html" class="side-btn active">📊</a>
+    <a href="#" class="side-btn">👥</a>
+    <a href="#" class="side-btn">⚙️</a>
 
-          <label>Pesquisar
-            <input type="search" id="globalSearch" placeholder="Pesquisar...">
-          </label>
-        </div>
-      </section>
+    <a href="#" id="logoutBtn" class="side-btn logout">↩️</a>
+  </aside>
 
-      <div class="grid">
-        <div class="left-col">
-          <section class="card">
-            <h3>Visitas x Conversões (últimos 30 dias)</h3>
-            <canvas id="reportsChart"></canvas>
-          </section>
+  <!-- Conteúdo -->
+  <main class="content">
 
-          <section class="card">
-            <h3>Tabela de eventos</h3>
-            <div class="table-wrap">
-              <table id="eventsTable">
-                <thead>
-                  <tr>
-                    <th data-key="date">Data</th>
-                    <th data-key="type">Tipo</th>
-                    <th data-key="user">Usuário</th>
-                    <th data-key="value">Valor</th>
-                    <th data-key="note">Observação</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </section>
-        </div>
+    <h1>Relatórios</h1>
+    <p class="subtitle">Análises e exportações avançadas</p>
 
-        <aside class="right-col">
-          <section class="card small-card">
-            <h4>Resumo</h4>
-            <ul class="list">
-              <li>Total eventos: <strong id="stat-total">-</strong></li>
-              <li>Visitas: <strong id="stat-visits">-</strong></li>
-              <li>Conversões: <strong id="stat-conversions">-</strong></li>
-            </ul>
-          </section>
+    <div class="report-card">
+      <h2>Exportação Geral</h2>
+      <button id="exportFull" class="btn">Exportar Tudo (CSV)</button>
+    </div>
 
-          <section class="card small-card">
-            <h4>Quick Filters</h4>
-            <button class="btn-ghost" id="quick-7">Últimos 7 dias</button>
-            <button class="btn-ghost" id="quick-30">Últimos 30 dias</button>
-            <button class="btn-ghost" id="quick-all">Tudo</button>
-          </section>
+    <div class="report-card">
+      <h2>Histórico de Visitas</h2>
+      <canvas id="chartVisitsHistory" height="140"></canvas>
+    </div>
 
-          <section class="card small-card">
-            <h4>Export</h4>
-            <button class="btn" id="exportSample">Gerar amostra</button>
-          </section>
-        </aside>
-      </div>
+    <div class="report-card">
+      <h2>Histórico de Conversões</h2>
+      <canvas id="chartConversionsHistory" height="140"></canvas>
+    </div>
 
-      <div class="spacer"></div>
-    </main>
-  </div>
+  </main>
 
-  <script src="reports.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="dashboard.js"></script>
+
+<script>
+  document.getElementById("logoutBtn").onclick = function() {
+    localStorage.removeItem("rev_user");
+    window.location.href = "index.html";
+  };
+</script>
+
 </body>
 </html>
