@@ -11,7 +11,11 @@
   <!-- Main stylesheet -->
   <link rel="stylesheet" href="style-dashboard.css" />
 </head>
-<body>
+<body><script>
+if (localStorage.getItem("rev_user") !== "ok") {
+  window.location.href = "index.html";
+}
+</script>
   <div class="app" id="appRoot">
     <!-- SIDEBAR -->
     <aside class="sidebar" aria-label="Barra lateral">
