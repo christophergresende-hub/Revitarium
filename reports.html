@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Revitarium – Relatórios</title>
+
+  <!-- CSS principal -->
   <link rel="stylesheet" href="style-dashboard.css">
 
+  <!-- Proteção de rota -->
   <script>
     if (!localStorage.getItem("rev_user")) {
       window.location.href = "index.html";
@@ -20,19 +23,18 @@
       margin-bottom: 20px;
       border: 1px solid rgba(255,255,255,0.06);
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
+    canvas {
+      margin-top: 10px;
+      width: 100% !important;
     }
-    table th, table td {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      color: #cfe8ff;
+    .subtitle {
+      opacity: 0.7;
+      margin-top: -8px;
+      margin-bottom: 20px;
     }
   </style>
-
 </head>
+
 <body>
 
 <div class="layout">
@@ -46,7 +48,7 @@
     <a href="#" class="side-btn">👥</a>
     <a href="#" class="side-btn">⚙️</a>
 
-    <a href="#" id="logoutBtn" class="side-btn logout">↩️</a>
+    <a id="logoutBtn" class="side-btn logout">↩️</a>
   </aside>
 
   <!-- Conteúdo -->
@@ -74,16 +76,11 @@
 
 </div>
 
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="dashboard.js"></script>
-
-<script>
-  document.getElementById("logoutBtn").onclick = function() {
-    localStorage.removeItem("rev_user");
-    window.location.href = "index.html";
-  };
-</script>
+<!-- Arquivo JS exclusivo dos relatórios -->
+<script src="reports.js"></script>
 
 </body>
 </html>
