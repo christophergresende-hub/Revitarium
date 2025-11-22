@@ -1,142 +1,132 @@
+/* app.js */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ----------------- ELEMENTOS ----------------- */
-  const visitsCtx = document.getElementById("visitsChart").getContext("2d");
-  const convCtx = document.getElementById("conversionsChart").getContext("2d");
+  // Charts Data
+  let visits = [120,150,180,140,210,230,200];
+  let conv = [12,20,15,18,30,28,22];
 
-  const recentActions = document.getElementById("recentActions");
-  const todoForm = document.getElementById("todoForm");
-  const todoInput = document.getElementById("todoInput");
-  const todoList = document.getElementById("todoList");
-  const userForm = document.getElementById("userForm");
-  const usersList = document.getElementById("usersList");
-  const exportBtn = document.getElementById("exportCsv");
-  const addActionBtn = document.getElementById("addActionBtn");
-  const autoRefresh = document.getElementById("autoRefresh");
+  // Stats
+  let usersTotal = 124;
+  let sessionsTotal = 987;
 
+  function updateStats(){
+    document.getElementById("statUsers").textContent = usersTotal;
+    document.getElementById("statSessions").textContent = sessionsTotal;
+    const rate = Math.round((conv.reduce((a,b)=>a+b,0) / visits.reduce((a,b)=>a+b,1))*100);
+    document.getElementById("statConversion").textContent = rate + "%";
+  }
+  updateStats();
 
-  /* ----------------- MOCK DATA ----------------- */
-  const visitsData = [120, 150, 180, 140, 210, 230, 200];
-  const conversionsData = [12, 20, 15, 18, 30, 28, 22];
+  // Charts
+  const ctx1 = document.getElementById("visitsChart").getContext("2d");
+  const ctx2 = document.getElementById("conversionsChart").getContext("2d");
 
-
-  /* ----------------- GRÁFICO VISITAS ----------------- */
-  const visitsChart = new Chart(visitsCtx, {
-    type: "line",
-    data: {
-      labels: ["6d","5d","4d","3d","2d","1d","Hoje"],
-      datasets: [{
-        label: "Visitas",
-        data: visitsData,
-        borderColor: "#00e0ff",
-        backgroundColor: "rgba(0,224,255,0.14)",
-        fill: true,
-        tension: 0.35,
-        pointRadius: 2
+  const chartVisits = new Chart(ctx1, {
+    type:"line",
+    data:{
+      labels:["6d","5d","4d","3d","2d","1d","Hoje"],
+      datasets:[{
+        data:visits,
+        borderColor:"#00eaff",
+        backgroundColor:"rgba(0,220,255,0.12)",
+        fill:true,
+        tension:0.35,
+        pointRadius:3
       }]
     },
-    options: { responsive: true, plugins:{legend:{display:false}} }
+    options:{responsive:true,plugins:{legend:{display:false}}}
   });
 
-
-  /* ----------------- GRÁFICO CONVERSÕES ----------------- */
-  const conversionsChart = new Chart(convCtx, {
-    type: "bar",
-    data: {
-      labels: ["6d","5d","4d","3d","2d","1d","Hoje"],
-      datasets: [{
-        label: "Conversões",
-        data: conversionsData,
-        backgroundColor: "#00e0ff"
+  const chartConv = new Chart(ctx2, {
+    type:"bar",
+    data:{
+      labels:["6d","5d","4d","3d","2d","1d","Hoje"],
+      datasets:[{
+        data:conv,
+        backgroundColor:"#00d2ff",
+        borderRadius:6
       }]
     },
-    options: { responsive:true, plugins:{legend:{display:false}} }
+    options:{responsive:true,plugins:{legend:{display:false}}}
   });
 
-
-  /* ----------------- LISTAS DINÂMICAS ----------------- */
-  const addListItem = (el, text) => {
-    const li = document.createElement("li");
-    li.textContent = text;
+  // Lists
+  function addItem(el,text){
+    const li=document.createElement("li");
+    li.textContent=text;
     el.prepend(li);
+  }
+
+  ["Item C","Item B","Item A"].forEach(x=>addItem(recentActions,x));
+  ["Tarefa 2","Tarefa 1"].forEach(x=>addItem(todoList,x));
+  ["Admin (Owner)"].forEach(x=>addItem(usersList,x));
+
+  // Add Action
+  document.getElementById("addActionBtn").onclick = () => {
+    addItem(recentActions,"Ação "+new Date().toLocaleTimeString());
   };
 
-  ["Item A","Item B","Item C"].forEach(t => addListItem(recentActions,t));
-  ["Tarefa 1","Tarefa 2"].forEach(t => addListItem(todoList,t));
-  ["Admin (Owner)"].forEach(u => addListItem(usersList,u));
-
-
-  /* ----------------- AÇÕES ----------------- */
-  addActionBtn.addEventListener("click", () => {
-    addListItem(
-      recentActions,
-      `Ação registrada às ${new Date().toLocaleTimeString()}`
-    );
-  });
-
-
-  /* ----------------- TODO ----------------- */
-  todoForm.addEventListener("submit", e => {
+  // Todo
+  todoForm.onsubmit = e => {
     e.preventDefault();
     if(!todoInput.value.trim()) return;
-    addListItem(todoList, todoInput.value.trim());
-    todoInput.value = "";
-  });
+    addItem(todoList,todoInput.value);
+    todoInput.value="";
+  };
 
-
-  /* ----------------- USUÁRIOS ----------------- */
-  userForm.addEventListener("submit", e => {
+  // Users
+  userForm.onsubmit = e => {
     e.preventDefault();
-    const name = document.getElementById("userName").value.trim();
-    const role = document.getElementById("userRole").value.trim();
-    if(!name) return;
+    const n=userName.value.trim();
+    const r=userRole.value.trim();
+    if(!n) return;
+    addItem(usersList, `${n}${r?' ('+r+')':''}`);
+    usersTotal++;
+    updateStats();
+    userName.value="";
+    userRole.value="";
+  };
 
-    addListItem(usersList, `${name} ${role ? "(" + role + ")" : ""}`);
-
-    document.getElementById("userName").value = "";
-    document.getElementById("userRole").value = "";
-  });
-
-
-  /* ----------------- EXPORTAR CSV ----------------- */
-  exportBtn.addEventListener("click", () => {
+  // Export CSV
+  document.getElementById("exportCsv").onclick = () => {
     const rows = [
       ["dia","visitas","conversoes"],
-      ...visitsData.map((v,i)=>[i,v, conversionsData[i] || 0])
+      ...visits.map((v,i)=>[i+1,v,conv[i]||0])
     ];
-
     const csv = rows.map(r=>r.join(",")).join("\n");
-    const blob = new Blob([csv], {type:"text/csv"});
+    const blob = new Blob([csv],{type:"text/csv"});
     const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "revitarium.csv";
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="revitarium-data.csv";
     a.click();
-
     URL.revokeObjectURL(url);
-  });
+  };
 
-
-  /* ----------------- AUTOREFRESH ----------------- */
-  autoRefresh.addEventListener("change", function(){
+  // Auto refresh
+  let loop=null;
+  document.getElementById("autoRefresh").onchange = function(){
     if(this.checked){
-      refreshInterval = setInterval(()=>{
-        visitsData.push(150 + Math.round(Math.random()*120));
-        visitsData.shift();
-
-        visitsChart.data.datasets[0].data = visitsData;
-        visitsChart.update();
-      }, 5000);
+      loop=setInterval(()=>{
+        visits.push(130+Math.random()*120|0); visits.shift();
+        conv.push(10+Math.random()*20|0); conv.shift();
+        sessionsTotal+=Math.random()*10|0;
+        chartVisits.data.datasets[0].data=visits;
+        chartConv.data.datasets[0].data=conv;
+        chartVisits.update();
+        chartConv.update();
+        updateStats();
+      },4000);
     } else {
-      clearInterval(refreshInterval);
+      clearInterval(loop);
     }
-  });
+  };
 
-
-  /* ----------------- LOGOUT ----------------- */
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    window.location.href = "index.html";
-  });
+  // Logout
+  document.getElementById("btn-logout").onclick = ()=>{
+    window.location.href="index.html";
+  };
 
 });
