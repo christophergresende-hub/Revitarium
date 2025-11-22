@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Revitarium — Relatórios Pro</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style-reports.css">
+</head>
+<body>
+  <!-- Guard: require login token -->
+  <script>
+    if (localStorage.getItem('rev_user') !== 'ok') {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <div class="app">
+    <aside class="sidebar" aria-hidden="false">
+      <div class="brand-ico">R</div>
+      <div class="nav-btn" data-nav="dashboard">🏠</div>
+      <div class="nav-btn active" data-nav="reports">📊</div>
+      <div class="nav-btn" data-nav="users">👥</div>
+      <div class="nav-btn" data-nav="settings">⚙️</div>
+      <div style="flex:1"></div>
+      <div class="nav-btn" id="btn-logout">⤴️</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="page-left">
+          <h1 class="page-title">Relatórios <small>Revitarium</small></h1>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btn-reset-filters">Limpar</button>
+          <button class="btn" id="btn-export-csv">Exportar CSV</button>
+          <button class="btn" id="btn-export-pdf">Exportar PDF</button>
+        </div>
+      </div>
+
+      <section class="filters card">
+        <div class="filter-row">
+          <label>Período
+            <input type="date" id="fromDate">
+            <input type="date" id="toDate">
+          </label>
+
+          <label>Tipo
+            <select id="typeFilter">
+              <option value="all">Todos</option>
+              <option value="visit">Visita</option>
+              <option value="conversion">Conversão</option>
+            </select>
+          </label>
+
+          <label>Usuário
+            <input type="text" id="userFilter" placeholder="Nome do usuário">
+          </label>
+
+          <label>Pesquisar
+            <input type="search" id="globalSearch" placeholder="Pesquisar...">
+          </label>
+        </div>
+      </section>
+
+      <div class="grid">
+        <div class="left-col">
+          <section class="card">
+            <h3>Visitas x Conversões (últimos 30 dias)</h3>
+            <canvas id="reportsChart"></canvas>
+          </section>
+
+          <section class="card">
+            <h3>Tabela de eventos</h3>
+            <div class="table-wrap">
+              <table id="eventsTable">
+                <thead>
+                  <tr>
+                    <th data-key="date">Data</th>
+                    <th data-key="type">Tipo</th>
+                    <th data-key="user">Usuário</th>
+                    <th data-key="value">Valor</th>
+                    <th data-key="note">Observação</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <aside class="right-col">
+          <section class="card small-card">
+            <h4>Resumo</h4>
+            <ul class="list">
+              <li>Total eventos: <strong id="stat-total">-</strong></li>
+              <li>Visitas: <strong id="stat-visits">-</strong></li>
+              <li>Conversões: <strong id="stat-conversions">-</strong></li>
+            </ul>
+          </section>
+
+          <section class="card small-card">
+            <h4>Quick Filters</h4>
+            <button class="btn-ghost" id="quick-7">Últimos 7 dias</button>
+            <button class="btn-ghost" id="quick-30">Últimos 30 dias</button>
+            <button class="btn-ghost" id="quick-all">Tudo</button>
+          </section>
+
+          <section class="card small-card">
+            <h4>Export</h4>
+            <button class="btn" id="exportSample">Gerar amostra</button>
+          </section>
+        </aside>
+      </div>
+
+      <div class="spacer"></div>
+    </main>
+  </div>
+
+  <script src="reports.js"></script>
+</body>
+</html>
