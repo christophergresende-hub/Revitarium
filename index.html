@@ -1,31 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revitarium – Login</title>
-  <link rel="stylesheet" href="Revitarium/app/style-index.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login – Revitarium</title>
+
+<style>
+body{
+  margin:0; font-family:Inter,Arial;
+  background:linear-gradient(180deg,#03131a,#000811);
+  height:100vh; display:flex; align-items:center; justify-content:center;
+  color:#fff;
+}
+.card{
+  width:90%; max-width:380px; padding:28px;
+  background:rgba(0,0,0,0.45);
+  border-radius:20px; border:1px solid rgba(0,255,255,0.1);
+  box-shadow:0 8px 25px rgba(0,0,0,0.6);
+}
+h1{ text-align:center; color:#00e6ff; font-size:32px; margin:0 0 25px 0; }
+input{
+  width:100%; padding:14px; margin:10px 0;
+  border-radius:10px; border:none; background:rgba(255,255,255,0.08);
+  font-size:16px; color:#fff;
+}
+button{
+  width:100%; padding:14px; margin-top:15px;
+  border:none; border-radius:14px; cursor:pointer; font-weight:700;
+  background:linear-gradient(90deg,#00f0ff,#008cff);
+  color:#000; font-size:18px;
+}
+</style>
 </head>
-
 <body>
-  <main class="page">
-    <section class="login-wrap">
-      <div class="login-card">
-        <h1 class="brand">Revitarium</h1>
 
-        <form id="loginForm">
-          <label>Usuário</label>
-          <input id="user" type="text" placeholder="Digite seu usuário" />
+<div class="card">
+  <h1>Revitarium</h1>
 
-          <label>Senha</label>
-          <input id="pass" type="password" placeholder="Digite sua senha" />
+  <label>Usuário</label>
+  <input id="user" placeholder="Digite seu usuário">
 
-          <button class="btn" type="submit">Entrar</button>
-        </form>
-      </div>
-    </section>
-  </main>
+  <label>Senha</label>
+  <input id="pass" type="password" placeholder="Digite sua senha">
 
-  <script src="Revitarium/app/app.js" defer></script>
+  <button onclick="login()">Entrar</button>
+</div>
+
+<script>
+function login(){
+  const u = document.getElementById("user").value.trim();
+  const p = document.getElementById("pass").value.trim();
+
+  if(u === "" || p === ""){
+    alert("Preencha usuário e senha!");
+    return;
+  }
+
+  if(u === "admin" && p === "123"){
+    localStorage.setItem("rev_user","admin");
+    window.location.href = "revitarium-full.html";
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
+}
+</script>
+
 </body>
 </html>
