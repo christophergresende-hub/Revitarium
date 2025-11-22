@@ -1,111 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Revitarium — Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium — Dashboard</title>
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <!-- Main stylesheet -->
-  <link rel="stylesheet" href="style-dashboard.css" />
+<link rel="stylesheet" href="style-dashboard.css" />
+
 </head>
-<body><script>
-if (localStorage.getItem("rev_user") !== "ok") {
-  window.location.href = "index.html";
-}
+<body>
+
+<!-- PROTEÇÃO DO DASHBOARD -->
+<script>
+  if (localStorage.getItem("rev_user") !== "ok") {
+    window.location.href = "index.html";
+  }
 </script>
-  <div class="app" id="appRoot">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" aria-label="Barra lateral">
-      <div class="brand">
-        <div class="brand-ico">R</div>
-      </div>
 
-      <nav class="side-nav" role="navigation" aria-label="Navegação">
-        <button class="nav-btn active" data-nav="dashboard" title="Dashboard">🏠</button>
-        <button class="nav-btn" data-nav="reports" title="Relatórios">📈</button>
-        <button class="nav-btn" data-nav="users" title="Usuários">👥</button>
-        <button class="nav-btn" data-nav="settings" title="Configurações">⚙️</button>
-      </nav>
+<div class="app">
 
-      <div style="flex:1"></div>
-      <button id="btn-logout" class="nav-btn logout" title="Sair">⤴️</button>
-    </aside>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-ico">R</div>
+    <div class="nav-btn active" data-nav="dashboard">🏠</div>
+    <div class="nav-btn" data-nav="reports">📈</div>
+    <div class="nav-btn" data-nav="users">👥</div>
+    <div class="nav-btn" data-nav="settings">⚙️</div>
+    <div style="flex:1"></div>
+    <div id="btn-logout" class="nav-btn">⤴️</div>
+  </aside>
 
-    <!-- MAIN -->
-    <main class="main">
-      <header class="topbar">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="page-title">Dashboard</div>
-          <div class="logo-caption">Revitarium</div>
+  <!-- Main -->
+  <main class="main">
+
+      <!-- HEADER -->
+      <div class="topbar">
+        <div class="title-box">
+          <h1 class="page-title">Dashboard</h1>
+          <span class="brand-text">Revitarium</span>
         </div>
 
         <div class="controls">
           <button id="exportCsv" class="btn">Exportar CSV</button>
-          <label class="switch"><input id="autoRefresh" type="checkbox" /> Auto-refresh</label>
+
+          <label class="switch small">
+            <input type="checkbox" id="autoRefresh" />
+            <span>Auto-refresh</span>
+          </label>
+
           <button id="toggleTheme" class="btn ghost">Light</button>
         </div>
-      </header>
+      </div>
 
+      <!-- GRID PRINCIPAL -->
       <div class="grid">
+
+        <!-- COLUNA ESQ -->
         <div class="left-col">
+
           <section class="card">
             <h3>Visitas (últimos 7 dias)</h3>
-            <div class="chart-wrap"><canvas id="visitsChart"></canvas></div>
+            <canvas id="visitsChart"></canvas>
           </section>
 
           <section class="card">
             <h3>Conversões</h3>
-            <div class="chart-wrap"><canvas id="conversionsChart"></canvas></div>
+            <canvas id="conversionsChart"></canvas>
           </section>
 
           <section class="card">
             <h3>Resumo</h3>
-            <ul class="summary-list">
+            <ul class="list">
               <li>Total de usuários: <strong id="statUsers">-</strong></li>
               <li>Total de sessões: <strong id="statSessions">-</strong></li>
               <li>Taxa conversão: <strong id="statConversion">-</strong></li>
             </ul>
           </section>
+
         </div>
 
+        <!-- COLUNA DIR -->
         <aside class="right-col">
+
           <section class="card">
             <h3>Últimas ações</h3>
-            <div style="display:flex;gap:8px;align-items:center">
+            <div style="display:flex; gap:8px;">
               <button id="addActionBtn" class="btn ghost">Adicionar ação</button>
               <button id="clearActions" class="btn ghost">Limpar</button>
             </div>
-            <ul id="recentActions" class="list" aria-live="polite"></ul>
+            <ul id="recentActions" class="list" style="margin-top:12px;"></ul>
           </section>
 
           <section class="card">
             <h3>Atividades pendentes</h3>
-            <form id="todoForm" class="inline-form" autocomplete="off">
+            <form id="todoForm" style="display:flex; gap:10px;">
               <input id="todoInput" placeholder="Nova tarefa..." />
               <button class="btn ghost" type="submit">Adicionar</button>
             </form>
-            <ul id="todoList" class="list"></ul>
+            <ul id="todoList" class="list" style="margin-top:12px;"></ul>
           </section>
 
           <section class="card">
             <h3>Usuários</h3>
-            <form id="userForm" class="stack-form" autocomplete="off">
+            <form id="userForm" style="display:flex; flex-direction:column; gap:10px;">
               <input id="userName" placeholder="Nome" />
               <input id="userRole" placeholder="Cargo/Role" />
-              <div style="display:flex;gap:8px"><button class="btn" type="submit">Adicionar</button></div>
+              <button class="btn" type="submit">Adicionar</button>
             </form>
-            <ul id="usersList" class="list"></ul>
+            <ul id="usersList" class="list" style="margin-top:12px;"></ul>
           </section>
+
         </aside>
+
       </div>
 
       <div class="spacer"></div>
-    </main>
-  </div>
 
-  <script src="dashboard.js" defer></script>
+  </main>
+</div>
+
+<!-- Script principal -->
+<script src="app.js"></script>
+
 </body>
 </html>
