@@ -1,0 +1,13 @@
+// db.js
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  // se estiver usando SSL em produção, adicione options conforme a plataforma
+});
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  pool
+};

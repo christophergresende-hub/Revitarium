@@ -1,0 +1,53 @@
+CREATE DATABASE revitarium_db;
+
+\c revitarium_db;
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  password VARCHAR(50) NOT NULL,
+  role VARCHAR(50) DEFAULT 'user'
+);
+
+INSERT INTO users (username,password,role)
+VALUES ('admin','123','owner');
+
+CREATE TABLE visits (
+  id SERIAL PRIMARY KEY,
+  day DATE NOT NULL,
+  value INT NOT NULL
+);
+
+CREATE TABLE conversions (
+  id SERIAL PRIMARY KEY,
+  day DATE NOT NULL,
+  value INT NOT NULL
+);
+
+CREATE TABLE analytics (
+  id SERIAL PRIMARY KEY,
+  day DATE NOT NULL,
+  visits INT NOT NULL,
+  conversions INT NOT NULL
+);
+
+-- dados iniciais
+INSERT INTO visits (day,value)
+VALUES
+  (NOW() - INTERVAL '6 days',120),
+  (NOW() - INTERVAL '5 days',150),
+  (NOW() - INTERVAL '4 days',180),
+  (NOW() - INTERVAL '3 days',140),
+  (NOW() - INTERVAL '2 days',210),
+  (NOW() - INTERVAL '1 day',230),
+  (NOW(),200);
+
+INSERT INTO conversions (day,value)
+VALUES
+  (NOW() - INTERVAL '6 days',12),
+  (NOW() - INTERVAL '5 days',20),
+  (NOW() - INTERVAL '4 days',15),
+  (NOW() - INTERVAL '3 days',18),
+  (NOW() - INTERVAL '2 days',30),
+  (NOW() - INTERVAL '1 day',28),
+  (NOW(),22);

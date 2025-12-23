@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revitarium — Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+
+:root{
+  --bg:#050e14;
+  --card:#0b1a24;
+  --accent:#11e0ff;
+  --text:#e8f7fb;
+  --muted:#7fa3b1;
+  --radius:18px;
+}
+
+body{
+  background:linear-gradient(180deg,#02080d,#071722);
+  font-family:Inter,system-ui,-apple-system,Arial;
+  color:var(--text);
+}
+
+.app{display:flex;min-height:100vh}
+
+.sidebar{
+  width:72px;
+  background:#031018;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:12px 0;
+  gap:14px;
+}
+
+.logo{
+  width:44px;height:44px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#0ff,#08a);
+  color:#012;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.icon{
+  width:46px;height:46px;
+  border-radius:14px;
+  background:#081b26;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:.7;
+}
+
+.main{
+  flex:1;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{margin:0;font-size:28px}
+
+.actions{display:flex;gap:10px}
+
+.btn{
+  padding:10px 16px;
+  border-radius:999px;
+  border:none;
+  font-weight:800;
+  background:linear-gradient(90deg,#12e7ff,#0bbcd4);
+  color:#012;
+  cursor:pointer;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+
+@media(min-width:900px){
+  .grid{grid-template-columns:2fr 1fr}
+}
+
+.card{
+  background:linear-gradient(180deg,#0a1b25,#07141d);
+  border-radius:var(--radius);
+  padding:18px;
+}
+
+.card h3{margin:0 0 12px;color:var(--accent)}
+
+.chart-wrap{
+  position:relative;
+  width:100%;
+  height:240px;
+}
+
+canvas{position:absolute;inset:0}
+
+.stats{display:flex;gap:12px}
+
+.stat{
+  flex:1;
+  background:#0a1a24;
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+}
+
+.stat strong{font-size:22px;display:block}
+
+pre{
+  margin:0;
+  height:160px;
+  overflow:auto;
+  background:#030c12;
+  padding:12px;
+  border-radius:12px;
+  color:#8fb7c6;
+}
+
+.footer{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">R</div>
+    <div class="icon">🏠</div>
+    <div class="icon">📈</div>
+    <div class="icon">👥</div>
+    <div class="icon">⚙️</div>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <h1>Dashboard<br><small style="color:#7fa3b1">Revitarium</small></h1>
+      <div class="actions">
+        <button class="btn" id="startWorkflowBtn">Start Workflow</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Visitas (7 dias)</h3>
+          <div class="chart-wrap">
+            <canvas id="visitasChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Conversões</h3>
+          <div class="chart-wrap">
+            <canvas id="conversoesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Resumo</h3>
+          <div class="stats">
+            <div class="stat"><strong id="u">124</strong>Usuários</div>
+            <div class="stat"><strong id="s">987</strong>Sessões</div>
+            <div class="stat"><strong id="c">12%</strong>Conversão</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Workflow</h3>
+          <pre id="log">Aguardando execução…</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Status: OK</span>
+      <span>Build v1.7 WORKFLOW</span>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ===========================
+   BASE DATA
+=========================== */
+const labels=["6d","5d","4d","3d","2d","1d","Hoje"];
+
+let visitas=[120,160,180,140,210,230,260];
+let conversoes=[10,18,15,22,30,26,28];
+
+/* ===========================
+   CHARTS (CRIADOS UMA VEZ)
+=========================== */
+const visitasChart=new Chart(
+  document.getElementById("visitasChart"),
+  {
+    type:"line",
+    data:{labels,datasets:[{
+      data:visitas,
+      fill:true,
+      tension:.35,
+      borderColor:"#14e6ff",
+      backgroundColor:"rgba(20,230,255,.15)",
+      pointRadius:4
+    }]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  }
+);
+
+const conversoesChart=new Chart(
+  document.getElementById("conversoesChart"),
+  {
+    type:"bar",
+    data:{labels,datasets:[{
+      data:conversoes,
+      backgroundColor:"#14e6ff"
+    }]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  }
+);
+
+/* ===========================
+   WORKFLOW MOCK REALISTA
+=========================== */
+function log(msg){
+  const l=document.getElementById("log");
+  l.textContent+=`\n${new Date().toLocaleTimeString()} — ${msg}`;
+  l.scrollTop=l.scrollHeight;
+}
+
+function randomize(base,delta){
+  return base.map(v=>Math.max(0,Math.round(v+(Math.random()*delta-delta/2))));
+}
+
+async function runWorkflow(){
+  log("Workflow iniciado");
+  await wait(800);
+  log("Agent: assessment ✔");
+
+  await wait(800);
+  log("Agent: planner ✔");
+
+  await wait(800);
+  log("Agent: simulator ✔");
+
+  visitas=randomize(visitas,40);
+  conversoes=randomize(conversoes,8);
+
+  visitasChart.data.datasets[0].data=visitas;
+  conversoesChart.data.datasets[0].data=conversoes;
+
+  visitasChart.update();
+  conversoesChart.update();
+
+  document.getElementById("u").textContent=120+Math.floor(Math.random()*20);
+  document.getElementById("s").textContent=900+Math.floor(Math.random()*200);
+  document.getElementById("c").textContent=Math.floor(Math.random()*10+10)+"%";
+
+  log("Workflow finalizado");
+}
+
+function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+
+document.getElementById("startWorkflowBtn").onclick=runWorkflow;
+</script>
+
+</body>
+</html>

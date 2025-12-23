@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revitarium – Notificações</title>
+
+  <link rel="stylesheet" href="style-dashboard.css">
+  <link rel="stylesheet" href="style-notifications.css">
+
+  <script>
+    if (!localStorage.getItem("rev_user")) {
+      window.location.href = "index.html";
+    }
+  </script>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">R</div>
+
+    <a href="dashboard.html" class="side-btn">🏠</a>
+    <a href="reports.html" class="side-btn">📊</a>
+    <a href="users.html" class="side-btn">👤</a>
+    <a href="settings.html" class="side-btn">⚙️</a>
+
+    <a href="notifications.html" class="side-btn active notif-btn">
+      🔔 <span id="notifCount" class="notif-badge">0</span>
+    </a>
+
+    <a id="logoutBtn" class="side-btn logout">↩️</a>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+    
+    <h1>Notificações</h1>
+    <p class="subtitle">Alertas, avisos e registros do sistema</p>
+
+    <div class="notif-list" id="notifList">
+      <!-- JS preenche automaticamente -->
+    </div>
+
+  </main>
+
+</div>
+
+<script src="notifications.js"></script>
+
+<script>
+document.getElementById("logoutBtn").onclick = function () {
+  localStorage.removeItem("rev_user");
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
