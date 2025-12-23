@@ -1,27 +1,38 @@
-# =========================
-# Revitarium API v4.2
-# Longitudinal Patient Scoring
-# =========================
-
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Depends
 from pydantic import BaseModel
 from typing import List, Dict
-from datetime import datetime
+from sqlalchemy.orm import Session
 import re
+
+from database import Base, engine, SessionLocal
+from models import PatientScore
+import crud
+
+# =========================
+# APP
+# =========================
 
 app = FastAPI(
     title="Revitarium API",
-    version="4.2",
-    description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring"
+    version="4.3",
+    description="Biomechanical scoliosis analysis with real longitudinal persistence"
 )
 
-# =========================
-# STORAGE (IN-MEMORY – v4.2)
-# =========================
-PATIENT_HISTORY: Dict[str, List[dict]] = {}
+Base.metadata.create_all(bind=engine)
 
 # =========================
-# MODELS
+# DEPENDENCY
+# =========================
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# =========================
+# MODELS (API)
 # =========================
 
 class VertebraInput(BaseModel):
@@ -50,39 +61,36 @@ class WorkflowResponse(BaseModel):
 def is_valid_vertebra(v: str) -> bool:
     return bool(re.match(r"^[CTLS][0-9]{1,2}$", v))
 
-def region_of(vertebra: str) -> str:
-    if vertebra.startswith("C"):
+def region_of(v: str) -> str:
+    if v.startswith("C"):
         return "cervical"
-    if vertebra.startswith("T"):
+    if v.startswith("T"):
         return "toracica"
-    if vertebra.startswith("L"):
+    if v.startswith("L"):
         return "lombar"
-    if vertebra.startswith("S"):
+    if v.startswith("S"):
         return "sacral"
     return "indefinida"
 
 def continuous_score(angle: float) -> float:
-    angle = abs(angle)
-    score = max(0.0, 100 - (angle * 2.2))
-    return round(score, 2)
+    return round(max(0, 100 - abs(angle) * 2.2), 2)
 
 def severity_label(angle: float) -> str:
-    angle = abs(angle)
-    if angle < 5:
+    a = abs(angle)
+    if a < 5:
         return "normal"
-    elif angle < 10:
+    if a < 10:
         return "leve"
-    elif angle < 20:
+    if a < 20:
         return "moderada"
-    elif angle < 30:
+    if a < 30:
         return "acentuada"
-    else:
-        return "grave"
+    return "grave"
 
-def clinical_risk_from_score(score: float) -> str:
+def clinical_risk(score: float) -> str:
     if score >= 75:
         return "verde"
-    elif score >= 55:
+    if score >= 55:
         return "amarelo"
     return "vermelho"
 
@@ -90,25 +98,18 @@ def clinical_risk_from_score(score: float) -> str:
 # ROUTES
 # =========================
 
-@app.get("/")
+@app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "service": "Revitarium API v4.2"
-    }
+    return {"status": "ok", "version": "4.3"}
 
 @app.post("/workflow/analyze/v4", response_model=WorkflowResponse)
 def analyze_v4(
     data: List[VertebraInput],
-    patient_id: str = Query(..., description="Patient unique identifier")
+    patient_id: str = Query(...),
+    db: Session = Depends(get_db)
 ):
-    analysis: List[VertebraAnalysis] = []
-    region_scores: Dict[str, List[float]] = {
-        "cervical": [],
-        "toracica": [],
-        "lombar": [],
-        "sacral": []
-    }
+    analysis = []
+    region_scores: Dict[str, List[float]] = {}
 
     for item in data:
         if not is_valid_vertebra(item.vertebra):
@@ -128,72 +129,56 @@ def analyze_v4(
             )
         )
 
-        if region in region_scores:
-            region_scores[region].append(score)
+        region_scores.setdefault(region, []).append(score)
 
-    region_avg: Dict[str, float] = {
-        r: round(sum(v) / len(v), 2) for r, v in region_scores.items() if v
+    regions_avg = {
+        r: round(sum(v) / len(v), 2) for r, v in region_scores.items()
     }
 
-    valid_scores = list(region_avg.values())
-    global_score = round(sum(valid_scores) / len(valid_scores), 2) if valid_scores else 0.0
-    clinical_risk = clinical_risk_from_score(global_score)
+    global_score = round(sum(regions_avg.values()) / len(regions_avg), 2)
+    risk = clinical_risk(global_score)
 
-    # =========================
-    # LONGITUDINAL STORAGE
-    # =========================
-    entry = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "global_score": global_score,
-        "clinical_risk": clinical_risk
-    }
-
-    if patient_id not in PATIENT_HISTORY:
-        PATIENT_HISTORY[patient_id] = []
-
-    PATIENT_HISTORY[patient_id].append(entry)
-
-    recommendation = (
-        "Plano corretivo baseado em análise vetorial, "
-        "com progressão controlada e reavaliação longitudinal."
-    )
+    # Persistência real
+    crud.create_score(db, patient_id, global_score, risk)
 
     return WorkflowResponse(
         patient_id=patient_id,
         global_score=global_score,
-        clinical_risk=clinical_risk,
-        regions=region_avg,
+        clinical_risk=risk,
+        regions=regions_avg,
         analysis=analysis,
-        recommendation=recommendation
+        recommendation=(
+            "Plano corretivo baseado em análise vetorial, "
+            "com progressão controlada e reavaliação longitudinal."
+        )
     )
 
 @app.get("/workflow/patient/{patient_id}/evolution")
-def patient_evolution(patient_id: str):
-    history = PATIENT_HISTORY.get(patient_id, [])
+def evolution(patient_id: str, db: Session = Depends(get_db)):
+    records = crud.get_scores_by_patient(db, patient_id)
 
-    if len(history) < 2:
+    if len(records) < 2:
         return {
             "patient_id": patient_id,
-            "message": "dados insuficientes para evolução",
-            "history": history
+            "message": "dados insuficientes",
+            "history": records
         }
 
-    last = history[-1]
-    prev = history[-2]
-    delta = round(last["global_score"] - prev["global_score"], 2)
+    last = records[-1]
+    prev = records[-2]
+    delta = round(last.global_score - prev.global_score, 2)
 
+    trend = "estável"
     if delta >= 5:
         trend = "melhora"
     elif delta <= -5:
         trend = "piora"
-    else:
-        trend = "estável"
 
     return {
         "patient_id": patient_id,
-        "previous_score": prev["global_score"],
-        "last_score": last["global_score"],
+        "previous_score": prev.global_score,
+        "last_score": last.global_score,
         "delta": delta,
         "trend": trend,
-        "history": history
+        "history": records
     }
