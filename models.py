@@ -1,9 +1,12 @@
-from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, Float, DateTime
+from datetime import datetime
+from database import Base
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
+class PatientScore(Base):
+    __tablename__ = "patient_scores"
 
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(String, index=True)
+    global_score = Column(Float)
+    clinical_risk = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
