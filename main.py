@@ -1,29 +1,54 @@
 # =========================================================
-# Revitarium API v4.3
-# Biomechanical Scoliosis Analysis
-# Longitudinal Scoring + Clinical PDF Report
+# Revitarium API v4.4
+# Biomechanical scoliosis analysis
+# Longitudinal scoring + PDF report
 # =========================================================
 
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Dict
 from datetime import datetime
-from fpdf import FPDF
+import sqlite3
 import os
 import re
+from fpdf import FPDF
+
+# =========================================================
+# APP
+# =========================================================
 
 app = FastAPI(
     title="Revitarium API",
-    version="4.3",
+    version="4.4",
     description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring and PDF reports"
 )
 
 # =========================================================
-# STORAGE (IN-MEMORY — v4.x)
+# DATABASE (SQLite)
 # =========================================================
 
-PATIENT_HISTORY: Dict[str, List[Dict]] = {}
+DB_PATH = "revitarium.db"
+
+def get_db():
+    return sqlite3.connect(DB_PATH)
+
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS patient_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_id TEXT,
+            timestamp TEXT,
+            global_score REAL,
+            clinical_risk TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # =========================================================
 # MODELS
@@ -52,36 +77,6 @@ class WorkflowResponse(BaseModel):
 # HELPERS
 # =========================================================
 
-def is_valid_vertebra(v: str) -> bool:
-    return bool(re.match(r"^[CTLS][0-9]{1,2}$", v))
-
-def classify_region(vertebra: str) -> str:
-    if vertebra.startswith("C"):
-        return "cervical"
-    if vertebra.startswith("T"):
-        return "toracica"
-    if vertebra.startswith("L"):
-        return "lombar"
-    if vertebra.startswith("S"):
-        return "sacral"
-    return "indefinida"
-
-def severity_from_angle(angle: float) -> str:
-    angle = abs(angle)
-    if angle < 5:
-        return "normal"
-    if angle < 10:
-        return "leve"
-    if angle < 20:
-        return "moderada"
-    if angle < 30:
-        return "acentuada"
-    return "grave"
-
-def continuous_score(angle: float) -> float:
-    angle = abs(angle)
-    return round(max(0.0, 100 - (angle * 2.2)), 2)
-
 REGION_WEIGHT = {
     "cervical": 1.0,
     "toracica": 1.2,
@@ -89,35 +84,46 @@ REGION_WEIGHT = {
     "sacral": 1.0
 }
 
+def is_valid_vertebra(v: str) -> bool:
+    return bool(re.match(r"^[CTLS][0-9]{1,2}$", v))
+
+def classify_region(v: str) -> str:
+    if v.startswith("C"): return "cervical"
+    if v.startswith("T"): return "toracica"
+    if v.startswith("L"): return "lombar"
+    if v.startswith("S"): return "sacral"
+    return "indefinida"
+
+def severity_from_angle(a: float) -> str:
+    a = abs(a)
+    if a < 5: return "normal"
+    if a < 10: return "leve"
+    if a < 20: return "moderada"
+    if a < 30: return "acentuada"
+    return "grave"
+
+def continuous_score(a: float) -> float:
+    return round(max(0.0, 100 - abs(a) * 2.2), 2)
+
 def clinical_risk_from_score(score: float) -> str:
-    if score >= 75:
-        return "verde"
-    if score >= 55:
-        return "amarelo"
+    if score >= 75: return "verde"
+    if score >= 55: return "amarelo"
     return "vermelho"
 
 # =========================================================
-# HEALTH
+# ROUTES
 # =========================================================
-
-@app.get("/")
-def root():
-    return {"status": "ok", "service": "Revitarium API v4.3"}
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
-
-# =========================================================
-# ANALYZE V4
-# =========================================================
+    return {"status": "ok", "version": "4.4"}
 
 @app.post("/workflow/analyze/v4", response_model=WorkflowResponse)
 def analyze_v4(
     data: List[VertebraInput],
     patient_id: str = Query(..., description="Patient unique identifier")
 ):
-    analysis: List[VertebraAnalysis] = []
+    analysis = []
     region_scores: Dict[str, List[float]] = {}
     weighted_sum = 0.0
     weight_total = 0.0
@@ -127,8 +133,8 @@ def analyze_v4(
             continue
 
         region = classify_region(item.vertebra)
-        severity = severity_from_angle(item.angle)
         score = continuous_score(item.angle)
+        severity = severity_from_angle(item.angle)
 
         analysis.append(
             VertebraAnalysis(
@@ -146,23 +152,22 @@ def analyze_v4(
         weighted_sum += score * w
         weight_total += w
 
-    if weight_total == 0:
-        raise HTTPException(status_code=400, detail="Nenhum dado válido para análise")
-
     region_avg = {
-        r: round(sum(v) / len(v), 2) for r, v in region_scores.items()
+        r: round(sum(v) / len(v), 2)
+        for r, v in region_scores.items()
     }
 
-    global_score = round(weighted_sum / weight_total, 2)
+    global_score = round(weighted_sum / weight_total, 2) if weight_total else 0.0
     clinical_risk = clinical_risk_from_score(global_score)
 
-    record = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "global_score": global_score,
-        "clinical_risk": clinical_risk
-    }
-
-    PATIENT_HISTORY.setdefault(patient_id, []).append(record)
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO patient_history (patient_id, timestamp, global_score, clinical_risk) VALUES (?, ?, ?, ?)",
+        (patient_id, datetime.utcnow().isoformat(), global_score, clinical_risk)
+    )
+    conn.commit()
+    conn.close()
 
     return WorkflowResponse(
         patient_id=patient_id,
@@ -176,98 +181,66 @@ def analyze_v4(
         )
     )
 
-# =========================================================
-# EVOLUTION (LONGITUDINAL)
-# =========================================================
-
 @app.get("/workflow/patient/{patient_id}/evolution")
 def patient_evolution(patient_id: str):
-    history = PATIENT_HISTORY.get(patient_id, [])
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",
+        (patient_id,)
+    )
+    rows = cur.fetchall()
+    conn.close()
+
+    history = [
+        {"timestamp": r[0], "global_score": r[1], "clinical_risk": r[2]}
+        for r in rows
+    ]
 
     if len(history) < 2:
-        return {
-            "patient_id": patient_id,
-            "message": "dados insuficientes para evolução",
-            "history": history
-        }
+        return {"patient_id": patient_id, "history": history}
 
-    last = history[-1]
-    prev = history[-2]
-    delta = round(last["global_score"] - prev["global_score"], 2)
-
-    if delta >= 5:
-        trend = "melhora"
-    elif delta <= -5:
-        trend = "piora"
-    else:
-        trend = "estável"
+    delta = round(history[-1]["global_score"] - history[-2]["global_score"], 2)
+    trend = "estável"
+    if delta >= 5: trend = "melhora"
+    elif delta <= -5: trend = "piora"
 
     return {
         "patient_id": patient_id,
-        "previous_score": prev["global_score"],
-        "last_score": last["global_score"],
         "delta": delta,
         "trend": trend,
         "history": history
     }
 
-# =========================================================
-# PDF REPORT (PASSO 6)
-# =========================================================
-
 @app.get("/workflow/patient/{patient_id}/report/pdf")
-def generate_pdf_report(patient_id: str):
-    history = PATIENT_HISTORY.get(patient_id)
+def patient_pdf(patient_id: str):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",
+        (patient_id,)
+    )
+    rows = cur.fetchall()
+    conn.close()
 
-    if not history:
-        raise HTTPException(status_code=404, detail="Paciente não encontrado")
+    if not rows:
+        return {"error": "Paciente sem histórico"}
 
-    last = history[-1]
-    prev = history[-2] if len(history) > 1 else None
-    delta = round(last["global_score"] - prev["global_score"], 2) if prev else None
+    last = rows[-1]
 
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Arial", size=12)
 
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Revitarium - Relatório Clínico", ln=True)
+    pdf.cell(0, 10, "Revitarium – Relatório Clínico", ln=True)
+    pdf.ln(4)
 
-    pdf.ln(5)
-    pdf.set_font("Arial", "", 12)
-    pdf.cell(0, 8, f"Paciente ID: {patient_id}", ln=True)
-    pdf.cell(0, 8, f"Data: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", ln=True)
+    pdf.cell(0, 10, f"Paciente: {patient_id}", ln=True)
+    pdf.cell(0, 10, f"Última avaliação: {last[0]}", ln=True)
+    pdf.cell(0, 10, f"Score global: {last[1]}", ln=True)
+    pdf.cell(0, 10, f"Risco clínico: {last[2]}", ln=True)
 
-    pdf.ln(5)
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 8, "Resultado Atual", ln=True)
+    path = f"report_{patient_id}.pdf"
+    pdf.output(path)
 
-    pdf.set_font("Arial", "", 12)
-    pdf.cell(0, 8, f"Score Global: {last['global_score']}", ln=True)
-    pdf.cell(0, 8, f"Risco Clínico: {last['clinical_risk']}", ln=True)
-
-    if delta is not None:
-        pdf.cell(0, 8, f"Evolução (delta): {delta}", ln=True)
-
-    pdf.ln(5)
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 8, "Recomendação Clínica", ln=True)
-
-    pdf.set_font("Arial", "", 12)
-    pdf.multi_cell(
-        0,
-        8,
-        "Plano corretivo progressivo com foco em mobilidade, "
-        "estabilidade segmentar e reeducação postural, "
-        "baseado na evolução biomecânica longitudinal."
-    )
-
-    os.makedirs("reports", exist_ok=True)
-    file_path = f"reports/revitarium_{patient_id}.pdf"
-    pdf.output(file_path)
-
-    return FileResponse(
-        file_path,
-        media_type="application/pdf",
-        filename=f"revitarium_{patient_id}.pdf"
-    )
+    return FileResponse(path, media_type="application/pdf", filename=path)
