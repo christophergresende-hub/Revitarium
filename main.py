@@ -1,143 +1,220 @@
 from fastapi import FastAPI, Query
+from fastapi.responses import FileResponse
 from typing import List, Dict
 from datetime import datetime
+from pydantic import BaseModel
+import sqlite3
+import os
+import re
+
+# =========================================================
+# APP
+# =========================================================
 
 app = FastAPI(
     title="Revitarium API",
-    version="4.2",
-    description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring"
+    version="4.4",
+    description="Biomechanical scoliosis analysis with longitudinal persistence (SQLite)"
 )
 
-# =========================================================
-# STORAGE (mock — depois vira banco)
-# =========================================================
-
-PATIENT_HISTORY: Dict[str, List[Dict]] = {}
+DB_PATH = "revitarium.db"
 
 # =========================================================
-# MODELS (simples, direto)
+# DATABASE
 # =========================================================
 
-def classify_region(vertebra: str) -> str:
-    if vertebra.startswith("C"):
-        return "cervical"
-    if vertebra.startswith("T"):
-        return "toracica"
-    if vertebra.startswith("L"):
-        return "lombar"
-    return "desconhecida"
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
 
-def severity_from_angle(angle: float) -> str:
-    if angle < 5:
-        return "normal"
-    if angle < 15:
-        return "leve"
-    if angle < 25:
-        return "moderada"
-    return "acentuada"
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS evaluations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        patient_id TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        global_score REAL NOT NULL,
+        clinical_risk TEXT NOT NULL
+    )
+    """)
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS vertebra_analysis (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        evaluation_id INTEGER,
+        vertebra TEXT,
+        angle REAL,
+        region TEXT,
+        severity TEXT,
+        score REAL,
+        FOREIGN KEY(evaluation_id) REFERENCES evaluations(id)
+    )
+    """)
 
-def score_from_angle(angle: float) -> float:
-    return max(0.0, round(100 - (angle * 2.2), 1))
+    conn.commit()
+    conn.close()
 
-
-REGION_WEIGHT = {
-    "cervical": 1.0,
-    "toracica": 1.2,
-    "lombar": 1.5
-}
+init_db()
 
 # =========================================================
-# HEALTH
+# MODELS
+# =========================================================
+
+class VertebraInput(BaseModel):
+    vertebra: str
+    angle: float
+
+class VertebraAnalysis(BaseModel):
+    vertebra: str
+    angle: float
+    region: str
+    severity: str
+    score: float
+
+# =========================================================
+# HELPERS
+# =========================================================
+
+def is_valid_vertebra(v: str) -> bool:
+    return bool(re.match(r"^[CTLS][0-9]{1,2}$", v))
+
+def classify_region(v: str) -> str:
+    if v.startswith("C"): return "cervical"
+    if v.startswith("T"): return "toracica"
+    if v.startswith("L"): return "lombar"
+    if v.startswith("S"): return "sacral"
+    return "indefinida"
+
+def continuous_score(angle: float) -> float:
+    return round(max(0.0, 100 - abs(angle) * 2.2), 2)
+
+def severity_label(angle: float) -> str:
+    a = abs(angle)
+    if a < 5: return "normal"
+    if a < 10: return "leve"
+    if a < 20: return "moderada"
+    if a < 30: return "acentuada"
+    return "grave"
+
+def clinical_risk(score: float) -> str:
+    if score >= 75: return "verde"
+    if score >= 55: return "amarelo"
+    return "vermelho"
+
+# =========================================================
+# ROUTES
 # =========================================================
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
-
-# =========================================================
-# ANALYZE V4
-# =========================================================
+    return {"status": "ok", "version": "4.4"}
 
 @app.post("/workflow/analyze/v4")
 def analyze_v4(
-    data: List[Dict],
+    data: List[VertebraInput],
     patient_id: str = Query(..., description="Patient unique identifier")
 ):
-    analysis = []
-    regions_score = {}
-    weighted_sum = 0.0
-    weight_total = 0.0
+    conn = get_db()
+    cur = conn.cursor()
+
+    region_scores: Dict[str, List[float]] = {}
+    analysis: List[VertebraAnalysis] = []
 
     for item in data:
-        vertebra = item["vertebra"]
-        angle = float(item["angle"])
+        if not is_valid_vertebra(item.vertebra):
+            continue
 
-        region = classify_region(vertebra)
-        severity = severity_from_angle(angle)
-        score = score_from_angle(angle)
+        region = classify_region(item.vertebra)
+        score = continuous_score(item.angle)
+        severity = severity_label(item.angle)
 
-        analysis.append({
-            "vertebra": vertebra,
-            "angle": angle,
-            "region": region,
-            "severity": severity,
-            "score": score
-        })
+        analysis.append(
+            VertebraAnalysis(
+                vertebra=item.vertebra,
+                angle=item.angle,
+                region=region,
+                severity=severity,
+                score=score
+            )
+        )
 
-        regions_score[region] = score
+        region_scores.setdefault(region, []).append(score)
 
-        w = REGION_WEIGHT.get(region, 1.0)
-        weighted_sum += score * w
-        weight_total += w
-
-    global_score = round(weighted_sum / weight_total, 2) if weight_total else 0.0
-
-    if global_score >= 75:
-        clinical_risk = "verde"
-    elif global_score >= 50:
-        clinical_risk = "amarelo"
-    else:
-        clinical_risk = "vermelho"
-
-    record = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "global_score": global_score,
-        "clinical_risk": clinical_risk
+    region_avg = {
+        r: round(sum(v) / len(v), 2)
+        for r, v in region_scores.items()
     }
 
-    PATIENT_HISTORY.setdefault(patient_id, []).append(record)
+    valid = list(region_avg.values())
+    global_score = round(sum(valid) / len(valid), 2) if valid else 0.0
+    risk = clinical_risk(global_score)
+
+    timestamp = datetime.utcnow().isoformat()
+
+    cur.execute(
+        "INSERT INTO evaluations (patient_id, timestamp, global_score, clinical_risk) VALUES (?, ?, ?, ?)",
+        (patient_id, timestamp, global_score, risk)
+    )
+    evaluation_id = cur.lastrowid
+
+    for a in analysis:
+        cur.execute("""
+            INSERT INTO vertebra_analysis
+            (evaluation_id, vertebra, angle, region, severity, score)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (evaluation_id, a.vertebra, a.angle, a.region, a.severity, a.score))
+
+    conn.commit()
+    conn.close()
 
     return {
         "patient_id": patient_id,
+        "timestamp": timestamp,
         "global_score": global_score,
-        "clinical_risk": clinical_risk,
-        "regions": regions_score,
+        "clinical_risk": risk,
+        "regions": region_avg,
         "analysis": analysis,
         "recommendation": (
-            "Plano corretivo baseado em análise vetorial, "
-            "com progressão controlada e reavaliação longitudinal."
+            "Plano corretivo progressivo baseado em score biomecânico "
+            "com acompanhamento longitudinal."
         )
     }
 
-# =========================================================
-# EVOLUTION (histórico longitudinal)
-# =========================================================
-
 @app.get("/workflow/patient/{patient_id}/evolution")
-def get_patient_evolution(patient_id: str):
+def patient_evolution(patient_id: str):
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT timestamp, global_score, clinical_risk
+        FROM evaluations
+        WHERE patient_id = ?
+        ORDER BY timestamp
+    """, (patient_id,))
+
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+
+    if len(rows) < 2:
+        return {
+            "patient_id": patient_id,
+            "message": "dados insuficientes para evolução",
+            "history": rows
+        }
+
+    delta = round(rows[-1]["global_score"] - rows[-2]["global_score"], 2)
+
+    trend = "estável"
+    if delta >= 5: trend = "melhora"
+    elif delta <= -5: trend = "piora"
+
     return {
         "patient_id": patient_id,
-        "history": PATIENT_HISTORY.get(patient_id, [])
-    }
-
-# =========================================================
-# PLACEHOLDER FUTURO (PDF)
-# =========================================================
-
-@app.get("/workflow/report/{patient_id}/pdf")
-def generate_pdf(patient_id: str):
-    return {
-        "message": "PDF generation endpoint reservado. Implementação futura."
+        "delta": delta,
+        "trend": trend,
+        "history": rows
     }
