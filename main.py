@@ -1,38 +1,29 @@
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Query
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Dict
-from sqlalchemy.orm import Session
+from datetime import datetime
 import re
+import uuid
 
-from database import Base, engine, SessionLocal
-from models import PatientScore
-import crud
-
-# =========================
-# APP
-# =========================
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 app = FastAPI(
     title="Revitarium API",
     version="4.3",
-    description="Biomechanical scoliosis analysis with real longitudinal persistence"
+    description="Biomechanical scoliosis analysis with longitudinal scoring and PDF export"
 )
 
-Base.metadata.create_all(bind=engine)
+# =========================
+# STORAGE (v4.x – memória)
+# =========================
+PATIENT_HISTORY: Dict[str, List[dict]] = {}
+LAST_REPORT: Dict[str, dict] = {}
 
 # =========================
-# DEPENDENCY
-# =========================
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# =========================
-# MODELS (API)
+# MODELS
 # =========================
 
 class VertebraInput(BaseModel):
@@ -62,14 +53,10 @@ def is_valid_vertebra(v: str) -> bool:
     return bool(re.match(r"^[CTLS][0-9]{1,2}$", v))
 
 def region_of(v: str) -> str:
-    if v.startswith("C"):
-        return "cervical"
-    if v.startswith("T"):
-        return "toracica"
-    if v.startswith("L"):
-        return "lombar"
-    if v.startswith("S"):
-        return "sacral"
+    if v.startswith("C"): return "cervical"
+    if v.startswith("T"): return "toracica"
+    if v.startswith("L"): return "lombar"
+    if v.startswith("S"): return "sacral"
     return "indefinida"
 
 def continuous_score(angle: float) -> float:
@@ -77,39 +64,34 @@ def continuous_score(angle: float) -> float:
 
 def severity_label(angle: float) -> str:
     a = abs(angle)
-    if a < 5:
-        return "normal"
-    if a < 10:
-        return "leve"
-    if a < 20:
-        return "moderada"
-    if a < 30:
-        return "acentuada"
+    if a < 5: return "normal"
+    if a < 10: return "leve"
+    if a < 20: return "moderada"
+    if a < 30: return "acentuada"
     return "grave"
 
 def clinical_risk(score: float) -> str:
-    if score >= 75:
-        return "verde"
-    if score >= 55:
-        return "amarelo"
+    if score >= 75: return "verde"
+    if score >= 55: return "amarelo"
     return "vermelho"
 
 # =========================
 # ROUTES
 # =========================
 
-@app.get("/health")
+@app.get("/")
 def health():
-    return {"status": "ok", "version": "4.3"}
+    return {"status": "ok", "service": "Revitarium API v4.3"}
 
 @app.post("/workflow/analyze/v4", response_model=WorkflowResponse)
 def analyze_v4(
     data: List[VertebraInput],
-    patient_id: str = Query(...),
-    db: Session = Depends(get_db)
+    patient_id: str = Query(...)
 ):
     analysis = []
-    region_scores: Dict[str, List[float]] = {}
+    region_scores: Dict[str, List[float]] = {
+        "cervical": [], "toracica": [], "lombar": [], "sacral": []
+    }
 
     for item in data:
         if not is_valid_vertebra(item.vertebra):
@@ -117,68 +99,80 @@ def analyze_v4(
 
         region = region_of(item.vertebra)
         score = continuous_score(item.angle)
-        severity = severity_label(item.angle)
 
         analysis.append(
             VertebraAnalysis(
                 vertebra=item.vertebra,
                 angle=item.angle,
                 region=region,
-                severity=severity,
+                severity=severity_label(item.angle),
                 score=score
             )
         )
 
-        region_scores.setdefault(region, []).append(score)
+        region_scores[region].append(score)
 
     regions_avg = {
-        r: round(sum(v) / len(v), 2) for r, v in region_scores.items()
+        r: round(sum(v)/len(v), 2) for r, v in region_scores.items() if v
     }
 
     global_score = round(sum(regions_avg.values()) / len(regions_avg), 2)
     risk = clinical_risk(global_score)
 
-    # Persistência real
-    crud.create_score(db, patient_id, global_score, risk)
+    entry = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "global_score": global_score,
+        "clinical_risk": risk
+    }
 
-    return WorkflowResponse(
+    PATIENT_HISTORY.setdefault(patient_id, []).append(entry)
+
+    response = WorkflowResponse(
         patient_id=patient_id,
         global_score=global_score,
         clinical_risk=risk,
         regions=regions_avg,
         analysis=analysis,
-        recommendation=(
-            "Plano corretivo baseado em análise vetorial, "
-            "com progressão controlada e reavaliação longitudinal."
-        )
+        recommendation="Plano corretivo com progressão controlada e reavaliação longitudinal."
     )
 
-@app.get("/workflow/patient/{patient_id}/evolution")
-def evolution(patient_id: str, db: Session = Depends(get_db)):
-    records = crud.get_scores_by_patient(db, patient_id)
+    LAST_REPORT[patient_id] = response.dict()
+    return response
 
-    if len(records) < 2:
-        return {
-            "patient_id": patient_id,
-            "message": "dados insuficientes",
-            "history": records
-        }
+# =========================
+# PDF EXPORT
+# =========================
 
-    last = records[-1]
-    prev = records[-2]
-    delta = round(last.global_score - prev.global_score, 2)
+@app.get("/workflow/report/{patient_id}/pdf")
+def generate_pdf(patient_id: str):
+    if patient_id not in LAST_REPORT:
+        return {"error": "Nenhum relatório encontrado para esse paciente"}
 
-    trend = "estável"
-    if delta >= 5:
-        trend = "melhora"
-    elif delta <= -5:
-        trend = "piora"
+    data = LAST_REPORT[patient_id]
+    filename = f"revitarium_report_{patient_id}_{uuid.uuid4().hex[:6]}.pdf"
 
-    return {
-        "patient_id": patient_id,
-        "previous_score": prev.global_score,
-        "last_score": last.global_score,
-        "delta": delta,
-        "trend": trend,
-        "history": records
-    }
+    doc = SimpleDocTemplate(filename, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
+
+    story.append(Paragraph("<b>REVITARIUM – LAUDO BIOMECÂNICO</b>", styles["Title"]))
+    story.append(Paragraph(f"Paciente: {patient_id}", styles["Normal"]))
+    story.append(Paragraph(f"Score Global: {data['global_score']}", styles["Normal"]))
+    story.append(Paragraph(f"Risco Clínico: {data['clinical_risk'].upper()}", styles["Normal"]))
+    story.append(Paragraph("<br/><b>ANÁLISE SEGMENTAR</b>", styles["Heading2"]))
+
+    for a in data["analysis"]:
+        story.append(
+            Paragraph(
+                f"{a['vertebra']} | {a['region']} | Ângulo: {a['angle']}° | "
+                f"{a['severity']} | Score: {a['score']}",
+                styles["Normal"]
+            )
+        )
+
+    story.append(Paragraph("<br/><b>RECOMENDAÇÃO</b>", styles["Heading2"]))
+    story.append(Paragraph(data["recommendation"], styles["Normal"]))
+
+    doc.build(story)
+
+    return FileResponse(filename, media_type="application/pdf", filename=filename)
