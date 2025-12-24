@@ -1,7 +1,7 @@
 # =========================================================
-# Revitarium API v4.4
-# Biomechanical scoliosis analysis
-# Longitudinal scoring + PDF report
+# Revitarium API v4.5
+# Biomechanical scoliosis analysis + longitudinal scoring
+# SQLite persistence + PDF clinical report
 # =========================================================
 
 from fastapi import FastAPI, Query
@@ -20,8 +20,8 @@ from fpdf import FPDF
 
 app = FastAPI(
     title="Revitarium API",
-    version="4.4",
-    description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring and PDF reports"
+    version="4.5",
+    description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring, persistence and PDF report"
 )
 
 # =========================================================
@@ -116,7 +116,11 @@ def clinical_risk_from_score(score: float) -> str:
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "4.4"}
+    return {"status": "ok", "version": "4.5"}
+
+# ---------------------------------------------------------
+# ANALYSIS ENTRYPOINT (MAIN)
+# ---------------------------------------------------------
 
 @app.post("/workflow/analyze/v4", response_model=WorkflowResponse)
 def analyze_v4(
@@ -147,16 +151,10 @@ def analyze_v4(
         )
 
         region_scores.setdefault(region, []).append(score)
+        weighted_sum += score * REGION_WEIGHT.get(region, 1.0)
+        weight_total += REGION_WEIGHT.get(region, 1.0)
 
-        w = REGION_WEIGHT.get(region, 1.0)
-        weighted_sum += score * w
-        weight_total += w
-
-    region_avg = {
-        r: round(sum(v) / len(v), 2)
-        for r, v in region_scores.items()
-    }
-
+    region_avg = {r: round(sum(v) / len(v), 2) for r, v in region_scores.items()}
     global_score = round(weighted_sum / weight_total, 2) if weight_total else 0.0
     clinical_risk = clinical_risk_from_score(global_score)
 
@@ -175,14 +173,15 @@ def analyze_v4(
         clinical_risk=clinical_risk,
         regions=region_avg,
         analysis=analysis,
-        recommendation=(
-            "Plano corretivo baseado em análise vetorial, "
-            "com progressão controlada e reavaliação longitudinal."
-        )
+        recommendation="Plano corretivo baseado em análise vetorial, com progressão controlada e reavaliação longitudinal."
     )
 
+# ---------------------------------------------------------
+# LONGITUDINAL EVOLUTION
+# ---------------------------------------------------------
+
 @app.get("/workflow/patient/{patient_id}/evolution")
-def patient_evolution(patient_id: str):
+def get_patient_evolution(patient_id: str):
     conn = get_db()
     cur = conn.cursor()
     cur.execute(
@@ -198,19 +197,28 @@ def patient_evolution(patient_id: str):
     ]
 
     if len(history) < 2:
-        return {"patient_id": patient_id, "history": history}
+        return {"patient_id": patient_id, "message": "dados insuficientes para evolução", "history": history}
 
-    delta = round(history[-1]["global_score"] - history[-2]["global_score"], 2)
-    trend = "estável"
-    if delta >= 5: trend = "melhora"
-    elif delta <= -5: trend = "piora"
+    previous = history[-2]
+    current = history[-1]
+    delta = round(current["global_score"] - previous["global_score"], 2)
+
+    if delta > 2: trend = "melhora"
+    elif delta < -2: trend = "piora"
+    else: trend = "estável"
 
     return {
         "patient_id": patient_id,
+        "previous_score": previous["global_score"],
+        "current_score": current["global_score"],
         "delta": delta,
         "trend": trend,
         "history": history
     }
+
+# ---------------------------------------------------------
+# PDF CLINICAL REPORT
+# ---------------------------------------------------------
 
 @app.get("/workflow/patient/{patient_id}/report/pdf")
 def patient_pdf(patient_id: str):
@@ -231,10 +239,8 @@ def patient_pdf(patient_id: str):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-
     pdf.cell(0, 10, "Revitarium – Relatório Clínico", ln=True)
     pdf.ln(4)
-
     pdf.cell(0, 10, f"Paciente: {patient_id}", ln=True)
     pdf.cell(0, 10, f"Última avaliação: {last[0]}", ln=True)
     pdf.cell(0, 10, f"Score global: {last[1]}", ln=True)
