@@ -3,65 +3,95 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Revitarium Login</title>
+<title>Revitarium | Login</title>
 <style>
-body {
-  background: #0A0F1F;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin:0; color:white;
-}
-.container {
-  background: #111827;
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 360px;
-}
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 6px;
-  border: none;
-}
-button {
-  width: 100%;
-  padding: 12px;
-  background: #06B6D4;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0a0f24;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .login-container {
+        background: #11172e;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 380px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-size: 22px;
+        letter-spacing: 1px;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        background: #0c1325;
+        color: white;
+        font-size: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        background: #3b82f6;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        transition: 0.2s;
+    }
+    button:hover {
+        background: #2563eb;
+    }
+    .error {
+        color: #ff4e4e;
+        margin-top: 10px;
+        font-size: 14px;
+    }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Revitarium Login</h2>
-  <input id="user" type="text" placeholder="Usuário">
-  <input id="pass" type="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="msg"></p>
+<div class="login-container">
+    <h2>Revitarium – Login</h2>
+    
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuário" autocomplete="off" required />
+        <input type="password" id="password" placeholder="Senha" required />
+        <button type="submit">Entrar</button>
+    </form>
+
+    <p class="error" id="errorMsg"></p>
 </div>
 
 <script>
-function login(){
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
+document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
 
-  if(u === "admin" && p === "123"){
-    localStorage.setItem("logged", "true");
-    window.location.href = "revitarium-dashboard.html"; // redireciona
-  } else {
-    document.getElementById("msg").innerText = "Acesso negado";
-  }
-}
+    // Credenciais atuais (mock)
+    if(user === "admin" && pass === "admin"){
+        window.location.href = "revitarium-dashboard.html";
+    } 
+    else {
+        document.getElementById("errorMsg").innerText = "Acesso negado. Usuário ou senha incorretos.";
+    }
+});
 </script>
 
 </body>
