@@ -3,71 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium Dashboard</title>
+<title>Revitarium Dashboard PRO</title>
+
 <style>
+    :root{
+        --primary:#002244;
+        --primary-dark:#00172f;
+        --accent:#00c8ff;
+        --danger:#8B0000;
+        --bg:#f2f6fa;
+    }
     body{
+        background:var(--bg);
+        font-family:Arial, sans-serif;
         margin:0;
-        font-family: Arial, sans-serif;
-        background:#f4f4f4;
-        color:#222;
+        padding:0;
     }
     header{
-        background:#002244;
+        background:var(--primary);
         color:white;
         padding:15px;
-        text-align:center;
         font-size:20px;
         font-weight:bold;
+        text-align:center;
+        position:sticky;
+        top:0;
     }
     .container{
         padding:20px;
-        display:flex;
-        flex-direction:column;
-        gap:15px;
-        max-width:500px;
+        max-width:480px;
         margin:auto;
     }
     input{
         width:100%;
         padding:12px;
-        border-radius:8px;
+        border-radius:10px;
         border:1px solid #ccc;
+        margin-bottom:15px;
         font-size:16px;
+    }
+    .card{
+        background:white;
+        padding:15px;
+        border-radius:12px;
+        margin-bottom:15px;
+        box-shadow:0 2px 6px rgba(0,0,0,0.08);
     }
     button{
         width:100%;
         padding:14px;
-        background:#002244;
-        color:white;
         border:none;
         border-radius:10px;
         font-size:16px;
         font-weight:bold;
+        margin-top:8px;
         cursor:pointer;
+        background:var(--primary);
+        color:white;
     }
-    button:hover{ background:#003366; }
+    button:hover{ background:var(--primary-dark); }
+    .logout{ background:var(--danger)!important; }
     pre{
         background:black;
         color:#0f0;
         padding:15px;
-        border-radius:10px;
-        min-height:150px;
+        border-radius:12px;
         overflow:auto;
+        min-height:180px;
         font-size:14px;
-    }
-    footer{
-        text-align:center;
-        font-size:12px;
-        padding:10px;
-        margin-top:20px;
-        color:#555;
+        margin-top:10px;
     }
 </style>
 </head>
 
 <body>
 
-<header>Revitarium - Painel Clínico</header>
+<header>Revitarium – Painel Clínico PRO</header>
 
 <!-- BLOQUEIO DE ACESSO SEM LOGIN -->
 <script>
@@ -78,20 +89,29 @@ if(localStorage.getItem("revitarium_logged") !== "yes"){
 
 <div class="container">
 
-    <h3>ID do Paciente:</h3>
-    <input type="text" id="patientId" placeholder="Ex: 123">
+    <div class="card">
+        <h3>Paciente</h3>
+        <input id="patientId" placeholder="Ex: 123">
+    </div>
 
-    <button onclick="novaAnalise()">Nova análise biomecânica</button>
-    <button onclick="verDashboard()">📊 Ver Dashboard</button>
-    <button onclick="evolucao()">📈 Evolução Longitudinal</button>
-    <button onclick="prevClinica()">🔮 Previsão Clínica</button>
-    <button onclick="pdfClinico()">📄 PDF Clínico</button>
-    <button style="background:#8B0000;" onclick="logout()">⛔ Sair</button>
+    <div class="card">
+        <h3>Consultas rápidas</h3>
+        <button onclick="verDashboard()">📊 Dashboard</button>
+        <button onclick="evolucao()">📈 Evolução</button>
+        <button onclick="prevClinica()">🔮 Previsão</button>
+        <button onclick="pdfClinico()">📄 PDF (em breve)</button>
+    </div>
 
-    <pre id="output">Aguardando ação...</pre>
+    <div class="card">
+        <h3>Ações</h3>
+        <button class="logout" onclick="logout()">⛔ Sair</button>
+    </div>
+
+    <div class="card">
+        <h3>Retorno da API</h3>
+        <pre id="output">Aguardando requisição...</pre>
+    </div>
 </div>
-
-<footer>Revitarium API • Mobile First • v1 Dashboard</footer>
 
 <script>
 const API = "https://revitarium.onrender.com";
@@ -102,41 +122,35 @@ function print(data){
 
 function getID(){
     let id = document.getElementById("patientId").value.trim();
-    if(!id){ print("ERRO: Digite um ID, ex: 123"); return null; }
+    if(!id){ print("Erro: informe o ID do paciente"); return null; }
     return id;
 }
 
-// ====== AÇÕES ======
-
-function novaAnalise(){
-    print("Função de análise em construção. Próximo passo do projeto.");
-}
-
 async function verDashboard(){
-    let id = getID(); if(!id) return;
-    let res = await fetch(`${API}/workflow/patient/${id}/dashboard`);
-    print(await res.json());
+    let id=getID(); if(!id)return;
+    let r=await fetch(`${API}/workflow/patient/${id}/dashboard`);
+    print(await r.json());
 }
 
 async function evolucao(){
-    let id = getID(); if(!id) return;
-    let res = await fetch(`${API}/workflow/patient/${id}/evolution`);
-    print(await res.json());
+    let id=getID(); if(!id)return;
+    let r=await fetch(`${API}/workflow/patient/${id}/evolution`);
+    print(await r.json());
 }
 
 async function prevClinica(){
-    let id = getID(); if(!id) return;
-    let res = await fetch(`${API}/workflow/patient/${id}/predict`);
-    print(await res.json());
+    let id=getID(); if(!id)return;
+    let r=await fetch(`${API}/workflow/patient/${id}/predict`);
+    print(await r.json());
 }
 
 function pdfClinico(){
-    print("PDF será habilitado ao final do módulo v5.");
+    print("PDF disponível na versão 5.x");
 }
 
 function logout(){
     localStorage.removeItem("revitarium_logged");
-    window.location.href = "index.html";
+    window.location.href="index.html";
 }
 </script>
 
