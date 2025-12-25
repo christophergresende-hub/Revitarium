@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Previsão Clínica – Revitarium</title>
+<style>
+    body{
+        margin:0;
+        background:#0c0c0c;
+        font-family:Arial, sans-serif;
+        color:white;
+    }
+    header{
+        background:#420065;
+        padding:18px;
+        text-align:center;
+        font-size:1.3rem;
+        font-weight:bold;
+    }
+    .container{
+        padding:20px;
+    }
+    input, button{
+        width:100%;
+        padding:15px;
+        margin:8px 0;
+        font-size:1rem;
+        border-radius:8px;
+        border:none;
+    }
+    input{
+        background:#111;
+        color:white;
+    }
+    .btn{
+        background:#9b00e8;
+        color:white;
+        font-weight:bold;
+    }
+    .btn-back{
+        background:#444;
+        color:white;
+        font-weight:bold;
+    }
+    .terminal{
+        background:black;
+        color:#00ff00;
+        padding:20px;
+        border-radius:10px;
+        margin-top:20px;
+        min-height:200px;
+        font-family:monospace;
+        white-space:pre-wrap;
+    }
+</style>
+</head>
+<body>
+
+<header>Previsão Clínica Avançada</header>
+
+<div class="container">
+    <h2>Prever status clínico</h2>
+
+    <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
+
+    <button class="btn" id="consultar">🔮 Gerar Previsão</button>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar ao Dashboard</button>
+
+    <h2>Retorno da API</h2>
+    <div id="terminal" class="terminal">Aguardando...</div>
+</div>
+
+<script>
+/* Bloqueio se não estiver logado */
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
+
+document.getElementById("consultar").onclick = async () => {
+    const pid = document.getElementById("pid").value.trim();
+    const terminal = document.getElementById("terminal");
+
+    if(!pid){
+        terminal.textContent = "Erro: Informe o ID do paciente.";
+        return;
+    }
+
+    terminal.textContent = "Calculando previsão clínica...";
+
+    try{
+        const response = await fetch(`https://revitarium.onrender.com/workflow/patient/${pid}/predict`);
+        const data = await response.json();
+        terminal.textContent = JSON.stringify(data, null, 2);
+    }catch(error){
+        terminal.textContent = "Erro ao consultar a API.";
+    }
+};
+</script>
+
+</body>
+</html>
