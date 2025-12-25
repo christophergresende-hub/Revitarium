@@ -250,3 +250,31 @@ def patient_pdf(patient_id: str):
     pdf.output(path)
 
     return FileResponse(path, media_type="application/pdf", filename=path)
+
+@app.get("/workflow/patient/{patient_id}/dashboard")
+def patient_dashboard(patient_id: str):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",
+        (patient_id,)
+    )
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        return {"error": "Paciente sem histórico"}
+
+    scores = [r[1] for r in rows]
+    last = rows[-1]
+    
+    dashboard = {
+        "patient_id": patient_id,
+        "avaliacoes_totais": len(rows),
+        "ultimo_score": last[1],
+        "ultimo_risco": last[2],
+        "media_geral": round(sum(scores) / len(scores), 2),
+        "melhor_score": max(scores),
+        "pior_score": min(scores)
+    }
+    return dashboard
