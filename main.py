@@ -1,7 +1,7 @@
 # =========================================================
 # Revitarium API v4.5
 # Biomechanical scoliosis analysis + longitudinal scoring
-# SQLite persistence + PDF clinical report
+# SQLite persistence + PDF clinical report + Audit log
 # =========================================================
 
 from fastapi import FastAPI, Query
@@ -21,7 +21,7 @@ from fpdf import FPDF
 app = FastAPI(
     title="Revitarium API",
     version="4.5",
-    description="Multi-agent biomechanical scoliosis analysis with longitudinal scoring, persistence and PDF report"
+    description="Biomechanical scoliosis analysis with scoring, evolution, prediction, PDF and audit log"
 )
 
 # =========================================================
@@ -36,6 +36,7 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS patient_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +46,17 @@ def init_db():
             clinical_risk TEXT
         )
     """)
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_id TEXT,
+            timestamp TEXT,
+            score REAL,
+            risk TEXT
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -119,7 +131,7 @@ def health():
     return {"status": "ok", "version": "4.5"}
 
 # ---------------------------------------------------------
-# ANALYSIS ENTRYPOINT (MAIN)
+# ANALYSIS (MAIN ENTRYPOINT)
 # ---------------------------------------------------------
 
 @app.post("/workflow/analyze/v4", response_model=WorkflowResponse)
@@ -137,8 +149,8 @@ def analyze_v4(
             continue
 
         region = classify_region(item.vertebra)
-        score = continuous_score(item.angle)
         severity = severity_from_angle(item.angle)
+        score = continuous_score(item.angle)
 
         analysis.append(
             VertebraAnalysis(
@@ -164,6 +176,10 @@ def analyze_v4(
         "INSERT INTO patient_history (patient_id, timestamp, global_score, clinical_risk) VALUES (?, ?, ?, ?)",
         (patient_id, datetime.utcnow().isoformat(), global_score, clinical_risk)
     )
+    cur.execute(
+        "INSERT INTO audit_log (patient_id, timestamp, score, risk) VALUES (?, ?, ?, ?)",
+        (patient_id, datetime.utcnow().isoformat(), global_score, clinical_risk)
+    )
     conn.commit()
     conn.close()
 
@@ -177,7 +193,7 @@ def analyze_v4(
     )
 
 # ---------------------------------------------------------
-# LONGITUDINAL EVOLUTION
+# EVOLUTION (LONGITUDINAL SCORE)
 # ---------------------------------------------------------
 
 @app.get("/workflow/patient/{patient_id}/evolution")
@@ -191,16 +207,12 @@ def get_patient_evolution(patient_id: str):
     rows = cur.fetchall()
     conn.close()
 
-    history = [
-        {"timestamp": r[0], "global_score": r[1], "clinical_risk": r[2]}
-        for r in rows
-    ]
+    history = [{"timestamp": r[0], "global_score": r[1], "clinical_risk": r[2]} for r in rows]
 
     if len(history) < 2:
         return {"patient_id": patient_id, "message": "dados insuficientes para evolução", "history": history}
 
-    previous = history[-2]
-    current = history[-1]
+    previous, current = history[-2], history[-1]
     delta = round(current["global_score"] - previous["global_score"], 2)
 
     if delta > 2: trend = "melhora"
@@ -217,6 +229,62 @@ def get_patient_evolution(patient_id: str):
     }
 
 # ---------------------------------------------------------
+# DASHBOARD
+# ---------------------------------------------------------
+
+@app.get("/workflow/patient/{patient_id}/dashboard")
+def patient_dashboard(patient_id: str):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",(patient_id,))
+    rows = cur.fetchall()
+    conn.close()
+
+    if not rows:
+        return {"error": "Paciente sem histórico"}
+
+    scores = [r[1] for r in rows]
+    last = rows[-1]
+
+    return {
+        "patient_id": patient_id,
+        "avaliacoes_totais": len(rows),
+        "ultimo_score": last[1],
+        "ultimo_risco": last[2],
+        "media_geral": round(sum(scores) / len(scores), 2),
+        "melhor_score": max(scores),
+        "pior_score": min(scores)
+    }
+
+# ---------------------------------------------------------
+# PREDIÇÃO FUTURA
+# ---------------------------------------------------------
+
+@app.get("/workflow/patient/{patient_id}/predict")
+def predict_progression(patient_id: str):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT global_score FROM patient_history WHERE patient_id = ? ORDER BY id",(patient_id,))
+    rows = [r[0] for r in cur.fetchall()]
+    conn.close()
+
+    if len(rows) < 3:
+        return {"patient_id": patient_id, "message": "Dados insuficientes para previsão"}
+
+    deltas = [rows[i] - rows[i-1] for i in range(1, len(rows))]
+    media_delta = sum(deltas) / len(deltas)
+    previsao = round(rows[-1] + media_delta, 2)
+
+    risco = "verde" if previsao >= 75 else "amarelo" if previsao >= 55 else "vermelho"
+
+    return {
+        "patient_id": patient_id,
+        "projecao_score": previsao,
+        "variacao_media": round(media_delta, 2),
+        "risco_previsto": risco
+    }
+
+# ---------------------------------------------------------
 # PDF CLINICAL REPORT
 # ---------------------------------------------------------
 
@@ -224,10 +292,7 @@ def get_patient_evolution(patient_id: str):
 def patient_pdf(patient_id: str):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(
-        "SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",
-        (patient_id,)
-    )
+    cur.execute("SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",(patient_id,))
     rows = cur.fetchall()
     conn.close()
 
@@ -248,33 +313,4 @@ def patient_pdf(patient_id: str):
 
     path = f"report_{patient_id}.pdf"
     pdf.output(path)
-
     return FileResponse(path, media_type="application/pdf", filename=path)
-
-@app.get("/workflow/patient/{patient_id}/dashboard")
-def patient_dashboard(patient_id: str):
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT timestamp, global_score, clinical_risk FROM patient_history WHERE patient_id = ? ORDER BY id",
-        (patient_id,)
-    )
-    rows = cur.fetchall()
-    conn.close()
-
-    if not rows:
-        return {"error": "Paciente sem histórico"}
-
-    scores = [r[1] for r in rows]
-    last = rows[-1]
-    
-    dashboard = {
-        "patient_id": patient_id,
-        "avaliacoes_totais": len(rows),
-        "ultimo_score": last[1],
-        "ultimo_risco": last[2],
-        "media_geral": round(sum(scores) / len(scores), 2),
-        "melhor_score": max(scores),
-        "pior_score": min(scores)
-    }
-    return dashboard
