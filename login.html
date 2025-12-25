@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium – Login</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f3f3f3;
+        margin: 0; padding: 0;
+        display: flex; justify-content: center; align-items: center;
+        height: 100vh;
+    }
+    .container {
+        width: 90%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 22px;
+    }
+    input {
+        width: 100%;
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    button {
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        border: none;
+        background: #0066ff;
+        color: #fff;
+        font-size: 17px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover { background: #004ccc; }
+    .alerta {
+        margin-top: 12px;
+        text-align: center;
+        color: red;
+        font-size: 15px;
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Revitarium – Login</h1>
+
+    <input type="email" id="email" placeholder="email" autocomplete="off">
+    <input type="password" id="senha" placeholder="senha">
+
+    <button onclick="login()">Entrar</button>
+
+    <div class="alerta" id="erro">Acesso negado. Verifique email e senha.</div>
+</div>
+
+<script>
+    // Se já estiver logado → pula login
+    if(localStorage.getItem("revitarium_session") === "valid"){
+        window.location.href = "revitarium-dashboard.html";
+    }
+
+    function login(){
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value.trim();
+        const erro = document.getElementById("erro");
+
+        // Credenciais padrão (podemos evoluir depois para API/JWT)
+        if(email === "admin" && senha === "admin"){
+            localStorage.setItem("revitarium_session", "valid");
+            window.location.href = "revitarium-dashboard.html";
+        } else {
+            erro.style.display = "block";
+        }
+    }
+</script>
+
+</body>
+</html>
