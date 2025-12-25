@@ -1,99 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Evolução Longitudinal – Revitarium</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolução Clínica – Revitarium</title>
 <style>
-    body{
-        margin:0;
-        background:#0c0c0c;
-        font-family:Arial, sans-serif;
-        color:white;
+    body {
+        background:#0c0c0c; margin:0; font-family: Arial, sans-serif; color:white;
     }
-    header{
-        background:#002a52;
+    header {
+        background:#8A0000;
         padding:18px;
         text-align:center;
         font-size:1.3rem;
         font-weight:bold;
     }
-    .container{
-        padding:20px;
+    .container {
+        padding:22px;
     }
-    input, button{
+    input, button {
         width:100%;
-        padding:15px;
-        margin:8px 0;
+        padding:16px;
         font-size:1rem;
-        border-radius:8px;
+        border-radius:10px;
         border:none;
+        margin:10px 0;
     }
-    input{
+    input {
         background:#111;
         color:white;
     }
-    .btn{
-        background:#007bff;
+    .btn {
+        background:#b40000;
         color:white;
         font-weight:bold;
     }
-    .btn-back{
+    .btn-back {
         background:#444;
         color:white;
         font-weight:bold;
     }
-    .terminal{
-        background:black;
-        color:#00ff00;
-        padding:20px;
+    .box {
+        background:#111;
+        padding:18px;
         border-radius:10px;
         margin-top:20px;
-        min-height:200px;
-        font-family:monospace;
         white-space:pre-wrap;
+        font-family:monospace;
+        font-size:.95rem;
     }
 </style>
 </head>
 <body>
 
-<header>Evolução do Paciente</header>
+<header>📈 Evolução Clínica</header>
 
 <div class="container">
-    <h2>Consultar evolução longitudinal</h2>
 
+    <h2>Consultar evolução do paciente</h2>
     <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
 
-    <button class="btn" id="consultar">📈 Consultar Evolução</button>
-    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar ao Dashboard</button>
+    <button class="btn" id="consultar">Consultar Evolução</button>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar</button>
 
-    <h2>Retorno da API</h2>
-    <div id="terminal" class="terminal">Aguardando...</div>
+    <div id="resposta" class="box">Aguardando busca...</div>
+
 </div>
 
 <script>
-/* Bloqueio de acesso sem login */
+/* BLOQUEIO SEM LOGIN */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
+/* CONSULTA API */
 document.getElementById("consultar").onclick = async () => {
     const pid = document.getElementById("pid").value.trim();
-    const terminal = document.getElementById("terminal");
+    const url = `https://revitarium.onrender.com/workflow/patient/${pid}/evolution`;
+    const box = document.getElementById("resposta");
 
     if(!pid){
-        terminal.textContent = "Erro: Insira o ID do paciente.";
+        box.textContent = "Erro: informe um patient_id.";
         return;
     }
 
-    terminal.textContent = "Consultando histórico...";
+    box.textContent = "Buscando dados...";
 
     try{
-        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${pid}/evolution`);
-        const data = await res.json();
-        terminal.textContent = JSON.stringify(data, null, 2);
-    }catch(err){
-        terminal.textContent = "Erro de conexão com a API.";
+        const r = await fetch(url);
+        const json = await r.json();
+        box.textContent = JSON.stringify(json, null, 2);
+    }catch(e){
+        box.textContent = "Erro ao conectar com a API.";
     }
 };
 </script>
