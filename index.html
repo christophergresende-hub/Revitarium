@@ -2,107 +2,151 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Revitarium • Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Revitarium • Mobile Dashboard</title>
 
 <style>
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #0e0e0e;
+        background: #0d0d0d;
         color: #fff;
     }
     .container {
-        max-width: 440px;
+        max-width: 460px;
         margin: auto;
-        padding: 20px;
+        padding: 25px;
+    }
+    h1, h2 {
+        font-weight: 600;
+        text-align: center;
     }
     input, button {
         width: 100%;
-        padding: 15px;
-        margin: 10px 0;
+        padding: 14px;
+        margin: 8px 0;
         border-radius: 10px;
         border: none;
         font-size: 16px;
     }
     input {
-        background: #1f1f1f;
-        color: white;
+        background: #1e1e1e;
+        color: #fff;
     }
     button {
         background: #007bff;
-        color: white;
+        color: #fff;
         font-weight: bold;
     }
-    button:hover {
-        opacity: 0.85;
-    }
-    /* MOBILE-FIRST */
-    @media (max-width: 480px) {
-        body { font-size: 15px; }
-        button { padding: 14px; font-size: 15px; }
-        input { padding: 14px; }
+    button:hover { opacity: .85; }
+    #saida {
+        background: #000;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+        height: 240px;
+        overflow-y: auto;
+        font-size: 14px;
+        white-space: pre-wrap;
     }
 </style>
 </head>
 
 <body>
 <div class="container">
-    <h1>Revitarium – Dashboard</h1>
-    <p>Login</p>
+    <h1>Revitarium – Acesso</h1>
+    <p>Login para continuar</p>
 
-    <input id="email" type="email" placeholder="email" />
+    <input id="email" type="text" placeholder="email" />
     <input id="senha" type="password" placeholder="senha" />
     <button onclick="login()">Entrar</button>
 
-    <hr style="margin:30px 0; border:0.5px solid #333">
+    <hr style="margin:25px 0; border-color:#333">
 
-    <h2>Paciente</h2>
-    <input id="pid" type="text" placeholder="ID do Paciente (ex: 123)">
-    <button onclick="verDashboard()">Ver Dashboard</button>
-    <button onclick="evolucao()">Evolução Longitudinal</button>
+    <h2>Painel do Paciente</h2>
+    <input id="pid" type="text" placeholder="ID do Paciente (Ex: 123)" />
+
+    <button onclick="analisar()">Nova Análise</button>
+    <button onclick="dashboard()">Dashboard</button>
+    <button onclick="evolucao()">Evolução</button>
     <button onclick="previsao()">Previsão Clínica</button>
+    <button onclick="pdf()">Gerar PDF</button>
 
-    <pre id="saida" style="background:black; color:lime; padding:15px; border-radius:10px; height:200px; overflow:auto;">Aguardando...</pre>
+    <pre id="saida">Aguardando...</pre>
 </div>
 
 <script>
-// login simples temporário
+// ------------------------------------------------
+// LOGIN COM SENHA NOVA
+// ------------------------------------------------
 function login() {
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("senha").value;
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
 
-    if(email === "admin@revitarium.ai" && senha === "revitarium123") {
-        alert("Login OK");
+    if (email === "123" && senha === "123") {
         localStorage.setItem("auth", "ok");
+        alert("Acesso liberado");
     } else {
-        alert("Acesso negado");
+        alert("Dados incorretos");
     }
 }
 
-function verDashboard(){
-    if(!localStorage.getItem("auth")) return alert("Faça login primeiro.");
+function checkLogin() {
+    if (!localStorage.getItem("auth")) {
+        alert("Faça login primeiro");
+        throw new Error("Bloqueado");
+    }
+}
+
+// ------------------------------------------------
+// API BACKEND
+// ------------------------------------------------
+const API = "https://revitarium.onrender.com";
+
+function analisar(){
+    checkLogin();
     const id = document.getElementById("pid").value;
-    fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`)
-        .then(r => r.json()).then(data => {
-            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
-        });
+    fetch(`${API}/workflow/analyze/v4?patient_id=${id}`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify([
+            {"vertebra":"C5", "angle":12},
+            {"vertebra":"T8", "angle":18},
+            {"vertebra":"L3", "angle":9}
+        ])
+    })
+    .then(r => r.json())
+    .then(out => document.getElementById("saida").textContent = JSON.stringify(out,null,2));
+}
+
+function dashboard(){
+    checkLogin();
+    const id = document.getElementById("pid").value;
+    fetch(`${API}/workflow/patient/${id}/dashboard`)
+    .then(r => r.json())
+    .then(out => document.getElementById("saida").textContent = JSON.stringify(out,null,2));
 }
 
 function evolucao(){
+    checkLogin();
     const id = document.getElementById("pid").value;
-    fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`)
-        .then(r => r.json()).then(data => {
-            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
-        });
+    fetch(`${API}/workflow/patient/${id}/evolution`)
+    .then(r => r.json())
+    .then(out => document.getElementById("saida").textContent = JSON.stringify(out,null,2));
 }
 
 function previsao(){
+    checkLogin();
     const id = document.getElementById("pid").value;
-    fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`)
-        .then(r => r.json()).then(data => {
-            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
-        });
+    fetch(`${API}/workflow/patient/${id}/predict`)
+    .then(r => r.json())
+    .then(out => document.getElementById("saida").textContent = JSON.stringify(out,null,2));
+}
+
+function pdf(){
+    checkLogin();
+    const id = document.getElementById("pid").value;
+    window.location = `${API}/workflow/patient/${id}/report/pdf`;
 }
 </script>
 </body>
