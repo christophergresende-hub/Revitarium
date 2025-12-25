@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revitarium Dashboard</title>
+<style>
+body{font-family:Arial;background:#f5f5f5;padding:20px;}
+.card{background:#fff;padding:20px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid #ccc;}
+button{background:#0050ff;color:white;font-weight:bold;border:none;}
+h2,h3{margin:0 0 10px 0;}
+.section-title{margin-top:25px;font-size:18px;font-weight:bold;}
+pre{background:#111;color:#0f0;padding:10px;border-radius:8px;overflow-x:auto;}
+</style>
+</head>
+<body>
+
+<h2>Revitarium – Dashboard | v4.6</h2>
+<div class="card">
+<h3>Login</h3>
+<input id="email" placeholder="email">
+<input id="senha" placeholder="senha" type="password">
+<button onclick="login()">Entrar</button>
+</div>
+
+<div class="card">
+<h3>Paciente</h3>
+<input id="pid" placeholder="Patient ID (ex: 123)">
+<button onclick="dashboard()">Ver Dashboard</button>
+<button onclick="evolution()">Evolução Longitudinal</button>
+<button onclick="predict()">Previsão Clínica</button>
+<button onclick="pdf()" style="background:#333;">⤓ PDF Clínico</button>
+</div>
+
+<div class="card">
+<h3>Retorno da API</h3>
+<pre id="output">Aguardando...</pre>
+</div>
+
+<script>
+let BASE = "https://revitarium.onrender.com";
+let token = "";
+
+function login(){
+  fetch(BASE+"/auth/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`username=${email.value}&password=${senha.value}`
+  }).then(r=>r.json()).then(d=>{
+    token=d.access_token;
+    localStorage.setItem("rv_token",token);
+    output.textContent="Login ok. Token salvo.";
+  });
+}
+
+function authHeader(){
+  return {"Authorization":"Bearer "+(token||localStorage.getItem("rv_token"))};
+}
+
+function dashboard(){
+  fetch(`${BASE}/workflow/patient/${pid.value}/dashboard`,{headers:authHeader()})
+  .then(r=>r.json()).then(d=>{output.textContent=JSON.stringify(d,null,2)});
+}
+
+function evolution(){
+  fetch(`${BASE}/workflow/patient/${pid.value}/evolution`,{headers:authHeader()})
+  .then(r=>r.json()).then(d=>{output.textContent=JSON.stringify(d,null,2)});
+}
+
+function predict(){
+  fetch(`${BASE}/workflow/patient/${pid.value}/predict`,{headers:authHeader()})
+  .then(r=>r.json()).then(d=>{output.textContent=JSON.stringify(d,null,2)});
+}
+
+function pdf(){
+  window.open(`${BASE}/workflow/patient/${pid.value}/report/pdf`,"_blank");
+}
+</script>
+
+</body>
+</html>
