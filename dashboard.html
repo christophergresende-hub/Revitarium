@@ -3,22 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Revitarium</title>
+<title>Revitarium Dashboard</title>
 <style>
 body {
+    background: #111;
+    color: #fff;
     font-family: Arial;
-    background: #121212;
-    color: white;
-    text-align: center;
-    padding: 60px 10px;
+    padding: 20px;
 }
-a { color: #4ea8ff; font-size: 18px; }
+button {
+    width: 100%; padding: 14px; margin-top: 10px;
+    font-size: 16px;
+    border: none; border-radius: 6px;
+    background: #007bff; color: white;
+}
+input {
+    width: 100%; padding: 14px; margin-top: 10px;
+    border-radius: 6px; border: none;
+}
+#resposta {
+    background: #000; color: #0f0;
+    padding: 15px; margin-top: 20px;
+    border-radius: 6px; font-family: monospace;
+    min-height: 120px;
+}
 </style>
 </head>
+
 <body>
-<h1>Dashboard carregado com sucesso!</h1>
-<p>Se você está vendo isso, o login e o redirecionamento funcionaram.</p>
-<br>
-<a href="index.html">Voltar para o login</a>
+<h1>Revitarium • Dashboard</h1>
+<p style="opacity:0.7">Conectado com sucesso.</p>
+
+<input id="pid" placeholder="ID do Paciente (ex: 123)">
+
+<button onclick="dash()">Ver Dashboard</button>
+<button onclick="evolucao()">Evolução Longitudinal</button>
+<button onclick="previsao()">Previsão Clínica</button>
+<button onclick="pdf()">Gerar PDF Clínico</button>
+
+<div id="resposta">Aguardando...</div>
+
+<script>
+const API = "https://revitarium.onrender.com";
+
+async function dash(){
+    const id = document.getElementById("pid").value;
+    const r = await fetch(`${API}/workflow/patient/${id}/dashboard`);
+    document.getElementById("resposta").textContent = await r.text();
+}
+async function evolucao(){
+    const id = document.getElementById("pid").value;
+    const r = await fetch(`${API}/workflow/patient/${id}/evolution`);
+    document.getElementById("resposta").textContent = await r.text();
+}
+async function previsao(){
+    const id = document.getElementById("pid").value;
+    const r = await fetch(`${API}/workflow/patient/${id}/predict`);
+    document.getElementById("resposta").textContent = await r.text();
+}
+async function pdf(){
+    const id = document.getElementById("pid").value;
+    window.open(`${API}/workflow/patient/${id}/report/pdf`, "_blank");
+}
+</script>
 </body>
 </html>
