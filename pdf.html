@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDF Clínico – Revitarium</title>
+<style>
+    body{
+        margin:0;
+        background:#0c0c0c;
+        font-family: Arial, sans-serif;
+        color:white;
+    }
+    header{
+        background:#8A0000;
+        padding:18px;
+        text-align:center;
+        font-size:1.3rem;
+        font-weight:bold;
+    }
+    .container{
+        padding:22px;
+    }
+    input, button{
+        width:100%;
+        padding:16px;
+        font-size:1rem;
+        margin:10px 0;
+        border-radius:10px;
+        border:none;
+    }
+    input{
+        background:#111;
+        color:white;
+    }
+    .btn-generate{
+        background:#b40000;
+        color:white;
+        font-weight:bold;
+    }
+    .btn-back{
+        background:#444;
+        color:white;
+        font-weight:bold;
+    }
+    .msg{
+        margin-top:20px;
+        color:#00ff99;
+        font-family:monospace;
+        background:#000;
+        padding:15px;
+        border-radius:10px;
+        min-height:100px;
+        white-space:pre-wrap;
+    }
+</style>
+</head>
+<body>
+
+<header>📄 Gerar PDF Clínico</header>
+
+<div class="container">
+    <h2>Dados do Paciente</h2>
+
+    <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
+
+    <button class="btn-generate" id="gerarPDF">Gerar PDF Clínico</button>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar ao Dashboard</button>
+
+    <h3>Retorno do Sistema</h3>
+    <div id="msg" class="msg">Aguardando...</div>
+
+</div>
+
+<script>
+/* Bloqueio de acesso sem login */
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
+
+/* Função para gerar PDF local (versão inicial) */
+document.getElementById("gerarPDF").onclick = async () => {
+    const pid = document.getElementById("pid").value.trim();
+    const msg = document.getElementById("msg");
+
+    if(!pid){
+        msg.textContent = "Erro: informe um Patient ID válido.";
+        return;
+    }
+
+    msg.textContent = "Gerando PDF...";
+
+    const conteudo = `
+RELATÓRIO CLÍNICO REVITARIUM
+============================
+PACIENTE: ${pid}
+DATA: ${new Date().toLocaleDateString()}
+STATUS: Avaliação inicial concluída.
+
+Este é um PDF inicial. A versão seguinte irá puxar dados reais da API.
+`;
+
+    const blob = new Blob([conteudo], {type: "application/pdf"});
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Relatorio-Paciente-${pid}.pdf`;
+    link.click();
+
+    msg.textContent = "PDF pronto para download.";
+};
+</script>
+
+</body>
+</html>
