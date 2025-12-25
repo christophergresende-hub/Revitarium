@@ -1,91 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Previsão Clínica – Revitarium</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Previsão Clínica • Revitarium</title>
 
 <style>
-    body {
-        background:#0B0B0B; margin:0; font-family: Arial, sans-serif; color:white;
-    }
-    header {
-        background:#0051A8;
-        padding:18px;
-        text-align:center;
-        font-size:1.3rem;
-        font-weight:bold;
-    }
-    .container {
-        padding:22px;
-    }
-    input, button {
-        width:100%;
-        padding:16px;
-        font-size:1rem;
-        border-radius:10px;
-        border:none;
-        margin:10px 0;
-    }
-    input {
-        background:#111; color:white;
-    }
-    .btn {
-        background:#0068D6; color:white; font-weight:bold;
-    }
-    .btn-back {
-        background:#444; color:white; font-weight:bold;
-    }
-    .box {
-        background:#111; color:white;
-        padding:18px; border-radius:10px;
-        margin-top:20px; white-space:pre-wrap;
-        font-family:monospace; font-size:.95rem;
-    }
+body{font-family:Arial;margin:0;background:#121212;color:white;padding:20px;}
+.container{max-width:430px;margin:auto;background:#1f1f1f;border-radius:14px;padding:22px;}
+input,button{width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:8px;border:none;}
+button{background:#3b82f6;color:white;font-weight:bold;}
+button:hover{background:#2563eb;}
+.card{background:#292929;padding:16px;border-radius:10px;margin-top:18px;}
+.tag{padding:6px 12px;border-radius:6px;font-size:15px;font-weight:bold;margin-top:6px;display:inline-block;}
+.verde{background:#16a34a;color:white;}
+.amarelo{background:#eab308;color:black;}
+.vermelho{background:#dc2626;color:white;}
+footer{text-align:center;margin-top:25px;opacity:.5;}
 </style>
 </head>
 
 <body>
 
-<header>🔮 Previsão Clínica</header>
-
-<div class="container">
-
-    <h2>Prever evolução do paciente</h2>
-    <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
-
-    <button class="btn" id="consultar">Rodar Previsão</button>
-    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar</button>
-
-    <div id="resposta" class="box">Aguardando previsão...</div>
-
-</div>
-
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html"; // bloqueia sem login
+    window.location.href = "index.html";
 }
+</script>
 
-document.getElementById("consultar").onclick = async () => {
-    const pid = document.getElementById("pid").value.trim();
-    const url = `https://revitarium.onrender.com/workflow/patient/${pid}/predict`;
-    const box = document.getElementById("resposta");
+<div class="container">
+<h2>Previsão Clínica</h2>
 
-    if(!pid){
-        box.textContent = "Erro: informe um patient_id.";
+<label>ID do Paciente</label>
+<input type="text" id="patientId" value="123">
+
+<button onclick="prever()">Calcular Previsão</button>
+<button style="background:#444" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+
+<div id="result"></div>
+</div>
+
+<footer>Revitarium • Projeção biomecânica e longitudinal</footer>
+
+<script>
+async function prever(){
+    const id = document.getElementById("patientId").value.trim();
+    const url = `https://revitarium.onrender.com/workflow/patient/${id}/predict`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(data.message){
+        document.getElementById("result").innerHTML = `
+            <div class="card">
+                <b>${data.message}</b><br><br>
+                Realize mais avaliações para habilitar projeção clínica.
+            </div>
+        `;
         return;
     }
 
-    box.textContent = "Calculando previsão...";
+    const riskClass = data.risco_previsto === "verde" ? "verde" :
+                      data.risco_previsto === "amarelo" ? "amarelo" : "vermelho";
 
-    try{
-        const r = await fetch(url);
-        const json = await r.json();
-        box.textContent = JSON.stringify(json, null, 2);
-    }catch(e){
-        box.textContent = "Erro ao conectar com a API.";
-    }
-};
+    document.getElementById("result").innerHTML = `
+        <div class="card">
+            <h3>Próximo Score Previsto: <b>${data.projecao_score}</b></h3>
+            <p>Variação média: <b>${data.variacao_media}</b></p>
+            <span class="tag ${riskClass}">${data.risco_previsto.toUpperCase()}</span>
+        </div>
+        <div class="card">
+            <h4>Dados completos:</h4>
+            <pre style="white-space:pre-wrap;">${JSON.stringify(data, null, 2)}</pre>
+        </div>
+    `;
+}
 </script>
 
 </body>
