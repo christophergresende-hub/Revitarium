@@ -1,56 +1,51 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Revitarium • Login</title>
 <style>
 body {
-    background:#000;
-    color:white;
-    font-family:Arial, sans-serif;
-    margin:0; padding:20px;
+    margin:0; font-family:Arial, sans-serif; background:#0d0d0d; color:white;
+    display:flex; justify-content:center; align-items:center; height:100vh;
 }
 .container {
-    max-width:420px;
-    margin:auto;
-    text-align:center;
+    width:90%; max-width:380px; background:#111; padding:25px; border-radius:12px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
-input{
-    width:100%; padding:14px;
-    margin:10px 0; border-radius:8px;
-    border:none; background:#222; color:white;
-    font-size:16px;
+input {
+    width:100%; padding:14px; margin:10px 0; border-radius:8px; border:none; font-size:16px;
 }
-button{
-    width:100%; padding:14px; border:none;
-    background:#007BFF; color:white;
-    border-radius:8px; font-size:18px;
-    margin-top:10px;
+button {
+    width:100%; padding:14px; background:#006CFF; color:white; border:none; font-size:18px;
+    border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px;
+}
+button:hover { background:#0053c4; }
+.alert {
+    text-align:center; margin-top:10px; font-size:14px; color:#FF4444; display:none;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Revitarium • Login</h2>
-
-    <input id="email" placeholder="email" autocomplete="off" />
-    <input id="senha" type="password" placeholder="senha" />
-
-    <button onclick="login()">Entrar</button>
+<h2>Login</h2>
+<input id="loginEmail" type="text" placeholder="Email: 123">
+<input id="loginSenha" type="password" placeholder="Senha: 123">
+<button onclick="login()">Entrar</button>
+<div id="erro" class="alert">Credenciais inválidas</div>
 </div>
 
 <script>
 function login(){
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
+    let email = document.getElementById("loginEmail").value.trim();
+    let senha = document.getElementById("loginSenha").value.trim();
 
     if(email === "123" && senha === "123"){
         localStorage.setItem("revitarium_logged","yes");
         window.location.href = "dashboard.html";
     } else {
-        alert("Acesso negado. Verifique os dados.");
+        document.getElementById("erro").style.display = "block";
     }
 }
 </script>
