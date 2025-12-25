@@ -2,120 +2,130 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium – Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revitarium – Dashboard (Mobile First)</title>
 <style>
+    :root {
+        --bg: #0b0e11;
+        --box: #14181d;
+        --btn: #00c7ff;
+        --text: #e8f8ff;
+        --danger: #c72626;
+    }
     body {
-        background:#0d0d0d;
-        color:white;
+        background: var(--bg);
+        color: var(--text);
         margin:0;
-        font-family:Arial, sans-serif;
-        padding:20px;
+        font-family: Arial, sans-serif;
+        padding:16px;
     }
-    .title {
-        font-size:30px;
+    .container {
+        max-width:540px;
+        margin:auto;
+        padding:10px;
+        background:var(--box);
+        border-radius:14px;
+    }
+    h1 {
+        font-size:26px;
         font-weight:bold;
-        margin-bottom:5px;
+        margin-bottom:4px;
+        text-align:center;
     }
-    .subtitle {
-        opacity:0.6;
-        margin-bottom:20px;
-    }
+    p { text-align:center; opacity:.7; font-size:14px; margin-top:0; }
     input, button {
         width:100%;
         padding:14px;
         margin:8px 0;
-        border-radius:8px;
+        border-radius:10px;
         border:none;
         font-size:16px;
     }
     input {
-        background:#1e1e1e;
+        background:#0f1318;
         color:white;
     }
     button {
-        background:#007bff;
-        color:white;
+        background:var(--btn);
+        color:#00222e;
         font-weight:bold;
     }
-    button:hover { background:#0066d6; cursor:pointer; }
-    #output {
-        margin-top:20px;
-        background:black;
-        padding:14px;
-        border-radius:8px;
-        font-size:14px;
-        min-height:80px;
-        color:#00ff00;
-        overflow-x:auto;
-        white-space:pre-wrap;
+    button:active { opacity:0.7; }
+
+    /* BOTÕES EM GRID (MOBILE FIRST) */
+    .grid {
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        margin-top:14px;
     }
+    @media(min-width:450px){
+        .grid { grid-template-columns:1fr 1fr; }
+    }
+
     .logout {
-        background:#b30000;
-        margin-top:20px;
+        background: var(--danger);
+        margin-top:14px;
+    }
+
+    #output {
+        margin-top:16px;
+        background:black;
+        padding:16px;
+        border-radius:10px;
+        font-size:13px;
+        min-height:100px;
+        color:#9dffa4;
+        white-space:pre-wrap;
+        overflow-x:auto;
     }
 </style>
 </head>
 <body>
 
-<!-- =========================================================
-     BLOQUEIO DE ACESSO SEM LOGIN
-========================================================= -->
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html"; // impede entrar sem login
+    window.location.href = "index.html";
 }
 </script>
 
-<!-- =========================================================
-     INTERFACE
-========================================================= -->
-<div class="title">Revitarium • Dashboard</div>
-<div class="subtitle">Análise biomecânica e evolução clínica</div>
+<div class="container">
+    <h1>Revitarium</h1>
+    <p>Dashboard Clínico • Mobile First</p>
 
-<hr>
+    <input id="patientId" placeholder="ID do Paciente (ex: 123)">
 
-<h3>ID do Paciente</h3>
-<input id="patientId" placeholder="Ex: 123">
+    <div class="grid">
+        <button onclick="novaAnalise()">Nova Análise</button>
+        <button onclick="verDashboard()">Dashboard</button>
+        <button onclick="verEvolucao()">Evolução</button>
+        <button onclick="previsaoClinica()">Previsão</button>
+        <button onclick="gerarPDF()">Gerar PDF</button>
+    </div>
 
-<button onclick="novaAnalise()">Nova Análise</button>
-<button onclick="verDashboard()">Dashboard do Paciente</button>
-<button onclick="verEvolucao()">Evolução Longitudinal</button>
-<button onclick="previsaoClinica()">Previsão Clínica</button>
-<button onclick="gerarPDF()">Gerar PDF Clínico</button>
+    <button class="logout" onclick="logout()">Sair</button>
 
-<button class="logout" onclick="logout()">Sair</button>
+    <div id="output">Aguardando...</div>
+</div>
 
-<div id="output">Aguardando...</div>
-
-<!-- =========================================================
-     LÓGICA DE CONEXÃO COM API
-========================================================= -->
 <script>
 const API = "https://revitarium.onrender.com";
 
-function getId() {
+function getId(){
     const id = document.getElementById("patientId").value.trim();
-    if(!id){ log("ERRO: informe um ID de paciente."); return null; }
+    if(!id){ log("ERRO: informe um ID."); return null; }
     return id;
 }
-
-function log(msg){
-    document.getElementById("output").innerText = typeof msg === "object"
-        ? JSON.stringify(msg, null, 2)
-        : msg;
-}
+function log(x){ document.getElementById("output").innerText = JSON.stringify(x,null,2); }
 
 function novaAnalise(){
     const id = getId(); if(!id) return;
-    log("Enviando nova análise para o paciente...");
-    
-    fetch(`${API}/workflow/analyze/v4?patient_id=${id}`, {
+    fetch(`${API}/workflow/analyze/v4?patient_id=${id}`,{
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify([
+        body:JSON.stringify([
             {"vertebra":"C5","angle":3},
-            {"vertebra":"T8","angle":12},
+            {"vertebra":"T8","angle":14},
             {"vertebra":"L4","angle":28}
         ])
     }).then(r=>r.json()).then(log);
@@ -123,28 +133,22 @@ function novaAnalise(){
 
 function verDashboard(){
     const id = getId(); if(!id) return;
-    log("Carregando dashboard...");
-    fetch(`${API}/workflow/patient/${id}/dashboard`)
-        .then(r=>r.json()).then(log);
+    fetch(`${API}/workflow/patient/${id}/dashboard`).then(r=>r.json()).then(log);
 }
 
 function verEvolucao(){
     const id = getId(); if(!id) return;
-    log("Buscando evolução...");
-    fetch(`${API}/workflow/patient/${id}/evolution`)
-        .then(r=>r.json()).then(log);
+    fetch(`${API}/workflow/patient/${id}/evolution`).then(r=>r.json()).then(log);
 }
 
 function previsaoClinica(){
     const id = getId(); if(!id) return;
-    log("Calculando previsão clínica...");
-    fetch(`${API}/workflow/patient/${id}/predict`)
-        .then(r=>r.json()).then(log);
+    fetch(`${API}/workflow/patient/${id}/predict`).then(r=>r.json()).then(log);
 }
 
 function gerarPDF(){
     const id = getId(); if(!id) return;
-    window.open(`${API}/workflow/patient/${id}/report/pdf`, "_blank");
+    window.open(`${API}/workflow/patient/${id}/report/pdf`,"_blank");
 }
 
 function logout(){
