@@ -1,71 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium Login</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium • Dashboard</title>
 
 <style>
-body {
-    margin: 0; padding: 0;
-    background: #eef1f5;
-    font-family: Arial, sans-serif;
-    display: flex; justify-content: center; align-items: center;
-    height: 100vh;
-}
-.container {
-    width: 90%; max-width: 380px;
-    background: white; padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15);
-    text-align: center;
-}
-input, button {
-    width: 100%; padding: 14px; margin-top: 10px;
-    border-radius: 8px; border: 1px solid #ccc;
-    font-size: 16px;
-}
-button {
-    background: #0066ff; color: white; border: none; font-weight: bold;
-}
-button:hover {
-    background: #004bb7;
-}
-#msg {
-    margin-top: 15px; font-weight: bold;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0e0e0e;
+        color: #fff;
+    }
+    .container {
+        max-width: 440px;
+        margin: auto;
+        padding: 20px;
+    }
+    input, button {
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: none;
+        font-size: 16px;
+    }
+    input {
+        background: #1f1f1f;
+        color: white;
+    }
+    button {
+        background: #007bff;
+        color: white;
+        font-weight: bold;
+    }
+    button:hover {
+        opacity: 0.85;
+    }
+    /* MOBILE-FIRST */
+    @media (max-width: 480px) {
+        body { font-size: 15px; }
+        button { padding: 14px; font-size: 15px; }
+        input { padding: 14px; }
+    }
 </style>
 </head>
 
 <body>
 <div class="container">
-    <h2>Revitarium • Login</h2>
-    <input type="email" id="email" placeholder="email">
-    <input type="password" id="senha" placeholder="senha">
+    <h1>Revitarium – Dashboard</h1>
+    <p>Login</p>
+
+    <input id="email" type="email" placeholder="email" />
+    <input id="senha" type="password" placeholder="senha" />
     <button onclick="login()">Entrar</button>
-    <div id="msg"></div>
+
+    <hr style="margin:30px 0; border:0.5px solid #333">
+
+    <h2>Paciente</h2>
+    <input id="pid" type="text" placeholder="ID do Paciente (ex: 123)">
+    <button onclick="verDashboard()">Ver Dashboard</button>
+    <button onclick="evolucao()">Evolução Longitudinal</button>
+    <button onclick="previsao()">Previsão Clínica</button>
+
+    <pre id="saida" style="background:black; color:lime; padding:15px; border-radius:10px; height:200px; overflow:auto;">Aguardando...</pre>
 </div>
 
 <script>
-// CREDENCIAIS OFICIAIS
-const USER = "admin@revitarium.ai";
-const PASS = "revitarium123";
-
+// login simples temporário
 function login() {
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
-    const msg = document.getElementById("msg");
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
 
-    if (email === USER && senha === PASS) {
-        msg.style.color = "green";
-        msg.textContent = "Acesso permitido. Redirecionando...";
-        setTimeout(() => {
-            window.location.href = "dashboard.html";
-        }, 700);
+    if(email === "admin@revitarium.ai" && senha === "revitarium123") {
+        alert("Login OK");
+        localStorage.setItem("auth", "ok");
     } else {
-        msg.style.color = "red";
-        msg.textContent = "Acesso negado | Verifique email e senha.";
+        alert("Acesso negado");
     }
+}
+
+function verDashboard(){
+    if(!localStorage.getItem("auth")) return alert("Faça login primeiro.");
+    const id = document.getElementById("pid").value;
+    fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`)
+        .then(r => r.json()).then(data => {
+            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
+        });
+}
+
+function evolucao(){
+    const id = document.getElementById("pid").value;
+    fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`)
+        .then(r => r.json()).then(data => {
+            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
+        });
+}
+
+function previsao(){
+    const id = document.getElementById("pid").value;
+    fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`)
+        .then(r => r.json()).then(data => {
+            document.getElementById("saida").textContent = JSON.stringify(data, null, 2);
+        });
 }
 </script>
 </body>
