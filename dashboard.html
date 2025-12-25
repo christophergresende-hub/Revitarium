@@ -12,7 +12,15 @@
         font-family:Arial, sans-serif;
         padding:20px;
     }
-    h1 { font-size:26px; margin-bottom:10px; }
+    .title {
+        font-size:30px;
+        font-weight:bold;
+        margin-bottom:5px;
+    }
+    .subtitle {
+        opacity:0.6;
+        margin-bottom:20px;
+    }
     input, button {
         width:100%;
         padding:14px;
@@ -21,8 +29,16 @@
         border:none;
         font-size:16px;
     }
-    input { background:#1e1e1e; color:white; }
-    button { background:#007bff; color:white; font-weight:bold; }
+    input {
+        background:#1e1e1e;
+        color:white;
+    }
+    button {
+        background:#007bff;
+        color:white;
+        font-weight:bold;
+    }
+    button:hover { background:#0066d6; cursor:pointer; }
     #output {
         margin-top:20px;
         background:black;
@@ -32,18 +48,30 @@
         min-height:80px;
         color:#00ff00;
         overflow-x:auto;
+        white-space:pre-wrap;
     }
-    .title {
-        font-size:32px;
-        font-weight:bold;
-        margin-bottom:10px;
+    .logout {
+        background:#b30000;
+        margin-top:20px;
     }
 </style>
 </head>
 <body>
 
+<!-- =========================================================
+     BLOQUEIO DE ACESSO SEM LOGIN
+========================================================= -->
+<script>
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html"; // impede entrar sem login
+}
+</script>
+
+<!-- =========================================================
+     INTERFACE
+========================================================= -->
 <div class="title">Revitarium • Dashboard</div>
-<p>Conectado. Pronto para executar ações.</p>
+<div class="subtitle">Análise biomecânica e evolução clínica</div>
 
 <hr>
 
@@ -51,13 +79,18 @@
 <input id="patientId" placeholder="Ex: 123">
 
 <button onclick="novaAnalise()">Nova Análise</button>
-<button onclick="verDashboard()">Dashboard</button>
-<button onclick="verEvolucao()">Evolução</button>
+<button onclick="verDashboard()">Dashboard do Paciente</button>
+<button onclick="verEvolucao()">Evolução Longitudinal</button>
 <button onclick="previsaoClinica()">Previsão Clínica</button>
-<button onclick="gerarPDF()">Gerar PDF</button>
+<button onclick="gerarPDF()">Gerar PDF Clínico</button>
+
+<button class="logout" onclick="logout()">Sair</button>
 
 <div id="output">Aguardando...</div>
 
+<!-- =========================================================
+     LÓGICA DE CONEXÃO COM API
+========================================================= -->
 <script>
 const API = "https://revitarium.onrender.com";
 
@@ -68,12 +101,15 @@ function getId() {
 }
 
 function log(msg){
-    document.getElementById("output").innerText = msg;
+    document.getElementById("output").innerText = typeof msg === "object"
+        ? JSON.stringify(msg, null, 2)
+        : msg;
 }
 
 function novaAnalise(){
     const id = getId(); if(!id) return;
-    log("Enviando análise...");
+    log("Enviando nova análise para o paciente...");
+    
     fetch(`${API}/workflow/analyze/v4?patient_id=${id}`, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
@@ -89,27 +125,33 @@ function verDashboard(){
     const id = getId(); if(!id) return;
     log("Carregando dashboard...");
     fetch(`${API}/workflow/patient/${id}/dashboard`)
-    .then(r=>r.json()).then(log);
+        .then(r=>r.json()).then(log);
 }
 
 function verEvolucao(){
     const id = getId(); if(!id) return;
     log("Buscando evolução...");
     fetch(`${API}/workflow/patient/${id}/evolution`)
-    .then(r=>r.json()).then(log);
+        .then(r=>r.json()).then(log);
 }
 
 function previsaoClinica(){
     const id = getId(); if(!id) return;
-    log("Calculando previsão...");
+    log("Calculando previsão clínica...");
     fetch(`${API}/workflow/patient/${id}/predict`)
-    .then(r=>r.json()).then(log);
+        .then(r=>r.json()).then(log);
 }
 
 function gerarPDF(){
     const id = getId(); if(!id) return;
     window.open(`${API}/workflow/patient/${id}/report/pdf`, "_blank");
 }
+
+function logout(){
+    localStorage.removeItem("revitarium_logged");
+    window.location.href = "index.html";
+}
 </script>
+
 </body>
 </html>
