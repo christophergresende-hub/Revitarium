@@ -1,87 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Revitarium • Dashboard</title>
 <style>
-body {
-    background:#000; color:white;
-    font-family:Arial, sans-serif;
-    margin:0; padding:20px;
+body {margin:0; background:#000; font-family:Arial, sans-serif; color:white;}
+header {padding:20px; text-align:center; background:#111; font-size:24px; font-weight:bold;}
+
+.container {padding:20px; width:95%; margin:auto;}
+input {width:100%; padding:14px; margin:10px 0; border-radius:8px; border:none; font-size:16px;}
+button {
+    width:100%; padding:14px; background:#006CFF; color:white; border:none;
+    font-size:18px; border-radius:8px; cursor:pointer; margin:8px 0; font-weight:bold;
 }
-input{
-    width:100%; padding:14px;
-    margin:10px 0; border-radius:8px;
-    border:none; background:#222; color:white;
-    font-size:16px;
-}
-button{
-    width:100%; padding:14px;
-    border:none; background:#007BFF; color:white;
-    border-radius:8px; font-size:18px;
-    margin:6px 0;
-}
-.logout{
-    background:#ff4444;
+button:hover {background:#0051c1;}
+.logout {background:#ff3333;}
+#output {
+    background:black; padding:10px; color:#00ff00; margin-top:20px; min-height:80px;
+    border-radius:8px; font-family:monospace;
 }
 </style>
 </head>
 <body>
 
 <script>
-// 🔒 Proteção - impede acesso sem login
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 </script>
 
-<h2>Revitarium • Dashboard</h2>
-<p>Conectado com sucesso.</p>
+<header>Revitarium • Dashboard</header>
 
-<input id="patient_id" placeholder="ID do Paciente (Ex: 123)" />
+<div class="container">
+    <input id="patientId" type="text" placeholder="ID do Paciente (ex: 123)">
 
-<button onclick="novaAnalise()">Nova Análise</button>
-<button onclick="verDashboard()">Dashboard</button>
-<button onclick="evolucao()">Evolução</button>
-<button onclick="previsao()">Previsão Clínica</button>
-<button onclick="pdf()">Gerar PDF</button>
+    <button onclick="novaAnalise()">Nova Análise</button>
+    <button onclick="verDashboard()">Dashboard</button>
+    <button onclick="evolucao()">Evolução</button>
+    <button onclick="prevClinica()">Previsão Clínica</button>
+    <button onclick="pdfClinico()">Gerar PDF</button>
 
-<button class="logout" onclick="logout()">Sair do Sistema</button>
+    <button class="logout" onclick="logout()">Sair</button>
 
-<pre id="resposta" style="background:#111; padding:12px; margin-top:20px;">Aguardando...</pre>
+    <div id="output">Aguardando...</div>
+</div>
 
 <script>
 const API = "https://revitarium.onrender.com";
 
-// BOTÕES
-function novaAnalise(){ executar(`/workflow/analyze/v4?patient_id=${id()}`, "POST", exemplo()); }
-function verDashboard(){ executar(`/workflow/patient/${id()}/dashboard`); }
-function evolucao(){ executar(`/workflow/patient/${id()}/evolution`); }
-function previsao(){ executar(`/workflow/patient/${id()}/predict`); }
-function pdf(){ window.open(`${API}/workflow/patient/${id()}/report/pdf`); }
+function print(msg){ document.getElementById("output").textContent = msg; }
 
-// FUNÇÕES
-function id(){ return document.getElementById("patient_id").value.trim(); }
-function exemplo(){
-return JSON.stringify([
- { "vertebra":"C5", "angle":3 },
- { "vertebra":"T8", "angle":12 },
- { "vertebra":"L4", "angle":28 }
- ]);
-}
-async function executar(endpoint, method="GET", body=null){
-    try{
-        const resposta = await fetch(API + endpoint, {
-            method,
-            headers:{ "Content-Type":"application/json" },
-            body
-        });
-        document.getElementById("resposta").innerText = JSON.stringify(await resposta.json(), null, 2);
-    }catch(e){
-        document.getElementById("resposta").innerText = "ERRO: " + e;
-    }
-}
+function novaAnalise(){ print("Nova análise enviada... (futura automação)") }
+function verDashboard(){ print("Dashboard carregando...") }
+function evolucao(){ print("Carregando evolução longitudinal...") }
+function prevClinica(){ print("Gerando previsão clínica...") }
+function pdfClinico(){ print("Gerando PDF clínico (em breve)...") }
+
 function logout(){
     localStorage.removeItem("revitarium_logged");
     window.location.href="index.html";
