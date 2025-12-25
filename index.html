@@ -1,22 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium • Login</title>
+<style>
+body {
+    background:#000;
+    color:white;
+    font-family:Arial, sans-serif;
+    margin:0; padding:20px;
+}
+.container {
+    max-width:420px;
+    margin:auto;
+    text-align:center;
+}
+input{
+    width:100%; padding:14px;
+    margin:10px 0; border-radius:8px;
+    border:none; background:#222; color:white;
+    font-size:16px;
+}
+button{
+    width:100%; padding:14px; border:none;
+    background:#007BFF; color:white;
+    border-radius:8px; font-size:18px;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Revitarium • Login</h2>
+
+    <input id="email" placeholder="email" autocomplete="off" />
+    <input id="senha" type="password" placeholder="senha" />
+
+    <button onclick="login()">Entrar</button>
+</div>
+
 <script>
-function login() {
+function login(){
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
-    const msg = document.getElementById("msg");
 
-    if (email === "123" && senha === "123") {
-        msg.style.color = "lightgreen";
-        msg.innerText = "Acesso permitido...";
-
-        // Salva sessão simples (simulação)
-        localStorage.setItem("revitarium_logged", "yes");
-
-        setTimeout(() => {
-            window.location.href = "dashboard.html"; 
-        }, 800);
+    if(email === "123" && senha === "123"){
+        localStorage.setItem("revitarium_logged","yes");
+        window.location.href = "dashboard.html";
     } else {
-        msg.style.color = "red";
-        msg.innerText = "Acesso negado. Dados incorretos.";
+        alert("Acesso negado. Verifique os dados.");
     }
 }
 </script>
+
+</body>
+</html>
