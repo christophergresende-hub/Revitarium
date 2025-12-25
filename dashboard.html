@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium Dashboard PRO</title>
+<title>Revitarium Dashboard PRO – Input Clínico</title>
 
 <style>
     :root{
@@ -11,76 +11,41 @@
         --primary-dark:#00172f;
         --accent:#00c8ff;
         --danger:#8B0000;
-        --bg:#f2f6fa;
+        --bg:#eef3f8;
     }
-    body{
-        background:var(--bg);
-        font-family:Arial, sans-serif;
-        margin:0;
-        padding:0;
-    }
+    body{background:var(--bg);font-family:Arial;margin:0;padding:0;}
     header{
-        background:var(--primary);
-        color:white;
-        padding:15px;
-        font-size:20px;
-        font-weight:bold;
-        text-align:center;
-        position:sticky;
-        top:0;
+        background:var(--primary);color:white;text-align:center;padding:15px;
+        font-size:20px;font-weight:bold;position:sticky;top:0;
     }
-    .container{
-        padding:20px;
-        max-width:480px;
-        margin:auto;
-    }
-    input{
-        width:100%;
-        padding:12px;
-        border-radius:10px;
-        border:1px solid #ccc;
-        margin-bottom:15px;
-        font-size:16px;
-    }
+    .container{max-width:480px;margin:auto;padding:20px;}
     .card{
-        background:white;
-        padding:15px;
-        border-radius:12px;
-        margin-bottom:15px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.08);
+        background:white;padding:15px;border-radius:12px;margin-bottom:15px;
+        box-shadow:0 2px 6px rgba(0,0,0,0.12);
+    }
+    input, select{
+        width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;
+        margin-bottom:10px;font-size:16px;
     }
     button{
-        width:100%;
-        padding:14px;
-        border:none;
-        border-radius:10px;
-        font-size:16px;
-        font-weight:bold;
-        margin-top:8px;
-        cursor:pointer;
-        background:var(--primary);
-        color:white;
+        width:100%;padding:14px;border:none;border-radius:10px;
+        font-size:16px;font-weight:bold;margin-top:6px;cursor:pointer;
+        background:var(--primary);color:white;
     }
-    button:hover{ background:var(--primary-dark); }
-    .logout{ background:var(--danger)!important; }
+    button:hover{background:var(--primary-dark);}
+    .logout{background:var(--danger)!important;}
     pre{
-        background:black;
-        color:#0f0;
-        padding:15px;
-        border-radius:12px;
-        overflow:auto;
-        min-height:180px;
-        font-size:14px;
-        margin-top:10px;
+        background:black;color:#0f0;padding:15px;border-radius:12px;
+        min-height:200px;overflow:auto;font-size:14px;margin-top:10px;
     }
+    .add-line{background:var(--accent)!important;color:black;}
 </style>
 </head>
 
 <body>
 
-<header>Revitarium – Painel Clínico PRO</header>
+<header>Revitarium – Análise Clínica PRO</header>
 
-<!-- BLOQUEIO DE ACESSO SEM LOGIN -->
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
@@ -89,28 +54,41 @@ if(localStorage.getItem("revitarium_logged") !== "yes"){
 
 <div class="container">
 
+    <!-- Paciente -->
     <div class="card">
         <h3>Paciente</h3>
-        <input id="patientId" placeholder="Ex: 123">
+        <input id="patientId" placeholder="ID do paciente (ex: 123)">
     </div>
 
+    <!-- Entrada de vértebra -->
     <div class="card">
-        <h3>Consultas rápidas</h3>
+        <h3>Inserir vértebras</h3>
+
+        <div id="vertebra-group">
+            <input class="v-field" placeholder="Ex: T7">
+            <input class="a-field" type="number" placeholder="Ângulo (ex: 12)">
+        </div>
+
+        <button class="add-line" onclick="addLine()">+ Adicionar nível</button>
+        <button onclick="enviarAnalise()">🚑 Enviar para Análise</button>
+    </div>
+
+    <!-- Consultas -->
+    <div class="card">
+        <h3>Consultas Rápidas</h3>
         <button onclick="verDashboard()">📊 Dashboard</button>
         <button onclick="evolucao()">📈 Evolução</button>
         <button onclick="prevClinica()">🔮 Previsão</button>
         <button onclick="pdfClinico()">📄 PDF (em breve)</button>
-    </div>
-
-    <div class="card">
-        <h3>Ações</h3>
         <button class="logout" onclick="logout()">⛔ Sair</button>
     </div>
 
+    <!-- Resultado -->
     <div class="card">
         <h3>Retorno da API</h3>
-        <pre id="output">Aguardando requisição...</pre>
+        <pre id="output">Aguardando...</pre>
     </div>
+
 </div>
 
 <script>
@@ -121,9 +99,41 @@ function print(data){
 }
 
 function getID(){
-    let id = document.getElementById("patientId").value.trim();
-    if(!id){ print("Erro: informe o ID do paciente"); return null; }
+    const id=document.getElementById("patientId").value.trim();
+    if(!id){print("Erro: informe o ID do paciente");return null;}
     return id;
+}
+
+function addLine(){
+    const box=document.getElementById("vertebra-group");
+    box.insertAdjacentHTML("beforeend",`
+        <input class="v-field" placeholder="Ex: L3">
+        <input class="a-field" type="number" placeholder="Ângulo (ex: 18)">
+    `);
+}
+
+async function enviarAnalise(){
+    const id=getID(); if(!id)return;
+
+    const vertebras=[...document.querySelectorAll(".v-field")];
+    const angulos=[...document.querySelectorAll(".a-field")];
+
+    let payload=[];
+    for(let i=0;i<vertebras.length;i++){
+        const v=vertebras[i].value.trim();
+        const a=parseFloat(angulos[i].value);
+        if(v && !isNaN(a)){ payload.push({vertebra:v, angle:a}); }
+    }
+
+    if(payload.length===0){ print("Inclua ao menos 1 vértebra"); return; }
+
+    const r=await fetch(`${API}/workflow/analyze/v4?patient_id=${id}`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+    });
+
+    print(await r.json());
 }
 
 async function verDashboard(){
@@ -131,22 +141,17 @@ async function verDashboard(){
     let r=await fetch(`${API}/workflow/patient/${id}/dashboard`);
     print(await r.json());
 }
-
 async function evolucao(){
     let id=getID(); if(!id)return;
     let r=await fetch(`${API}/workflow/patient/${id}/evolution`);
     print(await r.json());
 }
-
 async function prevClinica(){
     let id=getID(); if(!id)return;
     let r=await fetch(`${API}/workflow/patient/${id}/predict`);
     print(await r.json());
 }
-
-function pdfClinico(){
-    print("PDF disponível na versão 5.x");
-}
+function pdfClinico(){ print("PDF disponível na v5.0"); }
 
 function logout(){
     localStorage.removeItem("revitarium_logged");
