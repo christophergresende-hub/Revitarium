@@ -2,158 +2,124 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Revitarium – Dashboard (Mobile First)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium • Dashboard</title>
+
 <style>
-    :root {
-        --bg: #0b0e11;
-        --box: #14181d;
-        --btn: #00c7ff;
-        --text: #e8f8ff;
-        --danger: #c72626;
-    }
-    body {
-        background: var(--bg);
-        color: var(--text);
-        margin:0;
-        font-family: Arial, sans-serif;
-        padding:16px;
-    }
-    .container {
-        max-width:540px;
-        margin:auto;
-        padding:10px;
-        background:var(--box);
-        border-radius:14px;
-    }
-    h1 {
-        font-size:26px;
-        font-weight:bold;
-        margin-bottom:4px;
-        text-align:center;
-    }
-    p { text-align:center; opacity:.7; font-size:14px; margin-top:0; }
-    input, button {
-        width:100%;
-        padding:14px;
-        margin:8px 0;
-        border-radius:10px;
-        border:none;
-        font-size:16px;
-    }
-    input {
-        background:#0f1318;
-        color:white;
-    }
-    button {
-        background:var(--btn);
-        color:#00222e;
-        font-weight:bold;
-    }
-    button:active { opacity:0.7; }
+:root{
+  --bg:#0b0e11;--box:#14181d;--text:#e8f8ff;--btn:#008cff;--danger:#c72626;
+}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial, sans-serif;padding:20px;
+}
+.container{
+  max-width:540px;margin:auto;background:var(--box);
+  padding:20px;border-radius:14px;
+}
+h1{font-size:26px;margin:0 0 8px;text-align:center;}
+p{text-align:center;opacity:.7;margin:0 0 20px;font-size:14px;}
 
-    /* BOTÕES EM GRID (MOBILE FIRST) */
-    .grid {
-        display:grid;
-        grid-template-columns:1fr;
-        gap:10px;
-        margin-top:14px;
-    }
-    @media(min-width:450px){
-        .grid { grid-template-columns:1fr 1fr; }
-    }
+input,button{
+ width:100%;padding:14px;border-radius:10px;border:none;margin:8px 0;
+ font-size:16px;
+}
+input{background:#0f1318;color:white;}
+button{background:var(--btn);font-weight:bold;color:white;}
+button:active{opacity:.7;}
 
-    .logout {
-        background: var(--danger);
-        margin-top:14px;
-    }
+.grid{display:grid;gap:10px;margin-top:14px;}
+@media(min-width:450px){.grid{grid-template-columns:1fr 1fr;}}
 
-    #output {
-        margin-top:16px;
-        background:black;
-        padding:16px;
-        border-radius:10px;
-        font-size:13px;
-        min-height:100px;
-        color:#9dffa4;
-        white-space:pre-wrap;
-        overflow-x:auto;
-    }
+.logout{background:var(--danger);margin-top:10px;}
+
+#output{
+ background:black;color:#9dffa4;padding:16px;border-radius:10px;
+ min-height:120px;margin-top:20px;white-space:pre-wrap;overflow:auto;
+}
 </style>
 </head>
+
 <body>
 
+<!-- BLOQUEIO DE ACESSO SEM LOGIN -->
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
+   window.location.href = "index.html";
 }
 </script>
 
 <div class="container">
-    <h1>Revitarium</h1>
-    <p>Dashboard Clínico • Mobile First</p>
+ <h1>Revitarium</h1>
+ <p>Dashboard Clínico (Mobile First)</p>
 
-    <input id="patientId" placeholder="ID do Paciente (ex: 123)">
+ <input id="patientId" placeholder="ID do Paciente (ex: 123)">
 
-    <div class="grid">
-        <button onclick="novaAnalise()">Nova Análise</button>
-        <button onclick="verDashboard()">Dashboard</button>
-        <button onclick="verEvolucao()">Evolução</button>
-        <button onclick="previsaoClinica()">Previsão</button>
-        <button onclick="gerarPDF()">Gerar PDF</button>
-    </div>
+ <div class="grid">
+   <button onclick="novaAnalise()">Nova Análise</button>
+   <button onclick="verDashboard()">Dashboard</button>
+   <button onclick="verEvolucao()">Evolução</button>
+   <button onclick="previsaoClinica()">Previsão Clínica</button>
+   <button onclick="gerarPDF()">Gerar PDF</button>
+ </div>
 
-    <button class="logout" onclick="logout()">Sair</button>
+ <button class="logout" onclick="logout()">Sair</button>
 
-    <div id="output">Aguardando...</div>
+ <pre id="output">Aguardando...</pre>
 </div>
 
 <script>
 const API = "https://revitarium.onrender.com";
 
-function getId(){
-    const id = document.getElementById("patientId").value.trim();
-    if(!id){ log("ERRO: informe um ID."); return null; }
-    return id;
+function log(x){
+ document.getElementById("output").innerText = 
+ typeof x === "string" ? x : JSON.stringify(x,null,2);
 }
-function log(x){ document.getElementById("output").innerText = JSON.stringify(x,null,2); }
+
+function getId(){
+ const id = document.getElementById("patientId").value.trim();
+ if(!id){ log("ERRO: Informe o ID do paciente."); return null; }
+ return id;
+}
 
 function novaAnalise(){
-    const id = getId(); if(!id) return;
-    fetch(`${API}/workflow/analyze/v4?patient_id=${id}`,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify([
-            {"vertebra":"C5","angle":3},
-            {"vertebra":"T8","angle":14},
-            {"vertebra":"L4","angle":28}
-        ])
-    }).then(r=>r.json()).then(log);
+ const id = getId(); if(!id) return;
+ fetch(`${API}/workflow/analyze/v4?patient_id=${id}`, {
+   method:"POST", headers:{"Content-Type":"application/json"},
+   body:JSON.stringify([
+     {"vertebra":"C5","angle":3},
+     {"vertebra":"T8","angle":14},
+     {"vertebra":"L4","angle":28}
+   ])
+ }).then(r=>r.json()).then(log).catch(e=>log("Erro: "+e));
 }
 
 function verDashboard(){
-    const id = getId(); if(!id) return;
-    fetch(`${API}/workflow/patient/${id}/dashboard`).then(r=>r.json()).then(log);
+ const id = getId(); if(!id) return;
+ fetch(`${API}/workflow/patient/${id}/dashboard`)
+ .then(r=>r.json()).then(log).catch(e=>log("Erro: "+e));
 }
 
 function verEvolucao(){
-    const id = getId(); if(!id) return;
-    fetch(`${API}/workflow/patient/${id}/evolution`).then(r=>r.json()).then(log);
+ const id = getId(); if(!id) return;
+ fetch(`${API}/workflow/patient/${id}/evolution`)
+ .then(r=>r.json()).then(log).catch(e=>log("Erro: "+e));
 }
 
 function previsaoClinica(){
-    const id = getId(); if(!id) return;
-    fetch(`${API}/workflow/patient/${id}/predict`).then(r=>r.json()).then(log);
+ const id = getId(); if(!id) return;
+ fetch(`${API}/workflow/patient/${id}/predict`)
+ .then(r=>r.json()).then(log).catch(e=>log("Erro: "+e));
 }
 
 function gerarPDF(){
-    const id = getId(); if(!id) return;
-    window.open(`${API}/workflow/patient/${id}/report/pdf`,"_blank");
+ const id = getId(); if(!id) return;
+ window.open(`${API}/workflow/patient/${id}/report/pdf`,"_blank");
 }
 
 function logout(){
-    localStorage.removeItem("revitarium_logged");
-    window.location.href = "index.html";
+ localStorage.removeItem("revitarium_logged");
+ window.location.href = "index.html";
 }
 </script>
 
