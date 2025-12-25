@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium Dashboard • A</title>
+<style>
+body{margin:0;background:#0a0a0a;color:white;font-family:Arial;padding:20px;}
+h1{font-size:26px;font-weight:bold;margin-bottom:6px;color:#00C9FF;}
+input,button{width:100%;padding:14px;border-radius:8px;border:none;font-size:16px;margin-bottom:12px;}
+input{background:#1b1b1b;color:white;}
+button{background:#0090ff;color:white;font-weight:bold;}
+#out{background:#000;padding:16px;color:#00ff00;border-radius:8px;font-size:14px;min-height:80px;}
+.card{background:#111;padding:20px;border-radius:14px;margin-bottom:20px;border:1px solid #1e1e1e;}
+</style>
+<script>
+const API="https://revitarium.onrender.com";
+async function call(r){
+ const id=document.getElementById("pid").value;
+ const res=await fetch(`${API}${r}${id}`);document.getElementById("out").innerText=await res.text();
+}
+</script>
+</head>
+<body>
+<h1>Revitarium • Dashboard A</h1>
+<div class="card">
+<input id="pid" placeholder="ID do Paciente (ex: 123)">
+<button onclick='call("/workflow/patient/")'>Ver Dashboard</button>
+<button onclick='call("/workflow/patient/")'>Evolução Longitudinal</button>
+<button onclick='call("/workflow/patient/")'>Previsão Clínica</button>
+<button onclick='call("/workflow/patient/")'>Gerar PDF Clínico</button>
+</div>
+<div id="out">Aguardando...</div>
+</body>
+</html>
