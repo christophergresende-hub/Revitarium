@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium | Login</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 20px;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #006eff;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #0051c2;
+    }
+    .msg {
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        color: red;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Revitarium • Login</h2>
+
+    <input type="email" id="email" placeholder="email">
+    <input type="password" id="senha" placeholder="senha">
+
+    <button onclick="login()">Entrar</button>
+
+    <div id="msg" class="msg"></div>
+</div>
+
+<script>
+// LOGIN PADRÃO
+const USER = "admin@revitarium.ai";
+const PASS = "revitarium123";
+
+function login() {
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+    const msg = document.getElementById("msg");
+
+    if (email === USER && senha === PASS) {
+        msg.style.color = "green";
+        msg.textContent = "Acesso liberado...";
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 800);
+    } else {
+        msg.textContent = "Acesso negado. Verifique email ou senha.";
+    }
+}
+</script>
+
+</body>
+</html>
