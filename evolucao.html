@@ -3,97 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evolução Clínica – Revitarium</title>
+<title>Evolução Clínica • Revitarium</title>
+
 <style>
-    body {
-        background:#0c0c0c; margin:0; font-family: Arial, sans-serif; color:white;
-    }
-    header {
-        background:#8A0000;
-        padding:18px;
-        text-align:center;
-        font-size:1.3rem;
-        font-weight:bold;
-    }
-    .container {
-        padding:22px;
-    }
-    input, button {
-        width:100%;
-        padding:16px;
-        font-size:1rem;
-        border-radius:10px;
-        border:none;
-        margin:10px 0;
-    }
-    input {
-        background:#111;
-        color:white;
-    }
-    .btn {
-        background:#b40000;
-        color:white;
-        font-weight:bold;
-    }
-    .btn-back {
-        background:#444;
-        color:white;
-        font-weight:bold;
-    }
-    .box {
-        background:#111;
-        padding:18px;
-        border-radius:10px;
-        margin-top:20px;
-        white-space:pre-wrap;
-        font-family:monospace;
-        font-size:.95rem;
-    }
+body{font-family:Arial;margin:0;background:#121212;color:white;padding:20px;}
+.container{max-width:430px;margin:auto;background:#1e1e1e;border-radius:14px;padding:22px;}
+input,button{width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:8px;border:none;}
+button{background:#3b82f6;color:white;font-weight:bold;}
+button:hover{background:#2563eb;}
+.card{background:#292929;padding:15px;border-radius:10px;margin-top:18px;}
+.tag{padding:4px 10px;border-radius:6px;font-size:14px;font-weight:bold;display:inline-block;margin-top:4px;}
+.verde{background:#16a34a;color:white;}
+.amarelo{background:#eab308;color:black;}
+.vermelho{background:#dc2626;color:white;}
+.score-box{font-size:20px;font-weight:bold;margin-bottom:6px;}
+.delta{font-size:18px;margin:6px 0;}
+footer{text-align:center;margin-top:25px;opacity:.6;}
 </style>
 </head>
+
 <body>
 
-<header>📈 Evolução Clínica</header>
-
-<div class="container">
-
-    <h2>Consultar evolução do paciente</h2>
-    <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
-
-    <button class="btn" id="consultar">Consultar Evolução</button>
-    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar</button>
-
-    <div id="resposta" class="box">Aguardando busca...</div>
-
-</div>
-
 <script>
-/* BLOQUEIO SEM LOGIN */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
+</script>
 
-/* CONSULTA API */
-document.getElementById("consultar").onclick = async () => {
-    const pid = document.getElementById("pid").value.trim();
-    const url = `https://revitarium.onrender.com/workflow/patient/${pid}/evolution`;
-    const box = document.getElementById("resposta");
+<div class="container">
+<h2>Evolução Clínica do Paciente</h2>
+<label>ID do Paciente</label>
+<input type="text" id="patientId" value="123">
 
-    if(!pid){
-        box.textContent = "Erro: informe um patient_id.";
+<button onclick="consultarEvolucao()">Consultar Evolução</button>
+<button style="background:#444" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+
+<div id="result"></div>
+</div>
+
+<footer>Revitarium • Sistema de Análise Biomecânica</footer>
+
+<script>
+async function consultarEvolucao(){
+    const id = document.getElementById("patientId").value.trim();
+    const url = `https://revitarium.onrender.com/workflow/patient/${id}/evolution`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // Se não houver evolução suficiente
+    if(data.message){
+        document.getElementById("result").innerHTML = `
+            <div class="card">
+                <div class="score-box">Sem dados suficientes para evolução</div>
+                <p>Realize mais avaliações para habilitar projeções.</p>
+            </div>
+        `;
         return;
     }
 
-    box.textContent = "Buscando dados...";
+    const trendClass = data.trend === "melhora" ? "verde" :
+                       data.trend === "piora"   ? "vermelho" : "amarelo";
 
-    try{
-        const r = await fetch(url);
-        const json = await r.json();
-        box.textContent = JSON.stringify(json, null, 2);
-    }catch(e){
-        box.textContent = "Erro ao conectar com a API.";
-    }
-};
+    document.getElementById("result").innerHTML = `
+        <div class="card">
+            <div class="score-box">Score Atual: <b>${data.current_score}</b></div>
+            <div class="score-box">Score Anterior: <b>${data.previous_score}</b></div>
+            <div class="delta">Delta: <b>${data.delta}</b></div>
+            <div class="tag ${trendClass}">${data.trend.toUpperCase()}</div>
+        </div>
+        <div class="card">
+            <h4>Histórico Completo</h4>
+            <pre style="white-space:pre-wrap;">${JSON.stringify(data.history, null, 2)}</pre>
+        </div>
+    `;
+}
 </script>
 
 </body>
