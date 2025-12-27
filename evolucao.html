@@ -5,23 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Revitarium • Evolução Clínica</title>
 
-<!-- Gráfico Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+    :root{
+        --primaria: #151e26;       /* nova cor */
+        --secundaria: #1f2b35;
+        --fundo: #f4f9ff;
+        --texto: #ffffff;
+        --azulClaro: #d6e9f7;
+    }
+
     body {
         margin: 0;
-        background: #f4f9ff;
+        background: var(--fundo);
         font-family: Arial, sans-serif;
-        color: #003b63;
+        color: var(--primaria);
     }
     header {
-        background: #0068a8;
+        background: var(--primaria);
         padding: 20px;
         text-align: center;
         font-size: 1.4rem;
         font-weight: bold;
-        color: white;
+        color: var(--texto);
     }
     .container {
         padding: 20px;
@@ -36,11 +43,11 @@
     }
     input {
         background: white;
-        border: 2px solid #d6e9f7;
+        border: 2px solid var(--azulClaro);
     }
     .btn-primary {
-        background: #0076c5;
-        color: white;
+        background: var(--primaria);
+        color: var(--texto);
         font-weight: bold;
     }
     .card {
@@ -52,18 +59,17 @@
     }
     #resultado {
         background: #e9f5ff;
-        border-left: 4px solid #0076c5;
+        border-left: 4px solid var(--primaria);
         padding: 15px;
         border-radius: 8px;
         font-family: monospace;
         white-space: pre-wrap;
         margin-top: 10px;
     }
-    /* MENU APP FIXO */
     .nav-bottom {
         position: fixed;
         bottom: 0; left: 0; right: 0;
-        background: #003b63;
+        background: var(--primaria);
         display: flex;
         justify-content: space-around;
         padding: 12px 0;
@@ -71,7 +77,7 @@
     .nav-bottom button {
         background: none;
         border: none;
-        color: white;
+        color: var(--texto);
         font-size: 1rem;
         font-weight: bold;
     }
@@ -80,7 +86,7 @@
 
 <body>
 
-<header>Evolução Clínica • Hospital Premium</header>
+<header>Evolução Clínica</header>
 
 <div class="container">
 
@@ -101,7 +107,6 @@
 
 </div>
 
-<!-- NAVEGAÇÃO INFERIOR -->
 <div class="nav-bottom">
     <button onclick="window.location.href='dashboard.html'">🏥 Dashboard</button>
     <button onclick="window.location.href='evolucao.html'">📈 Evolução</button>
@@ -109,7 +114,6 @@
 </div>
 
 <script>
-/* Proteção de acesso */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
@@ -117,7 +121,6 @@ if(localStorage.getItem("revitarium_logged") !== "yes"){
 const ctx = document.getElementById("graficoEvolucao").getContext("2d");
 let grafico;
 
-/* Carregar evolução */
 document.getElementById("buscarDados").onclick = async () => {
     const id = document.getElementById("patientId").value.trim();
     const box = document.getElementById("resultado");
@@ -129,7 +132,6 @@ document.getElementById("buscarDados").onclick = async () => {
     try {
         const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
         const data = await res.json();
-
         box.textContent = JSON.stringify(data, null, 2);
 
         const scores = data.history.map(item => item.global_score);
@@ -144,8 +146,8 @@ document.getElementById("buscarDados").onclick = async () => {
                 datasets: [{
                     label: "Score Clínico",
                     data: scores,
-                    borderColor: "#0076c5",
-                    backgroundColor: "rgba(0,118,197,0.15)",
+                    borderColor: "#151e26",
+                    backgroundColor: "rgba(21, 30, 38, 0.20)",
                     borderWidth: 3,
                     pointRadius: 4,
                     tension: 0.3
@@ -154,13 +156,11 @@ document.getElementById("buscarDados").onclick = async () => {
             options: {
                 responsive: true,
                 animation: { duration: 1200 },
-                scales: {
-                    y: { beginAtZero: false }
-                }
+                scales: { y: { beginAtZero: false } }
             }
         });
 
-    } catch(e) {
+    } catch {
         box.textContent = "Erro ao consultar API ou paciente inexistente.";
     }
 };
