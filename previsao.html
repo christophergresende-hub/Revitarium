@@ -2,69 +2,50 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium • Hospital Premium</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Revitarium • Sports Science Lab</title>
 <style>
 body{
-    margin:0; background:#ffffff; font-family:Arial, sans-serif; color:#003B64;
+    margin:0;background:#e8ecf1;font-family:Arial, sans-serif;color:#111;
 }
 header{
-    background:#0077B6; color:white; padding:18px; text-align:center;
-    font-size:1.3rem; font-weight:bold;
+    background:#0B1C36;color:white;padding:20px;text-align:center;
+    font-size:1.4rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
 }
-.container{
-    padding:20px; max-width:600px; margin:auto;
-}
+.container{padding:20px;max-width:650px;margin:auto;}
 input,button{
-    width:100%; padding:15px; margin:8px 0; font-size:1rem; border-radius:10px;
+    width:100%;padding:15px;margin:8px 0;font-size:1rem;border-radius:12px;
 }
-input{
-    border:1px solid #bcd7e9; background:#f8fcff;
-}
-button{
-    background:#0077B6; color:white; border:none; font-weight:bold;
-}
+input{background:white;border:2px solid #003566;font-weight:bold;}
+button{background:#003566;color:white;border:none;font-weight:bold;}
 .card{
-    margin-top:18px; background:#EBF7FF; padding:15px; border-radius:12px; border-left:6px solid #0077B6;
-}
-.nav{
-    display:flex; gap:6px; margin-top:20px;
-}
-.nav button{
-    flex:1; background:#013B64; padding:14px; border:none; color:white; border-radius:10px;
+    background:white;padding:18px;margin-top:18px;border-radius:14px;
+    border-left:6px solid #003566;box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 </style>
 </head>
 <body>
 
-<header>Hospital Premium</header>
+<header>Sports Science • High Performance Lab</header>
+
 <div class="container">
+    <h2>Análise de Projeção</h2>
+    <input id="patientId" placeholder="ID do Atleta">
+    <button id="btnPrever">Gerar Previsão de Performance</button>
 
-<h2>Consultar Previsão</h2>
-<input id="patientId" placeholder="ID do Paciente (ex: 123)">
-<button id="btnPrever">Prever Condição Clínica</button>
-
-<div id="resultado" class="card">Aguardando dados...</div>
-
-<div class="nav">
-    <button onclick="location.href='dashboard.html'">Dashboard</button>
-    <button onclick="location.href='evolucao.html'">Evolução</button>
-    <button onclick="location.href='previsao.html'">Previsão</button>
-</div>
-
+    <div id="resultado" class="card">Aguardando dados biomecânicos...</div>
 </div>
 
 <script>
 if(localStorage.getItem("revitarium_logged")!=="yes") location.href="index.html";
 
-document.getElementById("btnPrever").onclick = async ()=>{
-    const id=document.getElementById("patientId").value.trim();
-    const out=document.getElementById("resultado");
-    if(!id) return out.textContent="Informe um ID válido.";
+btnPrever.onclick=async()=>{
+    const id=patientId.value.trim();
+    if(!id) return resultado.textContent="Informe o ID do atleta.";
 
-    out.textContent="Carregando...";
+    resultado.textContent="Calculando projeção biomecânica...";
     const r=await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
-    out.textContent=JSON.stringify(await r.json(),null,2);
+    resultado.textContent=JSON.stringify(await r.json(),null,2);
 };
 </script>
 </body>
