@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium Login</title>
+<title>Revitarium Login v8</title>
 <style>
 body{background:#0a0a0a;color:white;font-family:Arial;margin:0;padding:0}
-.container{margin:0 auto;margin-top:140px;width:90%;max-width:380px;text-align:center}
-input,button{width:100%;padding:14px;margin:8px 0;border:none;border-radius:8px;font-size:1rem}
-input{background:#111;color:white}
+.container{margin:0 auto;margin-top:120px;width:90%;max-width:380px;text-align:center}
+input,button,select{width:100%;padding:14px;margin:8px 0;border:none;border-radius:8px;font-size:1rem}
+input,select{background:#111;color:white}
 button{background:#007bff;color:white;font-weight:bold}
 </style>
 </head>
@@ -16,6 +16,12 @@ button{background:#007bff;color:white;font-weight:bold}
 
 <div class="container">
 <h2>Login Revitarium</h2>
+
+<select id="perfil">
+<option value="clinico">Clínico / Profissional</option>
+<option value="paciente">Paciente</option>
+</select>
+
 <input id="email" placeholder="Email ou ID" />
 <input type="password" id="senha" placeholder="Senha" />
 <button id="loginBtn">Entrar</button>
@@ -26,9 +32,18 @@ button{background:#007bff;color:white;font-weight:bold}
 document.getElementById("loginBtn").onclick = () => {
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
+    const perfil = document.getElementById("perfil").value;
 
-    if(email === "123" && senha === "123"){
+    // Contas de teste
+    const users = {
+        "clinico": { email:"123", senha:"123" },
+        "paciente":{ email:"pac", senha:"123" }
+    };
+
+    if(email === users[perfil].email && senha === users[perfil].senha){
         localStorage.setItem("revitarium_logged","yes");
+        localStorage.setItem("revitarium_role",perfil);
+        localStorage.setItem("revitarium_user",email);
         window.location.href = "dashboard.html";
     } else {
         document.getElementById("msg").textContent = "Acesso negado.";
