@@ -76,7 +76,10 @@
     <button class="btn" id="btnDashboard">📊 Dashboard</button>
     <button class="btn" id="btnEvolucao">📈 Evolução</button>
     <button class="btn" id="btnPrevisao">🔮 Previsão</button>
-    <button class="btn" id="btnPDF">📄 PDF (em breve)</button>
+
+    <!-- ESTE É O BOTÃO NOVO, COMO VOCÊ PEDIU -->
+    <button id="btnPDF" class="btn">Gerar PDF Clínico</button>
+
     <button class="btn-danger" id="btnLogout">⛔ Sair</button>
 
     <h2 class="section-title">Retorno da API</h2>
@@ -85,41 +88,46 @@
 </div>
 
 <script>
-/* ============================
+/* =====================================================
    BLOQUEIO DE ACESSO SEM LOGIN
-===============================*/
+=====================================================*/
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-/* ============================
-        NAVEGAÇÃO
-===============================*/
+/* =====================================================
+        NAVEGAÇÃO ENTRE PÁGINAS
+=====================================================*/
 document.getElementById("btnDashboard").onclick = () => {
     window.location.href = "dashboard.html";
 };
-
 document.getElementById("btnEvolucao").onclick = () => {
     window.location.href = "evolucao.html";
 };
-
 document.getElementById("btnPrevisao").onclick = () => {
     window.location.href = "previsao.html";
 };
-
-document.getElementById("btnPDF").onclick = () => {
-    alert("Módulo PDF em construção");
-};
-
 document.getElementById("btnLogout").onclick = () => {
     localStorage.removeItem("revitarium_logged");
     window.location.href = "index.html";
 };
 
+/* =====================================================
+      GERAR PDF CLÍNICO (CÓDIGO QUE VOCÊ PEDIU)
+=====================================================*/
+document.getElementById("btnPDF").onclick = async () => {
+    const patientId = prompt("Digite o ID do paciente para gerar PDF:");
+    if(!patientId) return;
 
-/* ============================
-     ENVIO DE ANÁLISE PARA API
-===============================*/
+    const pdfUrl = `https://revitarium.onrender.com/workflow/patient/${patientId}/report/pdf`;
+
+    // abre e baixa automaticamente
+    window.open(pdfUrl, "_blank");
+};
+
+/* =====================================================
+      ENVIO DE ANÁLISE PARA API
+=====================================================*/
 document.getElementById("enviarAnalise").onclick = async () => {
     const vertebra = document.getElementById("vertebra").value.trim();
     const angulo = document.getElementById("angulo").value.trim();
