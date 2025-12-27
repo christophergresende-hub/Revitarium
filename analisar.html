@@ -1,108 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium – Análise Clínica PRO</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #0c0c0c;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+    header {
+        background: #002a52;
+        padding: 18px;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    .container {
+        padding: 20px;
+    }
+    input, button {
+        width: 100%;
+        padding: 15px;
+        margin: 8px 0;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+    }
+    input {
+        background: #111;
+        color: #fff;
+    }
+    .btn { background: #007bff; color: white; font-weight: bold; }
+    .btn-danger { background: #8B0000; color: white; font-weight: bold; }
+    .region-btn { background: #444; margin-top:4px; font-size:0.9rem; }
+    .terminal {
+        background: black;
+        color: #00ff00;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        min-height: 140px;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+    .section-title {
+        margin-top: 35px;
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<header>Revitarium – Análise Clínica PRO (v11)</header>
+
+<div class="container">
+
+    <h2>Inserir vértebras manualmente</h2>
+    <input id="vertebra" type="text" placeholder="Ex: T7">
+    <input id="angulo" type="number" placeholder="Ângulo: 0-40°">
+    <button class="btn" id="addNivel">+ Adicionar nível</button>
+
+    <h2 class="section-title">Preenchimento Rápido por Região</h2>
+    <button class="region-btn" id="btnCervical">👤 Cervical (C1–C7)</button>
+    <button class="region-btn" id="btnToracica">🫁 Torácica (T1–T12)</button>
+    <button class="region-btn" id="btnLombar">🏋️ Lombar (L1–L5)</button>
+    <button class="region-btn" id="btnSacral">⚙ Sacral (S1–S2)</button>
+
+    <h2 class="section-title">Enviar para API</h2>
+    <button class="btn" id="enviar">🚑 Enviar análise → API</button>
+
+    <h2 class="section-title">Consultas Rápidas</h2>
+    <button class="btn" id="btnDashboard">📊 Dashboard</button>
+    <button class="btn" id="btnEvolucao">📈 Evolução</button>
+    <button class="btn" id="btnPrevisao">🔮 Previsão Clínica</button>
+    <button class="btn" id="btnPDF">📄 Gerar PDF Clínico</button>
+    <button class="btn-danger" id="btnLogout">⛔ Sair</button>
+
+    <h2 class="section-title">Lista de níveis ativos</h2>
+    <div id="lista" class="terminal">Nenhum nível adicionado ainda.</div>
+
+    <h2 class="section-title">Terminal da API</h2>
+    <div id="terminal" class="terminal">Aguardando ação...</div>
+
+</div>
+
 <script>
 /* ============================================================
-   🔐 BLOQUEIO DE ACESSO
+   🔐 BLOQUEIO DE ACESSO SEM LOGIN
 ============================================================ */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
 /* ============================================================
-   📌 LISTA DE VÉRTEBRAS VÁLIDAS (AUTO-SUGESTÃO)
+   📌 LISTA DE VÉRTEBRAS POR REGIÃO
 ============================================================ */
-const vertebrasValidas = [
-    "C1","C2","C3","C4","C5","C6","C7",
-    "T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12",
-    "L1","L2","L3","L4","L5",
-    "S1","S2"
-];
+const regioes = {
+    cervical: ["C1","C2","C3","C4","C5","C6","C7"],
+    toracica: ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"],
+    lombar: ["L1","L2","L3","L4","L5"],
+    sacral: ["S1","S2"]
+};
 
-let niveis = [];
+const niveis = [];
 const lista = document.getElementById("lista");
 const terminal = document.getElementById("terminal");
 const inputV = document.getElementById("vertebra");
 const inputA = document.getElementById("angulo");
 
+
 /* ============================================================
-   ✍ AUTO-SUGESTÃO EM TEMPO REAL
+   🎯 AUTO-SUGESTÃO AO DIGITAR
 ============================================================ */
 inputV.addEventListener("input", () => {
     const texto = inputV.value.toUpperCase().trim();
-    const sugestoes = vertebrasValidas.filter(v => v.startsWith(texto));
-    if(sugestoes.length > 0){
-        lista.textContent = "Sugestões: " + sugestoes.join(", ");
-    }
+    const matches = Object.values(regioes).flat().filter(v => v.startsWith(texto));
+    lista.textContent = matches.length ? "Sugestões: " + matches.join(", ") : "Sem sugestões";
 });
 
+
 /* ============================================================
-   🚨 VALIDAÇÃO CLÍNICA DO ÂNGULO
+   🧠 BOTÕES DE PREENCHIMENTO POR REGIÃO
 ============================================================ */
-inputA.addEventListener("input", () => {
-    const a = Number(inputA.value);
-    if(a >= 30) terminal.textContent = "⚠ Ângulo grave – alto risco";
-    else if(a >= 20) terminal.textContent = "⚠ moderado – monitorar";
-    else terminal.textContent = "Ângulo dentro do fluxo clínico";
-});
+function preencherRegiao(regiao, anguloPadrao = 8){
+    niveis.length = 0;
+    regioes[regiao].forEach(v => niveis.push({ vertebra: v, angle: anguloPadrao }));
+    lista.textContent = JSON.stringify(niveis, null, 2);
+    terminal.textContent = `✔ Região ${regiao.toUpperCase()} carregada (${regioes[regiao].length} níveis).`;
+}
+
+document.getElementById("btnCervical").onclick = () => preencherRegiao("cervical", 6);
+document.getElementById("btnToracica").onclick = () => preencherRegiao("toracica", 10);
+document.getElementById("btnLombar").onclick = () => preencherRegiao("lombar", 12);
+document.getElementById("btnSacral").onclick = () => preencherRegiao("sacral", 5);
+
 
 /* ============================================================
-   ➕ ADICIONAR NÍVEL
+   ➕ ADICIONAR MANUAL
 ============================================================ */
 document.getElementById("addNivel").onclick = () => {
     const v = inputV.value.toUpperCase().trim();
     const a = Number(inputA.value);
 
-    if(!vertebrasValidas.includes(v)){
-        terminal.textContent = "❌ Vért. inválida – exemplo correto: T7 / L3 / C5";
-        return;
-    }
-    if(!a && a !== 0){
-        terminal.textContent = "❌ Ângulo inválido";
-        return;
-    }
+    const permitido = Object.values(regioes).flat();
+    if(!permitido.includes(v)) return terminal.textContent = "❌ Vért. inválida (C1–S2).";
 
     niveis.push({ vertebra:v, angle:a });
     lista.textContent = JSON.stringify(niveis, null, 2);
     inputV.value = ""; inputA.value = "";
 };
 
+
 /* ============================================================
-   🚑 ENVIAR PARA A API (MÚLTIPLO)
+   🚑 ENVIAR PARA API
 ============================================================ */
 document.getElementById("enviar").onclick = async () => {
-    if(niveis.length === 0){
-        terminal.textContent = "⚠ Nenhum nível para enviar";
-        return;
-    }
+    if(!niveis.length) return terminal.textContent = "⚠ Nenhum nível para enviar.";
 
-    terminal.textContent = "🔄 Enviando análise...";
+    terminal.textContent = "🔄 Enviando dados...";
 
-    try{
-        const res = await fetch("https://revitarium.onrender.com/workflow/analyze/v4?patient_id=123", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(niveis)
-        });
+    const res = await fetch("https://revitarium.onrender.com/workflow/analyze/v4?patient_id=123", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(niveis)
+    });
 
-        const data = await res.json();
-        terminal.textContent = JSON.stringify(data, null, 2);
-
-    }catch(err){
-        terminal.textContent = "❌ Erro ao conectar com a API.";
-    }
+    terminal.textContent = JSON.stringify(await res.json(), null, 2);
 };
 
-/* ============================================================
-   📄 PDF
-============================================================ */
-document.getElementById("btnPDF").onclick = async () => {
-    const id = prompt("📄 ID do paciente?");
-    if(!id) return;
-    window.open(`https://revitarium.onrender.com/workflow/patient/${id}/report/pdf`, "_blank");
-};
 
 /* ============================================================
-   ↩ VOLTAR
+   📄 PDF CLÍNICO
 ============================================================ */
-document.getElementById("voltar").onclick = () => {
-    window.location.href = "dashboard.html";
+document.getElementById("btnPDF").onclick = () => {
+    const id = prompt("ID do paciente:");
+    if(id) window.open(`https://revitarium.onrender.com/workflow/patient/${id}/report/pdf`, "_blank");
+};
+
+
+/* ============================================================
+   🔁 NAVEGAÇÃO
+============================================================ */
+document.getElementById("btnDashboard").onclick = () => location.href = "dashboard.html";
+document.getElementById("btnEvolucao").onclick = () => location.href = "evolucao.html";
+document.getElementById("btnPrevisao").onclick = () => location.href = "previsao.html";
+document.getElementById("btnLogout").onclick = () => {
+    localStorage.removeItem("revitarium_logged");
+    location.href = "index.html";
 };
 </script>
+
+</body>
+</html>
