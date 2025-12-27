@@ -3,137 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium – Dashboard Clínico (v9)</title>
+<title>Revitarium – Dashboard Clínico Premium (v13)</title>
 
 <style>
-    body {
-        margin: 0;
-        background: #0B0B0B;
-        font-family: Arial, sans-serif;
-        color: white;
-    }
-    header {
-        background: #003B72;
-        padding: 22px;
-        text-align: center;
-        font-size: 1.4rem;
-        font-weight: bold;
-        letter-spacing: 0.4px;
-    }
-    .container {
-        padding: 22px;
-        max-width: 700px;
-        margin: auto;
-    }
-    h2 {
-        font-weight: bold;
-        margin-top: 25px;
-        font-size: 1.25rem;
-    }
-    input, button {
-        width: 100%;
-        padding: 15px;
-        margin: 8px 0;
-        border-radius: 10px;
-        border: none;
-        font-size: 1rem;
-    }
-    input { background: #111; color: #fff; }
-    .btn-primary { background: #0078FF; font-weight: bold; }
-    .btn-secondary { background: #1B1B1B; border: 1px solid #333; }
-    .btn-danger { background: #B70000; font-weight: bold; }
-    .card {
-        background: #0F0F0F;
-        padding: 18px;
-        margin: 12px 0;
-        border-radius: 14px;
-        border: 1px solid #1F1F1F;
-    }
-    .api-box {
-        background: black;
-        color: #00FF00;
-        font-family: monospace;
-        padding: 18px;
-        border-radius: 10px;
-        min-height: 120px;
-        margin-top: 20px;
-        white-space: pre-wrap;
-    }
+:root {
+    --bg: #050505;
+    --card: #0D0D0D;
+    --border: #1C1C1C;
+    --text: #E6E6E6;
+    --accent: #007BFF;
+    --accent-hover: #0A8CFF;
+    --danger: #B30000;
+    --terminal-bg: #000;
+    --terminal-text: #00FF88;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+header {
+    background: linear-gradient(90deg, #003B72, #00579E);
+    padding: 26px 18px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid #001F36;
+}
+
+.container {
+    max-width: 760px;
+    margin: auto;
+    padding: 20px;
+}
+
+h2.section-title {
+    margin: 30px 0 14px;
+    font-size: 1.35rem;
+    font-weight: bold;
+    border-left: 4px solid var(--accent);
+    padding-left: 10px;
+}
+
+.card {
+    background: var(--card);
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    box-shadow: 0 0 14px rgba(0,0,0,0.45);
+}
+
+input, button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    margin: 10px 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+input {background: #111; color: var(--text);}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    font-weight: bold;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-secondary {
+    background: #151515;
+    border: 1px solid #2A2A2A;
+}
+
+.btn-danger {
+    background: var(--danger);
+    font-weight: bold;
+}
+
+.api-box {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    font-family: monospace;
+    padding: 18px;
+    border-radius: 12px;
+    min-height: 140px;
+    white-space: pre-wrap;
+    border: 1px solid #003300;
+}
+
+.status {
+    font-size: 0.85rem;
+    color: #00FF6A;
+    margin-top: -6px;
+}
 </style>
 </head>
 
 <body>
-<header>Revitarium – Dashboard Clínico (v9)</header>
+<header>Revitarium • Dashboard Clínico Premium (v13)</header>
 
 <div class="container">
 
+    <h2 class="section-title">Paciente</h2>
     <div class="card">
-        <h2>ID do Paciente</h2>
-        <input type="text" id="patientId" placeholder="Ex: 123">
+        <input type="text" id="patientId" placeholder="ID do Paciente (Ex: 123)">
     </div>
 
+    <h2 class="section-title">Nova Análise</h2>
     <div class="card">
-        <h2>Inserir Nível Vertebral</h2>
-        <input type="text" id="vertebra" placeholder="Ex: T7">
-        <input type="number" id="angulo" placeholder="Ex: 12 graus">
+        <input type="text" id="vertebra" placeholder="Nível Vertebral (Ex: T7)">
+        <input type="number" id="angulo" placeholder="Ângulo (Ex: 12 graus)">
         <button class="btn-primary" id="enviarAnalise">🚑 Enviar para Análise</button>
+        <div class="status" id="statusMsg">Aguardando envio...</div>
     </div>
 
-    <h2>Consultas Rápidas</h2>
-    <button class="btn-primary" id="btnDashboardGeral">📊 Dashboard Geral</button>
-    <button class="btn-primary" id="btnEvolucao">📈 Evolução</button>
-    <button class="btn-primary" id="btnPrevisao">🔮 Previsão</button>
-    <button class="btn-secondary" id="btnPDF">📄 PDF Clínico</button>
-    <button class="btn-danger" id="btnLogout">⛔ Sair</button>
+    <h2 class="section-title">Consultas</h2>
+    <div class="card">
+        <button class="btn-primary" id="btnDashboardGeral">📊 Dashboard Geral</button>
+        <button class="btn-primary" id="btnEvolucao">📈 Evolução</button>
+        <button class="btn-primary" id="btnPrevisao">🔮 Previsão</button>
+        <button class="btn-secondary" id="btnPDF">📄 Gerar PDF Clínico</button>
+        <button class="btn-danger" id="btnLogout">⛔ Sair</button>
+    </div>
 
-    <h2>📡 Retorno da API</h2>
-    <div id="terminal" class="api-box">Aguardando...</div>
+    <h2 class="section-title">Retorno da API</h2>
+    <div id="terminal" class="api-box">Aguardando processamento clínico...</div>
 
 </div>
 
 <script>
-/* 🔐 BLOQUEIO */
+/* 🔐 Proteção de acesso */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-/* 📌 Navegação */
-document.getElementById("btnDashboardGeral").onclick = () => location.href = "analisar.html";
-document.getElementById("btnEvolucao").onclick = () => location.href = "evolucao.html";
-document.getElementById("btnPrevisao").onclick = () => location.href = "previsao.html";
+/* 🌐 Ações de Navegação */
+document.getElementById("btnDashboardGeral").onclick = () =>
+    location.href = "analisar.html";
+document.getElementById("btnEvolucao").onclick       = () =>
+    location.href = "evolucao.html";
+document.getElementById("btnPrevisao").onclick       = () =>
+    location.href = "previsao.html";
+
 document.getElementById("btnLogout").onclick = () => {
     localStorage.removeItem("revitarium_logged");
     location.href = "index.html";
 };
 
-/* 🚑 ENVIO PARA A API */
+/* 🚑 Envio clínico para API */
 document.getElementById("enviarAnalise").onclick = async () => {
-    const patient = document.getElementById("patientId").value.trim();
+    const p = document.getElementById("patientId").value.trim();
     const v = document.getElementById("vertebra").value.trim();
     const a = document.getElementById("angulo").value.trim();
-    const terminal = document.getElementById("terminal");
+    const term = document.getElementById("terminal");
+    const status = document.getElementById("statusMsg");
 
-    if(!patient || !v || !a){
-        terminal.textContent = "⚠ Preencha todos os campos.";
+    if(!p || !v || !a){
+        term.textContent = "⚠ Preencha todos os campos!";
+        status.textContent = "Dados incompletos.";
         return;
     }
 
-    terminal.textContent = "⏳ Enviando dados...";
+    status.textContent = "⏳ Enviando para análise clínica...";
+    term.textContent = "Processando...";
 
-    const res = await fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${patient}`, {
+    const res = await fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${p}`, {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify([{vertebra:v, angle:Number(a)}])
     });
 
     const data = await res.json();
-    terminal.textContent = JSON.stringify(data, null, 2);
+    status.textContent = "✔ Resultado recebido.";
+    term.textContent = JSON.stringify(data, null, 2);
 };
 
-/* 📄 PDF CLÍNICO */
+/* 📄 PDF clínico */
 document.getElementById("btnPDF").onclick = () => {
-    const patient = prompt("ID do paciente:");
-    if(patient) window.open(`https://revitarium.onrender.com/workflow/patient/${patient}/report/pdf`);
+    const p = prompt("Digite o ID do paciente:");
+    if(p) window.open(`https://revitarium.onrender.com/workflow/patient/${p}/report/pdf`);
 };
 </script>
 
