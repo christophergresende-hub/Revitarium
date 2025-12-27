@@ -3,47 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Revitarium • Sports Science Lab</title>
+<title>Revitarium • Neuro Biomechanics</title>
 <style>
 body{
-    margin:0;background:#e8ecf1;font-family:Arial, sans-serif;color:#111;
+    margin:0;background:#000;font-family:Arial;color:#0affef;
 }
 header{
-    background:#0B1C36;color:white;padding:20px;text-align:center;
-    font-size:1.4rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    background:#000;padding:22px;text-align:center;
+    font-size:1.5rem;font-weight:bold;color:#0affef;border-bottom:1px solid #0affef;
 }
-.container{padding:20px;max-width:650px;margin:auto;}
+.container{padding:20px;max-width:600px;margin:auto;color:#0affef;}
 input,button{
-    width:100%;padding:15px;margin:8px 0;font-size:1rem;border-radius:12px;
+    width:100%;padding:14px;margin:8px 0;font-size:1rem;border-radius:10px;
 }
-input{background:white;border:2px solid #003566;font-weight:bold;}
-button{background:#003566;color:white;border:none;font-weight:bold;}
+input{
+    background:#0c0c0c;border:1px solid #0affef;color:#0affef;
+}
+button{
+    background:#0affef;color:#000;font-weight:bold;border:none;
+    text-transform:uppercase;letter-spacing:1px;
+}
 .card{
-    background:white;padding:18px;margin-top:18px;border-radius:14px;
-    border-left:6px solid #003566;box-shadow:0 4px 12px rgba(0,0,0,.12);
+    background:#010b0b;border-left:6px solid #0affef;padding:20px;margin-top:20px;
+    border-radius:14px;font-size:0.9rem;color:#0affef;
 }
 </style>
 </head>
 <body>
 
-<header>Sports Science • High Performance Lab</header>
+<header>Neuro-Biomechanics • Predictive Lab</header>
 
 <div class="container">
-    <h2>Análise de Projeção</h2>
-    <input id="patientId" placeholder="ID do Atleta">
-    <button id="btnPrever">Gerar Previsão de Performance</button>
+    <h2>Predição Neurofuncional</h2>
+    <input id="patientId" placeholder="Identificação Neural (ID)">
+    <button id="btnRun">PROCESSAR</button>
 
-    <div id="resultado" class="card">Aguardando dados biomecânicos...</div>
+    <div id="resultado" class="card">Aguardando input neural...</div>
 </div>
 
 <script>
 if(localStorage.getItem("revitarium_logged")!=="yes") location.href="index.html";
 
-btnPrever.onclick=async()=>{
-    const id=patientId.value.trim();
-    if(!id) return resultado.textContent="Informe o ID do atleta.";
+btnRun.onclick = async()=>{
+    const id = patientId.value.trim();
+    if(!id) return resultado.textContent="⚠ ID inválido.";
 
-    resultado.textContent="Calculando projeção biomecânica...";
+    resultado.textContent="⚡ Rodando inferência biomecânica...";
     const r=await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
     resultado.textContent=JSON.stringify(await r.json(),null,2);
 };
