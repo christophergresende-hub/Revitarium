@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium • Previsão iOS Health</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body{
+        margin:0;
+        background:#FAFAFA;
+        font-family:-apple-system, BlinkMacSystemFont, Arial, sans-serif;
+        color:#0A0A0A;
+    }
+    header{
+        background:white;
+        padding:18px;
+        font-size:1.5rem;
+        font-weight:600;
+        text-align:center;
+        border-bottom:1px solid #E6E6E6;
+        position:sticky;top:0;
+    }
+    .container{
+        max-width:480px;
+        padding:22px;
+        margin:auto;
+    }
+
+    input, button{
+        width:100%;
+        padding:14px;
+        font-size:1rem;
+        border-radius:14px;
+        margin-bottom:12px;
+        border:1px solid #D8D8D8;
+    }
+    input{
+        background:white;
+        color:#333;
+    }
+    .btn{
+        background:#007AFF;
+        color:white;
+        font-weight:600;
+        border:none;
+    }
+    .card{
+        padding:18px;
+        background:white;
+        border-radius:18px;
+        margin:20px 0;
+        border:1px solid #EDEDED;
+        box-shadow:0 6px 18px rgba(0,0,0,0.05);
+    }
+    #result{
+        background:#FFFFFF;
+        color:#555;
+        padding:20px;
+        border-radius:14px;
+        border:1px solid #E6E6E6;
+        font-size:.9rem;
+        white-space:pre-wrap;
+    }
+
+    /* NAV estilo iOS */
+    nav{
+        position:fixed;
+        bottom:0;
+        width:100%;
+        background:white;
+        display:flex;
+        justify-content:space-around;
+        border-top:1px solid #E6E6E6;
+        padding:10px 0;
+    }
+    nav button{
+        background:white;
+        border:none;
+        font-size:1rem;
+        font-weight:600;
+        color:#007AFF;
+    }
+</style>
+</head>
+<body>
+
+<header>🔮 Previsão Clínica</header>
+
+<div class="container">
+    <h3 style="font-weight:600;">Identificação</h3>
+    <input id="patientId" placeholder="ID do Paciente (ex: 123)" />
+
+    <button id="predictBtn" class="btn">Gerar Previsão</button>
+
+    <div class="card">
+        <h3 style="margin-top:0;font-weight:600;">📄 Resultado Clínico</h3>
+        <pre id="result">Aguardando previsão...</pre>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0;font-weight:600;">📈 Projeção Biomecânica</h3>
+        <canvas id="evolutionChart" height="220"></canvas>
+    </div>
+</div>
+
+<nav>
+    <button onclick="location.href='dashboard.html'">Dashboard</button>
+    <button onclick="location.href='evolucao.html'">Evolução</button>
+    <button style="color:#FF3B30" onclick="location.href='index.html'">Sair</button>
+</nav>
+
+<script>
+// bloqueio sem login
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href="index.html";
+}
+
+let chart;
+
+document.getElementById("predictBtn").onclick = async () => {
+    const id = document.getElementById("patientId").value.trim();
+    const out = document.getElementById("result");
+
+    if(!id){ out.textContent="Digite o ID do paciente."; return; }
+
+    out.textContent="🔄 Consultando previsão...";
+    
+    try{
+        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
+        const data = await res.json();
+        out.textContent = JSON.stringify(data,null,2);
+
+        const evo = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
+        const hist = await evo.json();
+        const labels = hist.history.map(r => r.timestamp.split("T")[0]);
+        const scores = hist.history.map(r => r.global_score);
+        const projection = data.projecao_score || scores[scores.length-1];
+
+        if(chart){ chart.destroy(); }
+
+        chart = new Chart(document.getElementById("evolutionChart"), {
+            type:"line",
+            data:{
+                labels:[...labels,"PREVISÃO"],
+                datasets:[{
+                    label:"Score Clínico (0-100)",
+                    data:[...scores,projection],
+                    borderColor:"#007AFF",
+                    backgroundColor:"rgba(0,122,255,0.15)",
+                    borderWidth:3,
+                    pointRadius:6,
+                    tension:0.35
+                }]
+            },
+            options:{
+                responsive:true,
+                scales:{
+                    y:{min:0,max:100,ticks:{color:"#000"}},
+                    x:{ticks:{color:"#000"}}
+                }
+            }
+        });
+
+    }catch(e){
+        out.textContent="❌ Erro ao conectar à API.";
+    }
+};
+</script>
+</body>
+</html>
