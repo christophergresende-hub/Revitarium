@@ -6,71 +6,105 @@
 <title>Revitarium • Dashboard Clínico</title>
 
 <style>
-    :root{
-        --primary:#6EC4B3;   /* Cor principal */
-        --secondary:#FFFFFF; /* Fundo */
-        --text:#151E26;      /* Letra escura premium */
-    }
+:root {
+    --principal:#151e26;      /* Header e menu inferior */
+    --botao:#6EC4B3;          /* Botões sólidos - verde hospitalar */
+    --fundo:#E7F4F2;          /* Fundo hospitalar claro */
+    --texto:#0c0c0c;
+}
 
-    body{
-        margin:0;
-        font-family: Arial, sans-serif;
-        background: var(--secondary);
-        color: var(--text);
-    }
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+}
 
-    header{
-        background: var(--primary);
-        padding: 18px;
-        text-align: center;
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: var(--text);
-        box-shadow: 0 2px 6px rgba(0,0,0,.12);
-    }
+/* HEADER */
+header{
+    background: var(--principal);
+    padding:20px;
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    color:white;
+}
 
-    .container{
-        padding: 20px;
-        max-width: 500px;
-        margin:auto;
-    }
+/* ÁREA CENTRAL */
+.container{
+    max-width:550px;
+    margin:auto;
+    padding:22px;
+}
 
-    input, button{
-        width:100%;
-        padding:15px;
-        margin:8px 0;
-        border-radius:10px;
-        border:1px solid #d8e6e4;
-        font-size:1rem;
-    }
+/* INPUTS */
+input{
+    width:100%;
+    padding:14px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #d0e4e2;
+    background:white;
+    font-size:1rem;
+}
 
-    input{
-        background:#f7fffd;
-        color:var(--text);
-    }
+/* BOTÕES */
+button{
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    border-radius:10px;
+    font-size:1rem;
+    font-weight:bold;
+    border:none;
+}
 
-    .btn-primary{
-        background: var(--primary);
-        color:var(--text);
-        font-weight:bold;
-        border:none;
-        box-shadow:0 4px 10px rgba(0,0,0,.15);
-    }
+.btn-solid{
+    background:var(--botao);
+    color:#000;
+    box-shadow:0 4px 8px rgba(0,0,0,.15);
+}
 
-    .btn-nav{
-        background:#e9f8f5;
-        color:var(--text);
-        border:none;
-        font-weight:bold;
-    }
+.btn-menu{
+    background:white;
+    color:#000;
+    border:2px solid var(--botao);
+}
 
-    .btn-danger{
-        background:#B71C1C;
-        color:white;
-        font-weight:bold;
-    }
+.btn-danger{
+    background:#B71C1C;
+    color:white;
+}
 
-    h2{ font-size:1.4rem; margin-top:25px; }
+/* TERMINAL */
+.terminal{
+    background:#0c0c0c;
+    color:#6EC4B3;
+    padding:18px;
+    border-radius:10px;
+    min-height:120px;
+    font-family:monospace;
+    white-space:pre-wrap;
+}
+
+/* MENU INFERIOR */
+.menu-bottom{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:var(--principal);
+    padding:10px 0;
+    display:flex;
+    justify-content:space-around;
+}
+
+.menu-bottom button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:1rem;
+}
 </style>
 </head>
 <body>
@@ -80,32 +114,41 @@
 <div class="container">
 
     <h2>ID do Paciente</h2>
-    <input type="text" id="pacienteId" placeholder="Ex: 123">
+    <input id="pacienteId" placeholder="Ex: 123">
 
     <h2>Inserir Nível Vertebral</h2>
-    <input type="text" id="vertebra" placeholder="Ex: T7">
-    <input type="number" id="angulo" placeholder="Ex: 12 graus">
+    <input id="vertebra" placeholder="Ex: T7">
+    <input id="angulo" type="number" placeholder="Ex: 12 graus">
 
-    <button class="btn-primary" id="enviarAnalise">🚑 Enviar para Análise</button>
+    <button class="btn-solid" id="enviarAnalise">🚑 Enviar para Análise</button>
 
     <h2>Consultas Rápidas</h2>
-    <button class="btn-nav" onclick="window.location.href='dashboard.html'">📊 Dashboard</button>
-    <button class="btn-nav" onclick="window.location.href='evolucao.html'">📈 Evolução</button>
-    <button class="btn-nav" onclick="window.location.href='previsao.html'">🔮 Previsão</button>
-    <button class="btn-nav" onclick="window.location.href='pdf.html'">📄 PDF Clínico</button>
+    <button class="btn-menu" onclick="nav('dashboard.html')">📊 Dashboard</button>
+    <button class="btn-menu" onclick="nav('evolucao.html')">📈 Evolução</button>
+    <button class="btn-menu" onclick="nav('previsao.html')">🔮 Previsão</button>
+    <button class="btn-menu" onclick="nav('pdf.html')">📄 PDF Clínico</button>
     <button class="btn-danger" onclick="logout()">⛔ Sair</button>
 
     <h2>Retorno da API</h2>
-    <pre id="terminal" style="background:#f4fffd; color:#00463f; padding:20px; border-radius:10px; min-height:120px;">
-Aguardando...
-    </pre>
+    <pre id="terminal" class="terminal">Aguardando consulta...</pre>
+
+</div>
+
+<!-- MENU INFERIOR FIXO -->
+<div class="menu-bottom">
+    <button onclick="nav('dashboard.html')">🏠 Início</button>
+    <button onclick="nav('evolucao.html')">📈 Evolução</button>
+    <button onclick="nav('previsao.html')">🔮 Previsão</button>
 </div>
 
 <script>
-// bloqueio sem login
+// bloqueio de acesso
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
+
+// navegação
+function nav(p){ window.location.href = p; }
 
 // logout
 function logout(){
@@ -113,32 +156,30 @@ function logout(){
     window.location.href="index.html";
 }
 
-// enviar análise
+// envio para API
 document.getElementById("enviarAnalise").onclick = async () => {
-    const id = document.getElementById("pacienteId").value.trim();
-    const v = document.getElementById("vertebra").value.trim();
-    const a = document.getElementById("angulo").value.trim();
-    const terminal = document.getElementById("terminal");
+    const id = pacienteId.value.trim();
+    const v  = vertebra.value.trim();
+    const a  = angulo.value.trim();
+    const out = document.getElementById("terminal");
 
     if(!id || !v || !a){
-        terminal.textContent = "Erro: preencha ID, vértebra e ângulo.";
+        out.textContent = "Preencha ID, vértebra e ângulo.";
         return;
     }
 
-    terminal.textContent = "Enviando análise para a API...";
+    out.textContent = "Consultando API…";
 
     try{
-        const res = await fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`,{
+        const r = await fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`,{
             method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify([{ vertebra:v, angle:Number(a) }])
+            headers:{ "Content-Type":"application/json"},
+            body:JSON.stringify([{vertebra:v, angle:Number(a)}])
         });
-
-        const data = await res.json();
-        terminal.textContent = JSON.stringify(data, null, 2);
-    }
-    catch(e){
-        terminal.textContent = "Erro de conexão com API.";
+        const json = await r.json();
+        out.textContent = JSON.stringify(json,null,2);
+    }catch{
+        out.textContent = "Erro de conexão.";
     }
 }
 </script>
