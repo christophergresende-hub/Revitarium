@@ -1,114 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PDF Clínico – Revitarium</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Clínico • Revitarium</title>
+
 <style>
-    body{
-        margin:0;
-        background:#0c0c0c;
-        font-family: Arial, sans-serif;
-        color:white;
-    }
-    header{
-        background:#8A0000;
-        padding:18px;
-        text-align:center;
-        font-size:1.3rem;
-        font-weight:bold;
-    }
-    .container{
-        padding:22px;
-    }
-    input, button{
-        width:100%;
-        padding:16px;
-        font-size:1rem;
-        margin:10px 0;
-        border-radius:10px;
-        border:none;
-    }
-    input{
-        background:#111;
-        color:white;
-    }
-    .btn-generate{
-        background:#b40000;
-        color:white;
-        font-weight:bold;
-    }
-    .btn-back{
-        background:#444;
-        color:white;
-        font-weight:bold;
-    }
-    .msg{
-        margin-top:20px;
-        color:#00ff99;
-        font-family:monospace;
-        background:#000;
-        padding:15px;
-        border-radius:10px;
-        min-height:100px;
-        white-space:pre-wrap;
-    }
+:root {
+    --verde-base:#6EC4B3;
+    --verde-escuro:#151e26;
+    --branco:#ffffff;
+}
+
+body{
+    margin:0;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:var(--branco);
+}
+
+/* Cabeçalho */
+.header{
+    background:var(--verde-base);
+    padding:25px;
+    text-align:center;
+    font-size:1.5rem;
+    font-weight:bold;
+    color:white;
+    letter-spacing:0.08em;
+}
+
+/* Container principal */
+.container{
+    padding:20px;
+    max-width:600px;
+    margin:auto;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #9fd6c8;
+    background:white;
+    margin-bottom:12px;
+    font-size:1rem;
+}
+
+/* Botão principal */
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:var(--verde-escuro);
+    color:white;
+    font-size:1.1rem;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+/* Terminal */
+.terminal{
+    background:#F4FFFC;
+    border-left:6px solid var(--verde-base);
+    padding:15px;
+    margin-top:20px;
+    border-radius:10px;
+    min-height:120px;
+    font-family:monospace;
+    white-space:pre-wrap;
+}
+
+/* Menu inferior */
+.menu-bottom{
+    position:fixed;
+    bottom:0; left:0; width:100%;
+    background:var(--verde-escuro);
+    padding:12px 0;
+    display:flex; justify-content:space-around;
+}
+.menu-bottom button{
+    background:none; border:none; color:white;
+    font-size:1rem; font-weight:600;
+}
 </style>
 </head>
 <body>
 
-<header>📄 Gerar PDF Clínico</header>
+<div class="header">📄 PDF Clínico</div>
 
 <div class="container">
-    <h2>Dados do Paciente</h2>
+    <h3 style="color:var(--verde-escuro)">Gerar Documento do Paciente</h3>
 
-    <input type="text" id="pid" placeholder="ID do Paciente (ex: 123)" />
+    <input id="patientId" placeholder="ID do Paciente (ex: 123)">
+    <button id="gerarPDF">📥 Baixar PDF Clínico</button>
 
-    <button class="btn-generate" id="gerarPDF">Gerar PDF Clínico</button>
-    <button class="btn-back" onclick="window.location.href='dashboard.html'">⬅ Voltar ao Dashboard</button>
+    <pre id="terminal" class="terminal">Aguardando ação...</pre>
+</div>
 
-    <h3>Retorno do Sistema</h3>
-    <div id="msg" class="msg">Aguardando...</div>
-
+<div class="menu-bottom">
+    <button onclick="nav('dashboard.html')">🏠 Início</button>
+    <button onclick="nav('evolucao.html')">📈 Evolução</button>
+    <button onclick="nav('previsao.html')">🔮 Previsão</button>
 </div>
 
 <script>
-/* Bloqueio de acesso sem login */
+// Proteção por login
 if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
+    window.location.href="index.html";
 }
 
-/* Função para gerar PDF local (versão inicial) */
-document.getElementById("gerarPDF").onclick = async () => {
-    const pid = document.getElementById("pid").value.trim();
-    const msg = document.getElementById("msg");
+function nav(p){ window.location.href=p }
 
-    if(!pid){
-        msg.textContent = "Erro: informe um Patient ID válido.";
+document.getElementById("gerarPDF").onclick = async () => {
+    const id = document.getElementById("patientId").value.trim();
+    const term = document.getElementById("terminal");
+
+    if(!id){
+        term.textContent = "Digite o ID do paciente.";
         return;
     }
 
-    msg.textContent = "Gerando PDF...";
+    try{
+        term.textContent = "Gerando PDF...";
 
-    const conteudo = `
-RELATÓRIO CLÍNICO REVITARIUM
-============================
-PACIENTE: ${pid}
-DATA: ${new Date().toLocaleDateString()}
-STATUS: Avaliação inicial concluída.
+        const pdfUrl = `https://revitarium.onrender.com/workflow/patient/${id}/report/pdf`;
 
-Este é um PDF inicial. A versão seguinte irá puxar dados reais da API.
-`;
-
-    const blob = new Blob([conteudo], {type: "application/pdf"});
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `Relatorio-Paciente-${pid}.pdf`;
-    link.click();
-
-    msg.textContent = "PDF pronto para download.";
+        // Abre download do PDF
+        window.open(pdfUrl, "_blank");
+        term.textContent = "PDF gerado com sucesso. (aguarde o download)";
+    }
+    catch(err){
+        term.textContent = "Erro ao gerar PDF.";
+    }
 };
 </script>
 
