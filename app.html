@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium • Clínica Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --azul-base: #003B6E;
+    --azul-sec: #0074C7;
+    --azul-ac: #00B4FF;
+    --fundo: #F5F9FC;
+    --texto: #0A0A0A;
+    --subtexto: #4A4A4A;
+    --erro: #B40000;
+}
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--fundo);color:var(--texto);}
+button{cursor:pointer;border:none;border-radius:12px;font-size:1rem;}
+
+/* HEADER A */
+header{
+    background:var(--azul-base);
+    padding:28px 0;
+    text-align:center;
+    color:white;
+    font-size:1.4rem;
+    font-weight:700;
+    letter-spacing:.5px;
+}
+
+/* CARD BASE */
+.card{
+    background:white;
+    margin:18px;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+
+/* INPUTS */
+input{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1.8px solid #d9e3ec;
+    margin:6px 0;
+    background:#fff;
+    color:var(--texto);
+}
+
+/* BOTÕES */
+.btn-primary{background:var(--azul-sec);color:white;font-weight:600;padding:16px;}
+.btn-ac{background:var(--azul-ac);color:white;font-weight:600;padding:16px;}
+.btn-saida{background:var(--erro);color:white;font-weight:600;padding:16px;}
+
+/* TERMINAL */
+.terminal{
+    background:black;color:#00FF15;
+    padding:18px;border-radius:10px;
+    font-family:monospace;min-height:130px;
+}
+
+/* NAV BOTTOM iOS */
+.nav{
+    position:fixed;bottom:0;left:0;right:0;
+    background:white;border-top:1px solid #ccc;
+    display:flex;justify-content:space-around;
+    padding:10px 0;
+}
+.nav button{
+    background:none;border:none;color:var(--azul-base);
+    font-weight:600;font-size:.9rem;
+}
+</style>
+</head>
+<body>
+
+<header>Revitarium • Clínica Premium</header>
+
+<!-- CARD PRINCIPAL -->
+<div class="card">
+    <h2>📍 ID do Paciente</h2>
+    <input id="patientId" placeholder="Ex: 123"/>
+
+    <h2 style="margin-top:20px;">🦴 Inserir Nível Vertebral</h2>
+    <input id="vertebra" placeholder="Ex: T7"/>
+    <input id="angulo" placeholder="Ex: 12 graus"/>
+
+    <button class="btn-ac" id="analisarBtn">🚑 Enviar para Análise</button>
+</div>
+
+<!-- CONSULTAS -->
+<div class="card">
+    <h2>🔎 Consultas Clínicas</h2>
+    <button class="btn-primary" onclick="window.location.href='evolucao.html'">📈 Evolução</button>
+    <button class="btn-primary" onclick="window.location.href='previsao.html'">🔮 Previsão</button>
+    <button class="btn-primary" onclick="gerarPDF()">📄 PDF Clínico</button>
+    <button class="btn-saida" onclick="logout()">⛔ Sair</button>
+</div>
+
+<!-- TERMINAL -->
+<div class="card">
+<h3>📡 Retorno da API</h3>
+<div id="terminal" class="terminal">Aguardando...</div>
+</div>
+
+<!-- NAV BOTTOM -->
+<div class="nav">
+    <button onclick="window.location.href='app.html'">🏠 Início</button>
+    <button onclick="window.location.href='evolucao.html'">📈 Evolução</button>
+    <button onclick="window.location.href='previsao.html'">🔮 Previsão</button>
+</div>
+
+<script>
+/* BLOQUEIO DE LOGIN */
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
+
+/* ENVIO PARA API */
+document.getElementById("analisarBtn").onclick = async()=>{
+    const id = patientId.value.trim();
+    const v = vertebra.value.trim();
+    const a = angulo.value.trim();
+    terminal.textContent="📡 Enviando...";
+
+    const body=[{vertebra:v,angle:Number(a)}];
+    const res = await fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`,{
+        method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)
+    });
+    terminal.textContent = JSON.stringify(await res.json(),null,2);
+};
+
+/* PDF */
+function gerarPDF(){
+    const id = prompt("ID do paciente?");
+    if(id){window.open(`https://revitarium.onrender.com/workflow/patient/${id}/report/pdf`,"_blank");}
+}
+
+/* LOGOUT */
+function logout(){
+    localStorage.removeItem("revitarium_logged");
+    window.location.href="index.html";
+}
+</script>
+
+</body>
+</html>
