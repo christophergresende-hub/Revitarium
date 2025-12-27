@@ -1,77 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Revitarium – Previsão Clínica</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Previsão</title></head>
+<body style="background:#0d0d0d;color:white;font-family:Arial;padding:20px">
 
-<style>
-    body { background:#0c0c0c; color:white; font-family:Arial; margin:0; }
-    header { background:#3b0066; padding:18px; text-align:center; font-weight:bold; font-size:1.3rem; }
-    .container { padding:20px; }
-    input, button {
-        width:100%; padding:15px; margin:8px 0; border-radius:8px; border:none;
-        font-size:1rem; font-weight:bold;
-    }
-    input { background:#111; color:white; }
-    .btn { background:#6200ea; color:white; }
-    .btn-danger { background:#8B0000; color:white; }
-    .terminal {
-        background:black; color:#00ff00; padding:20px; border-radius:10px;
-        margin-top:20px; min-height:160px; white-space:pre-wrap; font-family:monospace;
-    }
-</style>
-</head>
-<body>
-
-<header>🔮 Revitarium – Previsão Clínica</header>
-
-<div class="container">
-    <h2>Previsão de progresso</h2>
-    <input type="text" id="patientId" placeholder="Ex: 123" />
-
-    <button id="consultar" class="btn">🔎 Consultar previsão</button>
-    <button id="voltar" class="btn">⬅ Voltar ao Dashboard</button>
-    <button id="logout" class="btn-danger">⛔ Sair</button>
-
-    <h3>Resultado:</h3>
-    <div id="terminal" class="terminal">Aguardando consulta...</div>
-</div>
+<h2>🔮 Previsão Clínica</h2>
+<input id="pid" placeholder="ID do paciente">
+<button onclick="run()">Prever evolução</button>
+<pre id="ret" style="background:black;color:#0f0;padding:20px;border-radius:10px"></pre>
 
 <script>
-// Bloqueio de acesso sem login
-if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
+if(localStorage.getItem("revitarium_logged")!=="yes"){window.location.href="index.html";}
+async function run(){
+ const id=document.getElementById("pid").value;
+ const r=await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
+ document.getElementById("ret").textContent=JSON.stringify(await r.json(),null,2);
 }
-
-// Navegação
-document.getElementById("voltar").onclick = () => window.location.href = "dashboard.html";
-document.getElementById("logout").onclick = () => {
-    localStorage.removeItem("revitarium_logged");
-    window.location.href = "index.html";
-};
-
-// Consulta Previsão
-document.getElementById("consultar").onclick = async () => {
-    const p = document.getElementById("patientId").value.trim();
-    const terminal = document.getElementById("terminal");
-
-    if(!p){
-        terminal.textContent = "Digite o ID do paciente.";
-        return;
-    }
-
-    terminal.textContent = "Calculando previsão...";
-
-    try {
-        const r = await fetch(`https://revitarium.onrender.com/workflow/patient/${p}/predict`);
-        const data = await r.json();
-        terminal.textContent = JSON.stringify(data, null, 2);
-    } catch(e){
-        terminal.textContent = "Erro ao conectar com a API.";
-    }
-};
 </script>
-
 </body>
 </html>
