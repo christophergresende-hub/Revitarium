@@ -3,80 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium • Dashboard Clínico v15</title>
+<title>Revitarium • Dashboard Clínico</title>
 
 <style>
 :root {
-    --verde-base:#6EC4B3;    /* Fundo principal inspirada na arte */
-    --verde-escuro:#151e26;  /* Faixa lateral igual ao projeto */
-    --branco:#FFFFFF;
-    --texto:#EAF7F5;
+    --principal:#6EC4B3;     /* NOVO HEADER e MENU */
+    --botao:#6EC4B3;         /* Botões */
+    --fundo:#E7F4F2;         /* Fundo hospitalar */
+    --texto:#1A2A32;         /* Texto clínico */
+    --caixa:#FFFFFF;         /* Inputs */
 }
 
 body {
     margin:0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    background: var(--branco);
+    font-family: Arial, sans-serif;
+    background: var(--fundo);
     color: var(--texto);
 }
 
-/* ======== SOBREPOSIÇÃO DO LAYOUT ======== */
-.bg-wrapper{
-    display:flex;
-    height: 250px;
-    width:100%;
-    background: var(--verde-base);
-    position:relative;
-    overflow:hidden;
-}
-
-/* FAIXA ESQUERDA ESCURA IGUAL AO PROJETO */
-.bg-wrapper:before{
-    content:"";
-    position:absolute;
-    left:0; top:0;
-    width:17%;
-    height:100%;
-    background: var(--verde-escuro);
-}
-
-/* TEXTO SOBREPOSTO IGUAL NO EXEMPLO */
-.overlay-title{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%, -50%);
-    text-align:center;
-    font-size:1.35rem;
-    font-weight:bold;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:white;
-}
-
-/* ======== CONTEÚDO ======== */
-.container{
+/* HEADER (agora verde sem borda escura) */
+header{
+    background: var(--principal);
     padding:20px;
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    color:white;
+    border-bottom: 0; /* REMOVIDO */
+}
+
+/* CONTEÚDO CENTRAL */
+.container{
     max-width:550px;
     margin:auto;
+    padding:22px;
 }
 
-h2{
-    color:var(--verde-escuro);
-    margin-top:25px;
-}
-
+/* INPUTS */
 input{
     width:100%;
     padding:14px;
     margin:8px 0;
     border-radius:10px;
-    border:1px solid #BDE4D9;
-    background:white;
+    border:1px solid #B7E7DF;
+    background:var(--caixa);
     font-size:1rem;
-    color:#1A2A32;
 }
 
+/* BOTÕES */
 button{
     width:100%;
     padding:15px;
@@ -85,43 +59,45 @@ button{
     font-size:1rem;
     font-weight:bold;
     border:none;
+    cursor:pointer;
 }
 
 .btn-solid{
-    background:var(--verde-base);
-    color:#002926;
+    background:var(--botao);
+    color:#00322F;
 }
 
-.btn-outline{
+.btn-menu{
     background:white;
-    border:2px solid var(--verde-base);
-    color:var(--verde-escuro);
+    color:#00322F;
+    border:2px solid var(--botao);
 }
 
 .btn-danger{
-    background:#B04141;
+    background:#BF4747;
     color:white;
 }
 
-/* TERMINAL */
+/* TERMINAL → CINZA CLARO */
 .terminal{
-    background:#F5FFFD;
-    border-left:6px solid var(--verde-base);
-    padding:15px;
-    border-radius:10px;
+    background:#FAFEFF;
     color:#00322F;
-    min-height:110px;
-    white-space:pre-wrap;
+    padding:18px;
+    border-radius:10px;
+    border:1px solid #C8E6E3;
+    min-height:120px;
     font-family:monospace;
+    white-space:pre-wrap;
 }
 
-/* MENU INFERIOR */
+/* MENU INFERIOR (também verde) */
 .menu-bottom{
     position:fixed;
-    bottom:0; left:0;
+    bottom:0;
+    left:0;
     width:100%;
-    background:var(--verde-escuro);
-    padding:12px 0;
+    background:var(--principal);
+    padding:10px 0;
     display:flex;
     justify-content:space-around;
 }
@@ -136,31 +112,29 @@ button{
 </head>
 <body>
 
-<!-- TOPO COM SOBREPOSIÇÃO -->
-<div class="bg-wrapper">
-    <div class="overlay-title">REVISÃO CLÍNICA</div>
-</div>
+<header>Revitarium • Dashboard Clínico</header>
 
 <div class="container">
 
     <h2>ID do Paciente</h2>
     <input id="pacienteId" placeholder="Ex: 123">
 
-    <h2>Nível Vertebral</h2>
+    <h2>Inserir Nível Vertebral</h2>
     <input id="vertebra" placeholder="Ex: T7">
     <input id="angulo" type="number" placeholder="Ex: 12 graus">
 
     <button class="btn-solid" id="enviarAnalise">🚑 Enviar para Análise</button>
 
     <h2>Consultas Rápidas</h2>
-    <button class="btn-outline" onclick="nav('dashboard.html')">📊 Dashboard</button>
-    <button class="btn-outline" onclick="nav('evolucao.html')">📈 Evolução</button>
-    <button class="btn-outline" onclick="nav('previsao.html')">🔮 Previsão</button>
-    <button class="btn-outline" onclick="nav('pdf.html')">📄 PDF Clínico</button>
+    <button class="btn-menu" onclick="nav('dashboard.html')">📊 Dashboard</button>
+    <button class="btn-menu" onclick="nav('evolucao.html')">📈 Evolução</button>
+    <button class="btn-menu" onclick="nav('previsao.html')">🔮 Previsão</button>
+    <button class="btn-menu" onclick="nav('pdf.html')">📄 PDF Clínico</button>
     <button class="btn-danger" onclick="logout()">⛔ Sair</button>
 
     <h2>Retorno da API</h2>
     <pre id="terminal" class="terminal">Aguardando consulta...</pre>
+
 </div>
 
 <div class="menu-bottom">
@@ -170,13 +144,21 @@ button{
 </div>
 
 <script>
+// bloqueio
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-function nav(p){ window.location.href = p }
-function logout(){ localStorage.removeItem("revitarium_logged"); window.location.href="index.html"; }
+// navegação
+function nav(p){ window.location.href = p; }
 
+// logout
+function logout(){
+    localStorage.removeItem("revitarium_logged");
+    window.location.href="index.html";
+}
+
+// API
 document.getElementById("enviarAnalise").onclick = async () => {
     const id = pacienteId.value.trim();
     const v  = vertebra.value.trim();
