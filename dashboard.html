@@ -3,147 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReviTARIUM v14 • Clinical Biomechanics</title>
+<title>ReviTARIUM v14 – Dashboard Clínico</title>
 
-<!-- Fonte Poppins -->
+<!-- Fonte -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
+/* PALETA */
 :root{
     --primary:#6EC4B3;
-    --dark:#151E26;
-    --white:#ffffff;
-    --glass-bg:rgba(255,255,255,0.05);
+    --bg:#151E26;
+    --glass:rgba(255,255,255,0.06);
     --glass-border:rgba(255,255,255,0.25);
+    --white:#FFF;
 }
 
+/* FUNDO SCI-FI */
 body{
     margin:0;
-    padding:0;
     font-family:'Poppins',sans-serif;
-    background:var(--dark);
+    background:var(--bg) url('https://i.imgur.com/ZpX8uIx.jpg') no-repeat center/cover fixed;
     color:var(--white);
-    background-image:url('https://i.imgur.com/ZpX8uIx.jpg'); /* textura sci-fi */
-    background-size:cover;
-    background-attachment:fixed;
 }
 
 /* HEADER */
 header{
     text-align:center;
-    padding:25px 10px;
-    font-size:1.6rem;
+    padding:28px 10px;
+    font-size:1.7rem;
     font-weight:600;
-    backdrop-filter:blur(10px);
-    background:rgba(21,30,38,0.6);
-    border-bottom:1px solid var(--primary);
-}
-
-/* CARD PRINCIPAL */
-.card{
-    margin:20px;
-    background:var(--glass-bg);
-    border:1px solid var(--glass-border);
     backdrop-filter:blur(12px);
-    padding:20px;
-    border-radius:18px;
+    background:rgba(21,30,38,0.55);
+    border-bottom:1px solid var(--primary);
+    text-transform:uppercase;
+    letter-spacing:1px;
 }
 
-label{font-size:1rem;font-weight:500;}
+/* CONTAINER PRINCIPAL */
+.container{
+    padding:20px;
+    max-width:480px;
+    margin:auto;
+}
+
+/* CARD | INPUT */
+.card{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    padding:22px;
+    border-radius:22px;
+    backdrop-filter:blur(14px);
+    margin-bottom:25px;
+}
+
+label{font-weight:500;}
 input{
     width:100%;
-    background:rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.07);
     border:1px solid var(--glass-border);
-    backdrop-filter:blur(8px);
-    color:white;
-    padding:14px;
-    border-radius:12px;
-    margin:10px 0 18px 0;
-}
-
-/* BOTÕES */
-.btn{
-    width:100%;
     padding:15px;
     border-radius:14px;
-    border:0;
-    font-weight:600;
-    font-size:1.05rem;
-    margin-top:8px;
+    color:white;
+    margin:12px 0 20px 0;
+    backdrop-filter:blur(8px);
+}
+
+/* BOTÃO PRINCIPAL */
+button.enviar{
+    width:100%;
     background:var(--primary);
     color:#0A1A18;
-    box-shadow:0px 0px 15px rgba(110,196,179,0.7);
+    padding:16px;
+    border-radius:14px;
+    font-weight:600;
+    border:none;
+    font-size:1.05rem;
+    box-shadow:0 0 18px rgba(110,196,179,0.8);
 }
 
-/* LISTA DE SEÇÕES */
-.section-btn{
+/* GRADE DE ÍCONES */
+.icon-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:20px;
+}
+.icon-btn{
     background:rgba(255,255,255,0.06);
     border:1px solid var(--glass-border);
-    backdrop-filter:blur(6px);
-    padding:14px;
-    border-radius:14px;
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    height:85px;
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    margin:10px 0;
-    font-size:1.05rem;
+    justify-content:center;
+    font-size:0.9rem;
+    color:#9DE7D8;
     cursor:pointer;
+    transition:.2s;
+}
+.icon-btn:hover{
+    border-color:var(--primary);
+    color:var(--primary);
 }
 
-.section-btn span{opacity:.8;}
-.section-btn:hover{opacity:1;border-color:var(--primary);}
-
-/* BOTTOM NAV FLUTUANTE */
+/* NAVEGAÇÃO INFERIOR FLUTUANTE */
 .navbar{
     position:fixed;
-    bottom:20px;
+    bottom:22px;
     left:50%;
     transform:translateX(-50%);
-    width:90%;
+    width:88%;
     background:rgba(21,30,38,0.7);
     border:1px solid var(--glass-border);
-    backdrop-filter:blur(10px);
-    padding:12px;
-    border-radius:20px;
+    backdrop-filter:blur(14px);
+    padding:14px;
+    border-radius:22px;
     display:flex;
     justify-content:space-around;
-    font-size:.95rem;
-    box-shadow:0 0 25px rgba(110,196,179,0.3);
+    font-size:1rem;
+    box-shadow:0 0 25px rgba(110,196,179,0.4);
 }
-
-.navbar div{cursor:pointer;}
-.navbar div.active{
+.navbar div{
+    cursor:pointer;
+    opacity:.85;
+}
+.navbar .active{
     color:var(--primary);
     font-weight:600;
+    opacity:1;
 }
 </style>
 </head>
 
 <body>
 
-<header>ReviTARIUM v14</header>
+<header>ReviTARIUM</header>
 
-<div class="card">
-    <label>ID do Paciente</label>
-    <input type="text" placeholder="Ex: 123">
+<div class="container">
 
-    <label>Nível Vertebral</label>
-    <input type="text" placeholder="Ex: T7  •  12°">
+    <!-- CARD PRINCIPAL -->
+    <div class="card">
+        <label>ID do Paciente</label>
+        <input type="text" placeholder="Ex: 123">
 
-    <button class="btn">Enviar para Análise →</button>
+        <label>Inserir Nível Vertebral</label>
+        <input type="text" placeholder="Ex: T7  •  12°">
+
+        <button class="enviar">Enviar para Análise →</button>
+    </div>
+
+    <!-- ICONES REVISÃO -->
+    <h3 style="text-align:center;margin-bottom:14px;">Ícones Revitarium</h3>
+
+    <div class="icon-grid">
+        <div class="icon-btn">🦴</div>
+        <div class="icon-btn">📊</div>
+        <div class="icon-btn">🧠</div>
+        <div class="icon-btn">📈</div>
+        <div class="icon-btn">SF</div>
+        <div class="icon-btn">⚕️</div>
+        <div class="icon-btn">📱</div>
+        <div class="icon-btn">👤</div>
+        <div class="icon-btn">🩻</div>
+    </div>
+
 </div>
 
-<div class="card">
-    <h3>Seções Clínicas</h3>
-    <div class="section-btn">Dashboard Clínico <span>→</span></div>
-    <div class="section-btn">Linha do Tempo Clínica <span>→</span></div>
-    <div class="section-btn">Previsão Biomecânica <span>→</span></div>
-    <div class="section-btn">PDF Clínico Avançado <span>→</span></div>
-</div>
-
+<!-- MENU FLUTUANTE -->
 <div class="navbar">
-    <div class="active">Home</div>
-    <div>Linha do Tempo</div>
+    <div class="active">Início</div>
+    <div>Evolução</div>
     <div>Previsão</div>
 </div>
 
