@@ -2,55 +2,69 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Revitarium • Neuro Biomechanics</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium • Hospital Premium</title>
 <style>
 body{
-    margin:0;background:#000;font-family:Arial;color:#0affef;
+    margin:0; background:#ffffff; font-family:Arial, sans-serif; color:#003B64;
 }
 header{
-    background:#000;padding:22px;text-align:center;
-    font-size:1.5rem;font-weight:bold;color:#0affef;border-bottom:1px solid #0affef;
+    background:#0077B6; color:white; padding:18px; text-align:center;
+    font-size:1.3rem; font-weight:bold;
 }
-.container{padding:20px;max-width:600px;margin:auto;color:#0affef;}
+.container{
+    padding:20px; max-width:600px; margin:auto;
+}
 input,button{
-    width:100%;padding:14px;margin:8px 0;font-size:1rem;border-radius:10px;
+    width:100%; padding:15px; margin:8px 0; font-size:1rem; border-radius:10px;
 }
 input{
-    background:#0c0c0c;border:1px solid #0affef;color:#0affef;
+    border:1px solid #bcd7e9; background:#f8fcff;
 }
 button{
-    background:#0affef;color:#000;font-weight:bold;border:none;
-    text-transform:uppercase;letter-spacing:1px;
+    background:#0077B6; color:white; border:none; font-weight:bold;
 }
 .card{
-    background:#010b0b;border-left:6px solid #0affef;padding:20px;margin-top:20px;
-    border-radius:14px;font-size:0.9rem;color:#0affef;
+    margin-top:18px; background:#EBF7FF; padding:15px; border-radius:12px; border-left:6px solid #0077B6;
+}
+.nav{
+    display:flex; gap:6px; margin-top:20px;
+}
+.nav button{
+    flex:1; background:#013B64; padding:14px; border:none; color:white; border-radius:10px;
 }
 </style>
 </head>
 <body>
 
-<header>Neuro-Biomechanics • Predictive Lab</header>
-
+<header>Hospital Premium</header>
 <div class="container">
-    <h2>Predição Neurofuncional</h2>
-    <input id="patientId" placeholder="Identificação Neural (ID)">
-    <button id="btnRun">PROCESSAR</button>
 
-    <div id="resultado" class="card">Aguardando input neural...</div>
+<h2>Consultar Previsão</h2>
+<input id="patientId" placeholder="ID do Paciente (ex: 123)">
+<button id="btnPrever">Prever Condição Clínica</button>
+
+<div id="resultado" class="card">Aguardando dados...</div>
+
+<div class="nav">
+    <button onclick="location.href='dashboard.html'">Dashboard</button>
+    <button onclick="location.href='evolucao.html'">Evolução</button>
+    <button onclick="location.href='previsao.html'">Previsão</button>
+</div>
+
 </div>
 
 <script>
 if(localStorage.getItem("revitarium_logged")!=="yes") location.href="index.html";
 
-btnRun.onclick = async()=>{
-    const id = patientId.value.trim();
-    if(!id) return resultado.textContent="⚠ ID inválido.";
+document.getElementById("btnPrever").onclick = async ()=>{
+    const id=document.getElementById("patientId").value.trim();
+    const out=document.getElementById("resultado");
+    if(!id) return out.textContent="Informe um ID válido.";
 
-    resultado.textContent="⚡ Rodando inferência biomecânica...";
+    out.textContent="Carregando...";
     const r=await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
-    resultado.textContent=JSON.stringify(await r.json(),null,2);
+    out.textContent=JSON.stringify(await r.json(),null,2);
 };
 </script>
 </body>
