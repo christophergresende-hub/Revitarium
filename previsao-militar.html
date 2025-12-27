@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revitarium • Projeção Tática</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    background:#0a0a0a;
+    font-family:"Roboto Mono", monospace;
+    color:#00ffb2;
+}
+header{
+    background:#001a18;
+    padding:20px;
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    border-bottom:2px solid #00ffb2;
+    text-shadow:0 0 6px #00ffb2;
+}
+.container{
+    padding:20px;
+}
+label{
+    display:block;
+    margin-top:20px;
+    font-weight:bold;
+    color:#7affd6;
+}
+input{
+    width:100%;
+    padding:12px;
+    background:#001511;
+    color:#00ffb2;
+    border:1px solid #00473c;
+    border-radius:6px;
+    font-size:1rem;
+    margin-top:8px;
+}
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    background:#003e35;
+    border:none;
+    color:#00ffb2;
+    font-size:1rem;
+    font-weight:bold;
+    border-radius:8px;
+    box-shadow:0 0 8px #00ffb2;
+}
+button:active{
+    background:#005548;
+}
+.terminal{
+    background:black;
+    border:1px solid #003e35;
+    padding:20px;
+    margin-top:30px;
+    min-height:200px;
+    color:#00ffb2;
+    font-family:monospace;
+    white-space:pre-wrap;
+    border-radius:10px;
+    box-shadow:0 0 10px #00ffb2;
+}
+.btn-back{
+    background:#2b0000;
+    box-shadow:0 0 8px red;
+    color:#ff6969;
+}
+</style>
+</head>
+<body>
+
+<header>REVITARIUM • PROJEÇÃO TÁTICA MILITAR</header>
+
+<div class="container">
+
+    <label>ID do Paciente</label>
+    <input id="patientId" placeholder="Ex: 123">
+
+    <button id="btnPrever">INICIAR SIMULAÇÃO TÁTICA</button>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">RETORNAR AO PAINEL</button>
+
+    <div id="terminal" class="terminal">
+        AGUARDANDO ORDEM DE SIMULAÇÃO...
+    </div>
+</div>
+
+<script>
+// Bloqueio de acesso sem login
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
+
+// Executar previsão
+document.getElementById("btnPrever").onclick = async () => {
+    const id = document.getElementById("patientId").value.trim();
+    const term = document.getElementById("terminal");
+
+    if(!id){
+        term.textContent = "ERRO: INSIRA UM ID VÁLIDO.";
+        return;
+    }
+
+    term.textContent = "ENVIANDO SOLICITAÇÃO PARA CENTRAL...\nAGUARDE...\n";
+
+    try{
+        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
+        const data = await res.json();
+        term.textContent = "RESPOSTA RECEBIDA (CLASSIFICAÇÃO TÁTICA):\n\n" + JSON.stringify(data, null, 2);
+
+    }catch(e){
+        term.textContent = "FALHA NA TRANSMISSÃO. SEM SINAL DO SERVIDOR.";
+    }
+};
+</script>
+
+</body>
+</html>
