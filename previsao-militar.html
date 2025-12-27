@@ -1,123 +1,152 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium • Projeção Tática</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Revitarium • Previsão Tática Militar</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-    background:#0a0a0a;
-    font-family:"Roboto Mono", monospace;
-    color:#00ffb2;
-}
-header{
-    background:#001a18;
-    padding:20px;
-    text-align:center;
-    font-size:1.4rem;
-    font-weight:bold;
-    border-bottom:2px solid #00ffb2;
-    text-shadow:0 0 6px #00ffb2;
-}
-.container{
-    padding:20px;
-}
-label{
-    display:block;
-    margin-top:20px;
-    font-weight:bold;
-    color:#7affd6;
-}
-input{
-    width:100%;
-    padding:12px;
-    background:#001511;
-    color:#00ffb2;
-    border:1px solid #00473c;
-    border-radius:6px;
-    font-size:1rem;
-    margin-top:8px;
-}
-button{
-    width:100%;
-    padding:15px;
-    margin-top:20px;
-    background:#003e35;
-    border:none;
-    color:#00ffb2;
-    font-size:1rem;
-    font-weight:bold;
-    border-radius:8px;
-    box-shadow:0 0 8px #00ffb2;
-}
-button:active{
-    background:#005548;
-}
-.terminal{
-    background:black;
-    border:1px solid #003e35;
-    padding:20px;
-    margin-top:30px;
-    min-height:200px;
-    color:#00ffb2;
-    font-family:monospace;
-    white-space:pre-wrap;
-    border-radius:10px;
-    box-shadow:0 0 10px #00ffb2;
-}
-.btn-back{
-    background:#2b0000;
-    box-shadow:0 0 8px red;
-    color:#ff6969;
-}
+    body{
+        background:#000;
+        color:#00ff4c;
+        font-family:"Roboto Mono", monospace;
+        margin:0;
+        padding:0;
+        letter-spacing:0.5px;
+    }
+    header{
+        background:#021a0f;
+        border-bottom:2px solid #00ff4c;
+        text-align:center;
+        padding:18px;
+        font-size:1.3rem;
+        font-weight:bold;
+        text-transform:uppercase;
+    }
+    .container{
+        padding:20px;
+    }
+    .label{
+        margin-top:20px;
+        font-size:0.9rem;
+        opacity:0.8;
+    }
+    input{
+        width:100%;
+        background:black;
+        color:#00ff4c;
+        border:1px solid #00ff4c;
+        padding:14px;
+        margin-top:6px;
+        border-radius:6px;
+        font-size:1.1rem;
+    }
+    button{
+        width:100%;
+        background:#003d1f;
+        border:1px solid #00ff4c;
+        color:#00ff4c;
+        padding:15px;
+        font-size:1.1rem;
+        margin-top:20px;
+        border-radius:6px;
+        text-transform:uppercase;
+        font-weight:bold;
+    }
+    button:active{
+        background:#015a2f;
+    }
+    .terminal{
+        background:black;
+        border:1px solid #00ff4c;
+        padding:20px;
+        margin-top:25px;
+        border-radius:6px;
+        height:200px;
+        overflow-y:auto;
+        font-size:0.9rem;
+        white-space:pre-wrap;
+    }
+    .radar{
+        width:200px;
+        height:200px;
+        border:2px solid #00ff4c;
+        border-radius:50%;
+        margin:25px auto;
+        animation:scan 2s linear infinite;
+        box-shadow:0 0 15px #00ff4c;
+    }
+    @keyframes scan{
+        0%{transform:rotate(0deg)}
+        100%{transform:rotate(360deg)}
+    }
 </style>
 </head>
+
 <body>
 
-<header>REVITARIUM • PROJEÇÃO TÁTICA MILITAR</header>
+<header>🛰️ Previsão Tática – Revitarium</header>
 
 <div class="container">
 
-    <label>ID do Paciente</label>
-    <input id="patientId" placeholder="Ex: 123">
+    <div class="radar"></div>
 
-    <button id="btnPrever">INICIAR SIMULAÇÃO TÁTICA</button>
-    <button class="btn-back" onclick="window.location.href='dashboard.html'">RETORNAR AO PAINEL</button>
+    <div class="label">ID DO PACIENTE</div>
+    <input type="text" id="patientId" placeholder="ex: 123">
 
-    <div id="terminal" class="terminal">
-        AGUARDANDO ORDEM DE SIMULAÇÃO...
+    <button id="btnPredict">EXECUTAR PREVISÃO</button>
+
+    <div class="terminal" id="terminal">
+        SISTEMA PRONTO...
+        Aguarde instruções.
     </div>
+
+    <button onclick="window.location.href='dashboard.html'">◀ Retornar ao Comando</button>
+    <button style="margin-top:10px;background:#520000;border-color:red;color:red;font-weight:bold"
+            onclick="localStorage.removeItem('revitarium_logged');window.location.href='index.html';">
+        ENCERRAR SESSÃO
+    </button>
+
 </div>
 
 <script>
-// Bloqueio de acesso sem login
-if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
+// Bloqueio sem login
+if(localStorage.getItem("revitarium_logged")!=="yes"){
+    window.location.href="index.html";
 }
 
-// Executar previsão
-document.getElementById("btnPrever").onclick = async () => {
+// Execução tática da previsão
+document.getElementById("btnPredict").onclick = async ()=>{
     const id = document.getElementById("patientId").value.trim();
-    const term = document.getElementById("terminal");
+    const terminal = document.getElementById("terminal");
 
     if(!id){
-        term.textContent = "ERRO: INSIRA UM ID VÁLIDO.";
+        terminal.textContent = "⚠ ERRO: ID não fornecido. Abortando operação.";
         return;
     }
 
-    term.textContent = "ENVIANDO SOLICITAÇÃO PARA CENTRAL...\nAGUARDE...\n";
+    terminal.textContent = "🔍 Estabelecendo conexão...\n🔌 Iniciando transmissão...\n";
 
     try{
-        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
-        const data = await res.json();
-        term.textContent = "RESPOSTA RECEBIDA (CLASSIFICAÇÃO TÁTICA):\n\n" + JSON.stringify(data, null, 2);
+        const req = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`,{
+            method:"GET",
+            headers:{Accept:"application/json"}
+        });
+
+        const data = await req.json();
+
+        terminal.textContent =
+        "📡 TRANSMISSÃO RECEBIDA\n"+
+        "------------------------------------\n"+
+        JSON.stringify(data,null,2) +
+        "\n------------------------------------\n"+
+        "STATUS: PREVISÃO COMPLETA\n"+
+        "🟢 SISTEMA OPERACIONAL";
 
     }catch(e){
-        term.textContent = "FALHA NA TRANSMISSÃO. SEM SINAL DO SERVIDOR.";
+        terminal.textContent = "❌ FALHA NA MALHA - CONEXÃO PERDIDA";
     }
-};
+}
 </script>
 
 </body>
