@@ -1,151 +1,151 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ReviTARIUM v14 • Dashboard Clínico</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviTARIUM v14 • Clinical Biomechanics</title>
 
-<!-- Tipografia Poppins -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Fonte Poppins -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --primary: #6EC4B3;
-    --dark: #151E26;
-    --light: #FFFFFF;
-    --frost: rgba(255,255,255,0.12);
-}
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: var(--dark);
-    color: var(--light);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+:root{
+    --primary:#6EC4B3;
+    --dark:#151E26;
+    --white:#ffffff;
+    --glass-bg:rgba(255,255,255,0.05);
+    --glass-border:rgba(255,255,255,0.25);
 }
 
-/* HEADER PREMIUM */
-header {
-    background: var(--primary);
-    color: var(--light);
-    text-align: center;
-    padding: 22px 14px;
-    font-size: 1.45rem;
-    font-weight: 600;
-    border-bottom: solid 3px var(--light);
+body{
+    margin:0;
+    padding:0;
+    font-family:'Poppins',sans-serif;
+    background:var(--dark);
+    color:var(--white);
+    background-image:url('https://i.imgur.com/ZpX8uIx.jpg'); /* textura sci-fi */
+    background-size:cover;
+    background-attachment:fixed;
 }
 
-/* CONTAINER */
-.container {
-    padding: 22px;
+/* HEADER */
+header{
+    text-align:center;
+    padding:25px 10px;
+    font-size:1.6rem;
+    font-weight:600;
+    backdrop-filter:blur(10px);
+    background:rgba(21,30,38,0.6);
+    border-bottom:1px solid var(--primary);
 }
 
-/* INPUTS */
-input {
-    width: 100%;
-    padding: 16px;
-    border-radius: 10px;
-    border: none;
-    background: var(--frost);
-    backdrop-filter: blur(10px);
-    font-size: 1rem;
-    color: var(--light);
-    margin-bottom: 14px;
+/* CARD PRINCIPAL */
+.card{
+    margin:20px;
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(12px);
+    padding:20px;
+    border-radius:18px;
 }
 
-/* BOTÕES PRINCIPAIS */
-button.card {
-    width: 100%;
-    background: var(--primary);
-    border: none;
-    padding: 18px;
-    border-radius: 14px;
-    color: var(--light);
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 10px 0;
-    text-align: left;
+label{font-size:1rem;font-weight:500;}
+input{
+    width:100%;
+    background:rgba(255,255,255,0.08);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(8px);
+    color:white;
+    padding:14px;
+    border-radius:12px;
+    margin:10px 0 18px 0;
 }
 
-/* NAVEGAÇÃO INFERIOR (B) – FLUTUANTE */
-.navbar {
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 92%;
-    background: var(--dark);
-    border-radius: 18px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-around;
-    border: 2px solid var(--primary);
+/* BOTÕES */
+.btn{
+    width:100%;
+    padding:15px;
+    border-radius:14px;
+    border:0;
+    font-weight:600;
+    font-size:1.05rem;
+    margin-top:8px;
+    background:var(--primary);
+    color:#0A1A18;
+    box-shadow:0px 0px 15px rgba(110,196,179,0.7);
 }
-.nav-btn {
-    color: var(--light);
-    font-weight: 500;
-    font-size: 0.9rem;
+
+/* LISTA DE SEÇÕES */
+.section-btn{
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(6px);
+    padding:14px;
+    border-radius:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:10px 0;
+    font-size:1.05rem;
+    cursor:pointer;
+}
+
+.section-btn span{opacity:.8;}
+.section-btn:hover{opacity:1;border-color:var(--primary);}
+
+/* BOTTOM NAV FLUTUANTE */
+.navbar{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    width:90%;
+    background:rgba(21,30,38,0.7);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(10px);
+    padding:12px;
+    border-radius:20px;
+    display:flex;
+    justify-content:space-around;
+    font-size:.95rem;
+    box-shadow:0 0 25px rgba(110,196,179,0.3);
+}
+
+.navbar div{cursor:pointer;}
+.navbar div.active{
+    color:var(--primary);
+    font-weight:600;
 }
 </style>
 </head>
 
 <body>
 
-<header>ReviTARIUM v14 • Dashboard Clínico</header>
+<header>ReviTARIUM v14</header>
 
-<div class="container">
+<div class="card">
+    <label>ID do Paciente</label>
+    <input type="text" placeholder="Ex: 123">
 
-    <h3>ID do Paciente</h3>
-    <input type="text" id="patientId" placeholder="Ex: 123">
+    <label>Nível Vertebral</label>
+    <input type="text" placeholder="Ex: T7  •  12°">
 
-    <h3>Inserir Nível Vertebral</h3>
-    <input type="text" id="vertebra" placeholder="Ex: T7">
-    <input type="number" id="angulo" placeholder="Ex: 12°">
-
-    <button class="card" id="sendData">Enviar para Análise →</button>
-
-    <h3 style="margin-top:30px;">Sessões Clínicas</h3>
-    <button class="card" onclick="location.href='dashboard.html'">Dashboard Clínico →</button>
-    <button class="card" onclick="location.href='evolucao.html'">Linha do Tempo Clínica →</button>
-    <button class="card" onclick="location.href='previsao.html'">Previsão Clínica →</button>
+    <button class="btn">Enviar para Análise →</button>
 </div>
 
+<div class="card">
+    <h3>Seções Clínicas</h3>
+    <div class="section-btn">Dashboard Clínico <span>→</span></div>
+    <div class="section-btn">Linha do Tempo Clínica <span>→</span></div>
+    <div class="section-btn">Previsão Biomecânica <span>→</span></div>
+    <div class="section-btn">PDF Clínico Avançado <span>→</span></div>
+</div>
 
-<!-- NAVBAR B – conforme solicitado -->
-<nav class="navbar">
-    <div class="nav-btn" onclick="location.href='dashboard.html'">Home</div>
-    <div class="nav-btn" onclick="location.href='evolucao.html'">Linha do Tempo</div>
-    <div class="nav-btn" onclick="location.href='previsao.html'">Previsão Clínica</div>
-</nav>
-
-<script>
-if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
-}
-
-document.getElementById("sendData").onclick = async () => {
-    const id = document.getElementById("patientId").value;
-    const v = document.getElementById("vertebra").value;
-    const a = document.getElementById("angulo").value;
-
-    if(!id || !v || !a){
-        alert("Preencha todos os campos.");
-        return;
-    }
-
-    const body = [{ vertebra: v, angle: Number(a) }];
-    fetch(`https://revitarium.onrender.com/workflow/analyze/v4?patient_id=${id}`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(body)
-    }).then(r => r.json()).then(d => {
-        console.log(d);
-        alert("Análise enviada com sucesso!");
-    }).catch(() => alert("Erro ao conectar à API."));
-};
-</script>
+<div class="navbar">
+    <div class="active">Home</div>
+    <div>Linha do Tempo</div>
+    <div>Previsão</div>
+</div>
 
 </body>
 </html>
