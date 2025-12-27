@@ -3,87 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evolução Clínica • Revitarium</title>
+<title>Evolução Clínica • Revitarium (v8 Gráfico Premium)</title>
+
+<!-- BIBLIOTECA PARA GRÁFICO ANIMADO -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
     --verde-base:#6EC4B3;
     --verde-escuro:#151e26;
+    --azul:#003f63;
     --branco:#ffffff;
-    --azul-botao:#003f63;
 }
 
-/* ====== BASE ====== */
+/* BASE */
 body{
     margin:0;
     background:var(--branco);
-    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-family: "Helvetica Neue", Arial, sans-serif;
     color:var(--verde-escuro);
 }
 
-/* ====== HEADER ====== */
+/* HEADER */
 header{
     background:var(--verde-base);
     color:var(--branco);
     text-align:center;
-    padding:22px;
+    padding:20px;
     font-size:1.45rem;
     font-weight:600;
-    letter-spacing:0.03em;
+    letter-spacing:0.02em;
 }
 
-/* ====== CONTAINER ====== */
+/* CONTAINER */
 .container{
-    max-width:600px;
+    max-width:650px;
     margin:auto;
     padding:22px;
 }
 
-h2{
-    font-size:1.25rem;
-    font-weight:700;
-    margin-bottom:14px;
-    color:var(--verde-escuro);
-}
-
-.inputBox{
+input{
     width:100%;
-    background:white;
-    border:1px solid #b8e4d9;
-    border-radius:10px;
     padding:14px;
     font-size:1rem;
-    margin-bottom:12px;
+    margin-bottom:10px;
+    border-radius:10px;
+    border:1px solid #b7e8dd;
 }
 
-/* BOTÃO PRINCIPAL */
-.btnPrimary{
+button{
     width:100%;
     padding:15px;
-    border:none;
-    border-radius:10px;
-    background:var(--azul-botao);
+    background:var(--azul);
     color:var(--branco);
-    font-size:1.1rem;
-    font-weight:600;
-    margin-top:8px;
+    font-weight:bold;
+    font-size:1rem;
+    border-radius:10px;
+    border:none;
+    margin-top:5px;
 }
 
-/* ====== TERMINAL ====== */
+/* TERMINAL */
 .terminal{
     background:#E8F9F5;
     border-left:5px solid var(--verde-base);
-    padding:18px;
+    padding:16px;
     border-radius:10px;
     margin-top:20px;
-    font-size:0.9rem;
-    font-family:monospace;
+    min-height:100px;
     white-space:pre-wrap;
-    color:#002c2c;
-    min-height:120px;
 }
 
-/* ====== MENU INFERIOR ====== */
+.chart-wrapper{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-top:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* MENU INFERIOR */
 .navBottom{
     position:fixed;
     bottom:0; left:0; width:100%;
@@ -102,23 +101,27 @@ h2{
 </head>
 <body>
 
-<header>Evolução Clínica</header>
+<header>Evolução Clínica • Gráfico Animado</header>
 
 <div class="container">
 
-    <h2>Consultar evolução do paciente</h2>
-    <input id="patientID" class="inputBox" placeholder="ID do Paciente (ex: 123)" />
-    <button class="btnPrimary" onclick="buscarEvolucao()">📈 Consultar Evolução</button>
+    <h2>Paciente</h2>
+    <input id="patientID" placeholder="Digite o ID do paciente (ex: 123)">
 
-    <div id="terminal" class="terminal">Aguardando dados...</div>
+    <button onclick="carregarEvolucao()">📊 Carregar Evolução</button>
+
+    <div id="terminal" class="terminal">Aguardando consulta...</div>
+
+    <div class="chart-wrapper">
+        <canvas id="graficoEvolucao"></canvas>
+    </div>
 
 </div>
 
-<!-- NAVEGAÇÃO PADRÃO -->
 <div class="navBottom">
-    <button onclick="window.location.href='dashboard.html'">🏠 Dashboard</button>
-    <button onclick="window.location.href='evolucao.html'">📈 Evolução</button>
-    <button onclick="window.location.href='previsao.html'">🔮 Previsão</button>
+    <button onclick="location.href='dashboard.html'">🏠 Dashboard</button>
+    <button onclick="location.href='evolucao.html'">📈 Evolução</button>
+    <button onclick="location.href='previsao.html'">🔮 Previsão</button>
 </div>
 
 <script>
@@ -127,30 +130,68 @@ if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-/* === FUNÇÃO DE EVOLUÇÃO V7 === */
-async function buscarEvolucao(){
+let chart; // referência global do gráfico
+
+async function carregarEvolucao(){
     const id = document.getElementById("patientID").value.trim();
     const terminal = document.getElementById("terminal");
 
     if(!id){
-        terminal.textContent = "Erro: informe o ID do paciente.";
+        terminal.textContent = "Erro: Informe o ID do paciente.";
         return;
     }
 
-    terminal.textContent = "Consultando evolução...";
+    terminal.textContent = "Carregando evolução...";
 
     try{
         const req = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
         const dados = await req.json();
-        
+
+        if(!dados.history || dados.history.length === 0){
+            terminal.textContent = "Nenhum histórico encontrado para esse paciente.";
+            return;
+        }
+
         terminal.textContent =
-        "📌 RESULTADO DA EVOLUÇÃO:\\n" +
-        "---------------------------------------\\n" +
-        `• Score Anterior: ${dados.previous_score || "N/D"}\\n` +
-        `• Score Atual: ${dados.current_score || "N/D"}\\n` +
-        `• Variação (Δ): ${dados.delta || "N/D"}\\n` +
-        `• Tendência: ${dados.trend || "N/D"}\\n`;
-        
+        `📌 Evolução clínica carregada\n` +
+        `----------------------------------\n` +
+        `Último Score: ${dados.current_score}\n` +
+        `Variação Δ: ${dados.delta}\n` +
+        `Tendência: ${dados.trend.toUpperCase()}\n`;
+
+        const labels = dados.history.map(h => h.timestamp.slice(0,10));
+        const scores = dados.history.map(h => h.global_score);
+
+        if(chart){ chart.destroy(); }
+
+        const ctx = document.getElementById("graficoEvolucao").getContext("2d");
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Score Clínico",
+                    data: scores,
+                    borderColor: "#6EC4B3",
+                    backgroundColor: "rgba(110,196,179,0.25)",
+                    borderWidth: 3,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                animation: { duration: 900 },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid:{color:"#d9f3ec"}
+                    },
+                    x:{
+                        grid:{display:false}
+                    }
+                }
+            }
+        });
+
     }catch(e){
         terminal.textContent = "Erro: API não respondeu.";
     }
