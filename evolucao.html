@@ -1,167 +1,150 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Revitarium • Evolução Clínica</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolução Clínica • Revitarium</title>
 
 <style>
-    :root{
-        --primaria: #151e26;       /* nova cor */
-        --secundaria: #1f2b35;
-        --fundo: #f4f9ff;
-        --texto: #ffffff;
-        --azulClaro: #d6e9f7;
-    }
+:root {
+    --verde-base:#6EC4B3;
+    --verde-escuro:#151e26;
+    --branco:#ffffff;
+    --texto:#0f2322;
+}
 
-    body {
-        margin: 0;
-        background: var(--fundo);
-        font-family: Arial, sans-serif;
-        color: var(--primaria);
-    }
-    header {
-        background: var(--primaria);
-        padding: 20px;
-        text-align: center;
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: var(--texto);
-    }
-    .container {
-        padding: 20px;
-    }
-    input, button {
-        width: 100%;
-        padding: 15px;
-        margin: 8px 0;
-        border-radius: 10px;
-        border: none;
-        font-size: 1rem;
-    }
-    input {
-        background: white;
-        border: 2px solid var(--azulClaro);
-    }
-    .btn-primary {
-        background: var(--primaria);
-        color: var(--texto);
-        font-weight: bold;
-    }
-    .card {
-        background: #ffffff;
-        padding: 18px;
-        border-radius: 12px;
-        margin-top: 18px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    #resultado {
-        background: #e9f5ff;
-        border-left: 4px solid var(--primaria);
-        padding: 15px;
-        border-radius: 8px;
-        font-family: monospace;
-        white-space: pre-wrap;
-        margin-top: 10px;
-    }
-    .nav-bottom {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        background: var(--primaria);
-        display: flex;
-        justify-content: space-around;
-        padding: 12px 0;
-    }
-    .nav-bottom button {
-        background: none;
-        border: none;
-        color: var(--texto);
-        font-size: 1rem;
-        font-weight: bold;
-    }
+body{
+    margin:0;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:white;
+}
+
+/* SOBREPOSIÇÃO */
+.bg-wrapper{
+    display:flex; height:220px; width:100%;
+    background:var(--verde-base);
+    position:relative; overflow:hidden;
+}
+.bg-wrapper:before{
+    content:""; position:absolute; left:0;top:0;
+    width:17%;height:100%; background:var(--verde-escuro);
+}
+.overlay-title{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    color:white; font-size:1.3rem; font-weight:bold;
+    letter-spacing:0.15em; text-transform:uppercase;
+}
+
+.container{
+    padding:20px; max-width:550px; margin:auto;
+}
+h2{
+    color:var(--verde-escuro);
+    text-transform:uppercase;
+}
+input{
+    width:100%; padding:14px; margin:10px 0;
+    background:white; border-radius:10px;
+    border:1px solid #9fd6c8; font-size:1rem; color:var(--texto);
+}
+button{
+    width:100%; padding:15px; margin:8px 0;
+    border-radius:10px; font-size:1rem; font-weight:bold;
+    border:none; cursor:pointer;
+}
+.btn-solid{ background:var(--verde-base); color:#002926; }
+.btn-outline{ background:white; border:2px solid var(--verde-base); color:var(--verde-escuro); }
+
+.chart-box{
+    background:white; border-radius:14px;
+    padding:15px; margin-top:25px; border:2px solid var(--verde-base);
+}
+.terminal{
+    background:#F5FFFD; border-left:6px solid var(--verde-base);
+    padding:15px; border-radius:10px; font-family:monospace;
+    min-height:120px; white-space:pre-wrap;
+}
+.menu-bottom{
+    position:fixed; bottom:0; left:0; width:100%;
+    background:var(--verde-escuro); padding:12px 0;
+    display:flex; justify-content:space-around;
+}
+.menu-bottom button{
+    background:none; border:none; color:white; font-size:1rem;
+}
 </style>
 </head>
-
 <body>
 
-<header>Evolução Clínica</header>
+<div class="bg-wrapper">
+    <div class="overlay-title">Evolução Clínica</div>
+</div>
 
 <div class="container">
 
     <h2>ID do Paciente</h2>
-    <input id="patientId" placeholder="Ex: 123"/>
+    <input id="patientId" placeholder="Ex: 123">
 
-    <button class="btn-primary" id="buscarDados">📈 Carregar Evolução</button>
+    <button class="btn-solid" id="consultar">📈 Consultar Evolução</button>
 
-    <div class="card">
-        <h3>Histórico Longitudinal (Scores)</h3>
-        <canvas id="graficoEvolucao" height="180"></canvas>
+    <div class="chart-box">
+        <canvas id="evolucaoChart"></canvas>
     </div>
 
-    <div class="card">
-        <h3>Dados Brutos</h3>
-        <div id="resultado">Aguardando consulta...</div>
-    </div>
+    <h2>Retorno da API</h2>
+    <pre id="terminal" class="terminal">Aguardando...</pre>
 
+    <button class="btn-outline" onclick="nav('dashboard.html')">🔙 Voltar ao Dashboard</button>
 </div>
 
-<div class="nav-bottom">
-    <button onclick="window.location.href='dashboard.html'">🏥 Dashboard</button>
-    <button onclick="window.location.href='evolucao.html'">📈 Evolução</button>
-    <button onclick="window.location.href='previsao.html'">🔍 Previsão</button>
+<div class="menu-bottom">
+    <button onclick="nav('dashboard.html')">🏠 Início</button>
+    <button onclick="nav('evolucao.html')">📈 Evolução</button>
+    <button onclick="nav('previsao.html')">🔮 Previsão</button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
-    window.location.href = "index.html";
+    window.location.href="index.html";
 }
 
-const ctx = document.getElementById("graficoEvolucao").getContext("2d");
-let grafico;
+function nav(p){ window.location.href=p }
 
-document.getElementById("buscarDados").onclick = async () => {
-    const id = document.getElementById("patientId").value.trim();
-    const box = document.getElementById("resultado");
+document.getElementById("consultar").onclick = async ()=>{
+    const id = patientId.value.trim();
+    const out = document.getElementById("terminal");
+    if(!id){ out.textContent="Digite o ID do paciente."; return; }
 
-    if(!id){ box.textContent = "Insira o ID do paciente."; return; }
+    out.textContent="Consultando evolução...";
+    try{
+        const r = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
+        const json = await r.json();
+        out.textContent = JSON.stringify(json,null,2);
 
-    box.textContent = "Consultando API...";
+        // Gráfico
+        const labels = json.history.map(item => item.date || "Data");
+        const valores = json.history.map(item => item.angle || 0);
 
-    try {
-        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
-        const data = await res.json();
-        box.textContent = JSON.stringify(data, null, 2);
-
-        const scores = data.history.map(item => item.global_score);
-        const labels = data.history.map(item => item.timestamp.split("T")[0]);
-
-        if(grafico) grafico.destroy();
-
-        grafico = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Score Clínico",
-                    data: scores,
-                    borderColor: "#151e26",
-                    backgroundColor: "rgba(21, 30, 38, 0.20)",
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    tension: 0.3
+        new Chart(document.getElementById("evolucaoChart"),{
+            type:"line",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"Ângulos / Progressão",
+                    data:valores,
+                    borderColor:"#151e26",
+                    backgroundColor:"rgba(21,30,38,0.25)",
+                    borderWidth:3,
+                    pointRadius:5,
+                    pointBackgroundColor:"#6EC4B3"
                 }]
             },
-            options: {
-                responsive: true,
-                animation: { duration: 1200 },
-                scales: { y: { beginAtZero: false } }
-            }
+            options:{responsive:true,maintainAspectRatio:false}
         });
-
-    } catch {
-        box.textContent = "Erro ao consultar API ou paciente inexistente.";
+    }catch(err){
+        out.textContent="Erro ao consultar API";
     }
 };
 </script>
