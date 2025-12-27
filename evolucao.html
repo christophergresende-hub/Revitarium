@@ -1,144 +1,167 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Revitarium • Evolução Clínica v13 ULTRA</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Revitarium • Evolução Clínica</title>
+
+<!-- Gráfico Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    body{
-        margin:0;
-        font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-        background:#050505;
-        color:white;
+    body {
+        margin: 0;
+        background: #f4f9ff;
+        font-family: Arial, sans-serif;
+        color: #003b63;
     }
-    header{
-        background:#002A52;
-        text-align:center;
-        padding:20px;
-        font-size:1.4rem;
-        font-weight:600;
-        position:sticky; top:0;
+    header {
+        background: #0068a8;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: white;
     }
-    .container{max-width:460px;margin:auto;padding:20px;}
-
-    input, button{
-        width:100%;padding:14px;margin:8px 0;border-radius:10px;
-        border:none;font-size:1rem;
+    .container {
+        padding: 20px;
     }
-    input{background:#111;color:white;}
-    .btn{background:#0A84FF;color:white;font-weight:bold;}
-
-    .card{
-        background:#111;padding:20px;margin:20px 0;border-radius:14px;
-        box-shadow:0 0 12px rgba(0,0,0,0.5);
+    input, button {
+        width: 100%;
+        padding: 15px;
+        margin: 8px 0;
+        border-radius: 10px;
+        border: none;
+        font-size: 1rem;
     }
-    .result{
-        font-size:1rem;line-height:1.6;
-        background:black;border-radius:12px;padding:15px;
-        white-space:pre-wrap;font-family:monospace;color:#00ff7b;
-        min-height:140px;
+    input {
+        background: white;
+        border: 2px solid #d6e9f7;
     }
-
-    /* Barra de evolução */
-    .barbox{margin-top:10px;}
-    .bar{
-        background:#222;height:14px;border-radius:8px;overflow:hidden;
-        position:relative;
+    .btn-primary {
+        background: #0076c5;
+        color: white;
+        font-weight: bold;
     }
-    .bar-fill{
-        background:linear-gradient(90deg,#00ff7b,#0080ff);
-        height:100%;transition:0.6s;width:0%;
+    .card {
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 12px;
+        margin-top: 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
-
-    /* NAV inferior */
-    nav{
-        position:fixed;bottom:0;width:100%;background:#000;
-        display:flex;justify-content:space-around;padding:12px 0;
-        border-top:1px solid #222;
+    #resultado {
+        background: #e9f5ff;
+        border-left: 4px solid #0076c5;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        margin-top: 10px;
     }
-    nav button{
-        flex:1;margin:0 4px;padding:12px;border-radius:10px;
-        background:#0A84FF;font-weight:bold;color:white;
+    /* MENU APP FIXO */
+    .nav-bottom {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: #003b63;
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0;
+    }
+    .nav-bottom button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
     }
 </style>
 </head>
+
 <body>
 
-<header>📈 Evolução Clínica – v13 ULTRA</header>
+<header>Evolução Clínica • Hospital Premium</header>
 
 <div class="container">
 
-    <h3>ID do Paciente</h3>
-    <input id="patientId" type="text" placeholder="Ex: 123">
+    <h2>ID do Paciente</h2>
+    <input id="patientId" placeholder="Ex: 123"/>
 
-    <button class="btn" id="consultar">Consultar Evolução</button>
-    <button class="btn" id="pdfBtn">📄 Gerar PDF Clínico</button>
+    <button class="btn-primary" id="buscarDados">📈 Carregar Evolução</button>
 
     <div class="card">
-        <h3>Resultado Atual:</h3>
-        <div class="result" id="terminal">Aguardando...</div>
+        <h3>Histórico Longitudinal (Scores)</h3>
+        <canvas id="graficoEvolucao" height="180"></canvas>
+    </div>
 
-        <div class="barbox">
-            <small>Score Atual</small>
-            <div class="bar"><div class="bar-fill" id="barScore"></div></div>
-        </div>
-
-        <div class="barbox">
-            <small>Delta de Evolução</small>
-            <div class="bar"><div class="bar-fill" id="barDelta"></div></div>
-        </div>
+    <div class="card">
+        <h3>Dados Brutos</h3>
+        <div id="resultado">Aguardando consulta...</div>
     </div>
 
 </div>
 
-<nav>
-    <button onclick="location.href='dashboard.html'">🏠 Início</button>
-    <button onclick="location.href='evolucao.html'" style="background:#0071E3;">📈 Evolução</button>
-    <button onclick="location.href='previsao.html'">🔮 Previsão</button>
-</nav>
+<!-- NAVEGAÇÃO INFERIOR -->
+<div class="nav-bottom">
+    <button onclick="window.location.href='dashboard.html'">🏥 Dashboard</button>
+    <button onclick="window.location.href='evolucao.html'">📈 Evolução</button>
+    <button onclick="window.location.href='previsao.html'">🔍 Previsão</button>
+</div>
 
 <script>
-// Proteção de acesso
+/* Proteção de acesso */
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-// Consultar evolução
-document.getElementById("consultar").onclick = async () => {
+const ctx = document.getElementById("graficoEvolucao").getContext("2d");
+let grafico;
+
+/* Carregar evolução */
+document.getElementById("buscarDados").onclick = async () => {
     const id = document.getElementById("patientId").value.trim();
-    const out = document.getElementById("terminal");
-    if(!id){ out.textContent="Digite um ID."; return; }
+    const box = document.getElementById("resultado");
 
-    out.textContent="🔄 Consultando evolução...";
+    if(!id){ box.textContent = "Insira o ID do paciente."; return; }
 
-    try{
+    box.textContent = "Consultando API...";
+
+    try {
         const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
         const data = await res.json();
-        out.textContent = JSON.stringify(data, null, 2);
 
-        // anima barra score (0-100)
-        if(data.current_score){
-            document.getElementById("barScore").style.width = `${data.current_score}%`;
-        }
+        box.textContent = JSON.stringify(data, null, 2);
 
-        // anima barra delta (-/+/)
-        if(data.delta){
-            let delta = Math.abs(data.delta)*10;
-            if(delta > 100) delta = 100;
-            document.getElementById("barDelta").style.width = `${delta}%`;
-        }
+        const scores = data.history.map(item => item.global_score);
+        const labels = data.history.map(item => item.timestamp.split("T")[0]);
 
-    }catch(e){
-        out.textContent="❌ Erro ao conectar com a API";
-    }
-};
+        if(grafico) grafico.destroy();
 
-// PDF Clínico
-document.getElementById("pdfBtn").onclick = () => {
-    const id = prompt("Paciente para PDF:");
-    if(id){
-        window.open(`https://revitarium.onrender.com/workflow/patient/${id}/report/pdf`, "_blank");
+        grafico = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Score Clínico",
+                    data: scores,
+                    borderColor: "#0076c5",
+                    backgroundColor: "rgba(0,118,197,0.15)",
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: { duration: 1200 },
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+
+    } catch(e) {
+        box.textContent = "Erro ao consultar API ou paciente inexistente.";
     }
 };
 </script>
