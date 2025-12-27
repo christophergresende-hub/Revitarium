@@ -7,10 +7,11 @@
 
 <style>
 :root {
-    --principal:#151e26;      /* Header e menu inferior */
-    --botao:#6EC4B3;          /* Botões sólidos - verde hospitalar */
-    --fundo:#E7F4F2;          /* Fundo hospitalar claro */
-    --texto:#0c0c0c;
+    --principal:#151e26;     /* Header e menu inferior */
+    --botao:#6EC4B3;         /* Botões */
+    --fundo:#E7F4F2;         /* Fundo hospitalar */
+    --texto:#1A2A32;         /* Texto neutro clínico */
+    --caixa:#FFFFFF;         /* Caixas e inputs */
 }
 
 body {
@@ -28,6 +29,7 @@ header{
     font-size:1.4rem;
     font-weight:bold;
     color:white;
+    border-bottom:4px solid var(--botao);
 }
 
 /* ÁREA CENTRAL */
@@ -43,8 +45,8 @@ input{
     padding:14px;
     margin:8px 0;
     border-radius:10px;
-    border:1px solid #d0e4e2;
-    background:white;
+    border:1px solid #C8E6E3;
+    background:var(--caixa);
     font-size:1rem;
 }
 
@@ -57,31 +59,32 @@ button{
     font-size:1rem;
     font-weight:bold;
     border:none;
+    cursor:pointer;
 }
 
 .btn-solid{
     background:var(--botao);
-    color:#000;
-    box-shadow:0 4px 8px rgba(0,0,0,.15);
+    color:#00322F;
 }
 
 .btn-menu{
     background:white;
-    color:#000;
+    color:#00322F;
     border:2px solid var(--botao);
 }
 
 .btn-danger{
-    background:#B71C1C;
+    background:#BF4747;
     color:white;
 }
 
-/* TERMINAL */
+/* TERMINAL → CINZA CLARO (sem preto) */
 .terminal{
-    background:#0c0c0c;
-    color:#6EC4B3;
+    background:#FAFEFF;
+    color:#00322F;
     padding:18px;
     border-radius:10px;
+    border:1px solid #C8E6E3;
     min-height:120px;
     font-family:monospace;
     white-space:pre-wrap;
@@ -134,7 +137,7 @@ button{
 
 </div>
 
-<!-- MENU INFERIOR FIXO -->
+<!-- MENU INFERIOR -->
 <div class="menu-bottom">
     <button onclick="nav('dashboard.html')">🏠 Início</button>
     <button onclick="nav('evolucao.html')">📈 Evolução</button>
@@ -142,7 +145,7 @@ button{
 </div>
 
 <script>
-// bloqueio de acesso
+// bloqueio
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
@@ -156,7 +159,7 @@ function logout(){
     window.location.href="index.html";
 }
 
-// envio para API
+// API
 document.getElementById("enviarAnalise").onclick = async () => {
     const id = pacienteId.value.trim();
     const v  = vertebra.value.trim();
