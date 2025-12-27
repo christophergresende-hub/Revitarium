@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium – Coleta Múltipla v9</title>
+
+<style>
+body{
+    background:#0c0c0c; color:white;
+    font-family:Arial; margin:0;
+}
+header{
+    background:#002a52; padding:18px;
+    text-align:center; font-weight:bold;
+    font-size:1.3rem;
+}
+.container{padding:20px;}
+input, button{
+    width:100%; padding:14px;
+    margin:8px 0; border:none; border-radius:8px;
+    font-size:1rem;
+}
+input{background:#111;color:white;}
+.btn{background:#007bff;color:white;font-weight:bold;}
+.btn-danger{background:#8B0000;color:white;font-weight:bold;}
+.list{
+    background:#111;padding:10px;margin-top:10px;
+    border-radius:8px;min-height:80px;
+    font-size:0.95rem;
+}
+.terminal{
+    background:black;color:#00ff00;
+    padding:18px;border-radius:10px;margin-top:20px;
+    min-height:160px;font-family:monospace;
+    white-space:pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<header>🦴 Revitarium – Coleta Múltipla v9</header>
+
+<div class="container">
+
+    <input type="text" id="vertebra" placeholder="Ex: T7" />
+    <input type="number" id="angulo" placeholder="Ex: 12" />
+    <button class="btn" id="addNivel">+ Adicionar nível</button>
+
+    <h3>Lista para análise:</h3>
+    <div id="lista" class="list">Nenhum nível adicionado.</div>
+
+    <button class="btn" id="enviar">🚑 Enviar análise completa</button>
+    <button class="btn-danger" id="voltar">⬅ Voltar</button>
+
+    <h3>Retorno da API:</h3>
+    <div id="terminal" class="terminal">Aguardando envio...</div>
+
+</div>
+
+<script>
+// -------------------------------
+// BLOQUEIO DE LOGIN
+// -------------------------------
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
+
+// -------------------------------
+// LISTA INTERNA
+// -------------------------------
+let niveis = [];
+const lista = document.getElementById("lista");
+const terminal = document.getElementById("terminal");
+
+document.getElementById("addNivel").onclick = () => {
+    const v = document.getElementById("vertebra").value.trim();
+    const a = document.getElementById("angulo").value.trim();
+
+    if(!v || !a){
+        terminal.textContent = "⚠ Preencha vértebra e ângulo.";
+        return;
+    }
+
+    niveis.push({ vertebra:v, angle:Number(a) });
+    lista.textContent = JSON.stringify(niveis, null, 2);
+    document.getElementById("vertebra").value = "";
+    document.getElementById("angulo").value = "";
+};
+
+// -------------------------------
+// ENVIO PARA API (MÚLTIPLO)
+// -------------------------------
+document.getElementById("enviar").onclick = async () => {
+    if(niveis.length === 0){
+        terminal.textContent = "⚠ Nenhum nível para enviar.";
+        return;
+    }
+
+    terminal.textContent = "🔄 Enviando análise...";
+
+    try{
+        const res = await fetch("https://revitarium.onrender.com/workflow/analyze/v4?patient_id=123", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(niveis)
+        });
+
+        const data = await res.json();
+        terminal.textContent = JSON.stringify(data, null, 2);
+
+    }catch(err){
+        terminal.textContent = "❌ Erro ao conectar com a API.";
+    }
+};
+
+// -------------------------------
+// VOLTAR
+// -------------------------------
+document.getElementById("voltar").onclick = () => {
+    window.location.href = "dashboard.html";
+};
+</script>
+</body>
+</html>
