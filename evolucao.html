@@ -1,83 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evolução Clínica • Revitarium</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revitarium – Evolução Clínica</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#121212;color:white;padding:20px;}
-.container{max-width:430px;margin:auto;background:#1e1e1e;border-radius:14px;padding:22px;}
-input,button{width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:8px;border:none;}
-button{background:#3b82f6;color:white;font-weight:bold;}
-button:hover{background:#2563eb;}
-.card{background:#292929;padding:15px;border-radius:10px;margin-top:18px;}
-.tag{padding:4px 10px;border-radius:6px;font-size:14px;font-weight:bold;display:inline-block;margin-top:4px;}
-.verde{background:#16a34a;color:white;}
-.amarelo{background:#eab308;color:black;}
-.vermelho{background:#dc2626;color:white;}
-.score-box{font-size:20px;font-weight:bold;margin-bottom:6px;}
-.delta{font-size:18px;margin:6px 0;}
-footer{text-align:center;margin-top:25px;opacity:.6;}
+    body { background: #0c0c0c; color: white; font-family: Arial; margin: 0; }
+    header { background: #002a52; padding: 18px; text-align: center; font-weight: bold; }
+    .container { padding: 20px; }
+    button {
+        width: 100%; padding: 15px; margin: 8px 0; border-radius: 8px;
+        border: none; font-weight: bold; font-size: 1rem;
+    }
+    .btn { background: #007bff; color: white; }
+    .btn-danger { background: #8B0000; color: white; }
+    .terminal {
+        background: black; color: #00ff00; padding: 20px;
+        border-radius: 10px; margin-top: 20px; min-height: 160px;
+        font-family: monospace; white-space: pre-wrap;
+    }
 </style>
 </head>
-
 <body>
+
+<header>📈 Revitarium – Evolução Clínica</header>
+
+<div class="container">
+    <h2>Consultar evolução do paciente</h2>
+    <input type="text" id="patientId" placeholder="Ex: 123" style="padding:12px;width:100%;border-radius:8px">
+    <button id="consultar" class="btn">🔎 Consultar evolução</button>
+    <button id="voltar" class="btn">⬅ Voltar ao Dashboard</button>
+    <button id="logout" class="btn-danger">⛔ Sair</button>
+
+    <h3>Retorno:</h3>
+    <div id="terminal" class="terminal">Aguardando consulta...</div>
+</div>
 
 <script>
 if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
-</script>
 
-<div class="container">
-<h2>Evolução Clínica do Paciente</h2>
-<label>ID do Paciente</label>
-<input type="text" id="patientId" value="123">
+document.getElementById("voltar").onclick = () => {
+    window.location.href = "dashboard.html";
+};
+document.getElementById("logout").onclick = () => {
+    localStorage.removeItem("revitarium_logged");
+    window.location.href = "index.html";
+};
 
-<button onclick="consultarEvolucao()">Consultar Evolução</button>
-<button style="background:#444" onclick="window.location.href='dashboard.html'">Voltar ao Dashboard</button>
+document.getElementById("consultar").onclick = async () => {
+    const p = document.getElementById("patientId").value.trim();
+    const terminal = document.getElementById("terminal");
 
-<div id="result"></div>
-</div>
+    if(!p){ terminal.textContent = "Digite o ID do paciente"; return; }
 
-<footer>Revitarium • Sistema de Análise Biomecânica</footer>
-
-<script>
-async function consultarEvolucao(){
-    const id = document.getElementById("patientId").value.trim();
-    const url = `https://revitarium.onrender.com/workflow/patient/${id}/evolution`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    // Se não houver evolução suficiente
-    if(data.message){
-        document.getElementById("result").innerHTML = `
-            <div class="card">
-                <div class="score-box">Sem dados suficientes para evolução</div>
-                <p>Realize mais avaliações para habilitar projeções.</p>
-            </div>
-        `;
-        return;
+    terminal.textContent = "Consultando evolução...";
+    try{
+        const r = await fetch(`https://revitarium.onrender.com/workflow/patient/${p}/evolution`);
+        const data = await r.json();
+        terminal.textContent = JSON.stringify(data, null, 2);
+    } catch(e){
+        terminal.textContent = "Erro ao conectar com a API.";
     }
-
-    const trendClass = data.trend === "melhora" ? "verde" :
-                       data.trend === "piora"   ? "vermelho" : "amarelo";
-
-    document.getElementById("result").innerHTML = `
-        <div class="card">
-            <div class="score-box">Score Atual: <b>${data.current_score}</b></div>
-            <div class="score-box">Score Anterior: <b>${data.previous_score}</b></div>
-            <div class="delta">Delta: <b>${data.delta}</b></div>
-            <div class="tag ${trendClass}">${data.trend.toUpperCase()}</div>
-        </div>
-        <div class="card">
-            <h4>Histórico Completo</h4>
-            <pre style="white-space:pre-wrap;">${JSON.stringify(data.history, null, 2)}</pre>
-        </div>
-    `;
-}
+};
 </script>
 
 </body>
