@@ -3,96 +3,107 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Revitarium • Previsão Clínica Militar</title>
+<title>Revitarium • Previsão Clínica</title>
 
 <style>
-body{
-    margin:0;
-    background:#0a0f0f;
-    font-family:Arial, sans-serif;
-    color:#e0ffe0;
-}
+    /* ======= DESIGN iOS SAÚDE ======= */
+    body{
+        margin:0;
+        background:#ffffff;
+        font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", Arial, sans-serif;
+        color:#111;
+    }
+    header{
+        padding:22px;
+        background:#ffffff;
+        font-size:1.4rem;
+        font-weight:600;
+        text-align:center;
+        border-bottom:1px solid #e6e6e6;
+        position:sticky; top:0;
+    }
+    .container{
+        padding:20px;
+        max-width:600px;
+        margin:auto;
+    }
 
-header{
-    background:#021a18;
-    padding:20px;
-    text-align:center;
-    color:#76ff03;
-    font-weight:bold;
-    font-size:1.4rem;
-    border-bottom:2px solid #0f3;
-}
+    /* Input Apple Style */
+    input{
+        width:100%;
+        padding:14px;
+        margin:10px 0;
+        font-size:1rem;
+        border-radius:12px;
+        border:1px solid #dcdcdc;
+        background:#fafafa;
+    }
 
-.container{
-    padding:20px;
-}
+    /* Botão estilo iOS Health */
+    button{
+        width:100%;
+        padding:15px;
+        margin:10px 0;
+        border-radius:12px;
+        font-weight:600;
+        border:none;
+        background:#007aff;
+        color:white;
+        font-size:1rem;
+    }
+    button:active{ background:#005fcc; }
 
-input,button{
-    width:100%;
-    padding:14px;
-    margin:8px 0;
-    border-radius:6px;
-    border:none;
-    font-size:1rem;
-}
+    /* Card de retorno estilo Apple */
+    .card{
+        background:#f9f9f9;
+        padding:18px;
+        border-radius:14px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        margin-top:18px;
+        font-size:0.95rem;
+        white-space:pre-wrap;
+    }
 
-input{
-    background:#0d1a1a;
-    color:#76ff03;
-    border:1px solid #093;
-}
-
-button{
-    background:#093;
-    color:white;
-    font-weight:bold;
-}
-
-button:hover{ background:#0c5; cursor:pointer; }
-
-#resultado{
-    background:black;
-    color:#0f0;
-    margin-top:20px;
-    padding:20px;
-    border-radius:8px;
-    font-family:monospace;
-    white-space:pre-wrap;
-    min-height:140px;
-}
-
-/* Botões inferiores */
-.navbar{
-    position:fixed;
-    bottom:0; left:0; width:100%;
-    background:#021a18;
-    display:flex;
-    border-top:2px solid #0f3;
-}
-.navbar button{
-    flex:1;
-    border-radius:0;
-    border-right:1px solid #062;
-}
+    /* Navbar inferior estilo app de saúde */
+    .navbar{
+        position:fixed;
+        bottom:0;
+        left:0;
+        width:100%;
+        background:#fff;
+        border-top:1px solid #e6e6e6;
+        display:flex;
+    }
+    .navbar button{
+        flex:1;
+        background:white;
+        color:#007aff;
+        border-radius:0;
+        border:none;
+        padding:14px;
+        font-size:.9rem;
+    }
 </style>
 </head>
 <body>
 
-<header>🛡️ Previsão Clínica • Protocolo Militar</header>
+<header>Previsão Clínica • iOS Health</header>
 
 <div class="container">
-    <h3>ID do Paciente</h3>
+    <label>ID do Paciente</label>
     <input id="patientId" placeholder="Ex: 123">
 
-    <button id="btnPrever">📡 Rodar Previsão</button>
+    <button id="btnPrever">Rodar Previsão</button>
 
-    <div id="resultado">Aguardando parâmetros...</div>
+    <h3 style="margin-top:30px; font-weight:600;">Resultado Previsto:</h3>
+    <div id="resultado" class="card">Aguardando dados...</div>
 </div>
 
+<!-- NAVBAR -->
 <div class="navbar">
-    <button onclick="location.href='dashboard.html'">🏠 Início</button>
-    <button onclick="location.href='evolucao.html'">📈 Evolução</button>
-    <button onclick="location.href='previsao.html'">🔮 Previsão</button>
+    <button onclick="location.href='dashboard.html'">Início</button>
+    <button onclick="location.href='evolucao.html'">Evolução</button>
+    <button onclick="location.href='previsao.html'">Previsão</button>
 </div>
 
 <script>
@@ -101,28 +112,27 @@ if(localStorage.getItem("revitarium_logged") !== "yes"){
     window.location.href = "index.html";
 }
 
-/* EXECUTAR PREVISÃO */
+/* CHAMADA PARA API */
 document.getElementById("btnPrever").onclick = async () => {
     const patientId = document.getElementById("patientId").value.trim();
     const box = document.getElementById("resultado");
 
     if(!patientId){
-        box.textContent = "ERRO: informe o ID do paciente.";
+        box.textContent = "Informe o ID para consulta.";
         return;
     }
 
-    box.textContent = "🔍 Consultando IA tática...";
+    box.textContent = "Calculando previsão...";
 
     try{
         const url = `https://revitarium.onrender.com/workflow/patient/${patientId}/predict`;
         const res = await fetch(url);
         const data = await res.json();
         box.textContent = JSON.stringify(data, null, 2);
+    } catch(err){
+        box.textContent = "Erro ao consultar API.";
     }
-    catch(e){
-        box.textContent = "❌ Falha de comunicação com a API";
-    }
-};
+}
 </script>
 
 </body>
