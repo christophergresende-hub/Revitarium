@@ -1,71 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium • Hospital Premium</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReviTARIUM v14 • Previsão Clínica</title>
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-body{
-    margin:0; background:#ffffff; font-family:Arial, sans-serif; color:#003B64;
+:root {
+    --primary: #6EC4B3;
+    --dark: #151E26;
+    --light: #FFFFFF;
+    --frost: rgba(255,255,255,0.10);
 }
-header{
-    background:#0077B6; color:white; padding:18px; text-align:center;
-    font-size:1.3rem; font-weight:bold;
+body {
+    margin: 0;
+    background: var(--dark);
+    color: var(--light);
+    font-family: 'Poppins', sans-serif;
 }
-.container{
-    padding:20px; max-width:600px; margin:auto;
+
+/* HEADER */
+header {
+    background: var(--primary);
+    color: var(--light);
+    text-align: center;
+    padding: 22px;
+    font-size: 1.35rem;
+    font-weight: 600;
 }
-input,button{
-    width:100%; padding:15px; margin:8px 0; font-size:1rem; border-radius:10px;
+
+/* CONTAINER */
+.container {
+    padding: 22px;
 }
-input{
-    border:1px solid #bcd7e9; background:#f8fcff;
+
+/* INPUTS */
+input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: none;
+    background: var(--frost);
+    font-size: 1rem;
+    color: var(--light);
+    margin-bottom: 14px;
+    backdrop-filter: blur(10px);
 }
-button{
-    background:#0077B6; color:white; border:none; font-weight:bold;
+
+/* BOTÃO */
+button {
+    width: 100%;
+    background: var(--primary);
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    color: var(--light);
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 10px 0;
 }
-.card{
-    margin-top:18px; background:#EBF7FF; padding:15px; border-radius:12px; border-left:6px solid #0077B6;
+
+/* CAIXA DE RETORNO */
+#resultado {
+    background: var(--frost);
+    border-radius: 14px;
+    padding: 18px;
+    backdrop-filter: blur(10px);
+    margin-top: 20px;
 }
-.nav{
-    display:flex; gap:6px; margin-top:20px;
+
+/* NAVBAR FLUTUANTE */
+.navbar {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    background: var(--dark);
+    border-radius: 18px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    border: 2px solid var(--primary);
 }
-.nav button{
-    flex:1; background:#013B64; padding:14px; border:none; color:white; border-radius:10px;
+.nav-btn {
+    color: var(--light);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+canvas{
+    margin-top: 26px;
+    background: var(--frost);
+    border-radius: 14px;
+    padding: 10px;
 }
 </style>
 </head>
+
 <body>
 
-<header>Hospital Premium</header>
+<header>Previsão Clínica • Inteligência Biomecânica</header>
+
 <div class="container">
 
-<h2>Consultar Previsão</h2>
-<input id="patientId" placeholder="ID do Paciente (ex: 123)">
-<button id="btnPrever">Prever Condição Clínica</button>
+    <h3>ID do Paciente</h3>
+    <input type="text" id="patientId" placeholder="Ex: 123">
 
-<div id="resultado" class="card">Aguardando dados...</div>
+    <button id="consultar">Prever Condição Clínica →</button>
 
-<div class="nav">
-    <button onclick="location.href='dashboard.html'">Dashboard</button>
-    <button onclick="location.href='evolucao.html'">Evolução</button>
-    <button onclick="location.href='previsao.html'">Previsão</button>
-</div>
+    <div id="resultado">Aguardando previsão...</div>
+
+    <!-- GRÁFICO ANIMADO -->
+    <canvas id="grafico"></canvas>
 
 </div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-btn" onclick="location.href='dashboard.html'">Home</div>
+    <div class="nav-btn" onclick="location.href='evolucao.html'">Linha do Tempo</div>
+    <div class="nav-btn" onclick="location.href='previsao.html'">Previsão Clínica</div>
+</nav>
+
 
 <script>
-if(localStorage.getItem("revitarium_logged")!=="yes") location.href="index.html";
+// BLOQUEIO SEM LOGIN
+if(localStorage.getItem("revitarium_logged") !== "yes"){
+    window.location.href = "index.html";
+}
 
-document.getElementById("btnPrever").onclick = async ()=>{
-    const id=document.getElementById("patientId").value.trim();
-    const out=document.getElementById("resultado");
-    if(!id) return out.textContent="Informe um ID válido.";
+const ctx = document.getElementById("grafico").getContext("2d");
+let chart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: ["Hoje", "1 Mês", "3 Meses", "6 Meses", "12 Meses"],
+        datasets: [{
+            label: "Tendência Clínica",
+            data: [0, 2, 4, 6, 8],
+            borderColor: "#6EC4B3",
+            backgroundColor: "rgba(110,196,179,0.25)",
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: "#6EC4B3",
+            tension: 0.35
+        }]
+    },
+    options: {
+        responsive: true,
+        animation: { duration: 1600, easing: "easeOutQuart" },
+        scales: {
+            x: { ticks: { color: "#fff" } },
+            y: { ticks: { color: "#fff" } }
+        }
+    }
+};
 
-    out.textContent="Carregando...";
-    const r=await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/predict`);
-    out.textContent=JSON.stringify(await r.json(),null,2);
+// CONSULTA À API
+document.getElementById("consultar").onclick = async () => {
+    const id = document.getElementById("patientId").value.trim();
+    if(!id){ alert("Digite o ID do paciente."); return; }
+
+    document.getElementById("resultado").textContent = "Consultando...";
+
+    try {
+        const res = await fetch(`https://revitarium.onrender.com/workflow/patient/${id}/evolution`);
+        const data = await res.json();
+        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+
+        // Atualiza gráfico baseado no retorno
+        if(data?.trend){
+            chart.data.datasets[0].data = data.trend;
+            chart.update();
+        }
+
+    } catch(e){
+        document.getElementById("resultado").textContent = "Erro ao conectar. Verifique o ID.";
+    }
 };
 </script>
+
 </body>
 </html>
