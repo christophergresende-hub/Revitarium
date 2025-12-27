@@ -7,11 +7,11 @@
 
 <style>
 :root {
-    --principal:#151e26;     /* Header e menu inferior */
+    --principal:#6EC4B3;     /* NOVO HEADER e MENU */
     --botao:#6EC4B3;         /* Botões */
     --fundo:#E7F4F2;         /* Fundo hospitalar */
-    --texto:#1A2A32;         /* Texto neutro clínico */
-    --caixa:#FFFFFF;         /* Caixas e inputs */
+    --texto:#1A2A32;         /* Texto clínico */
+    --caixa:#FFFFFF;         /* Inputs */
 }
 
 body {
@@ -21,7 +21,7 @@ body {
     color: var(--texto);
 }
 
-/* HEADER */
+/* HEADER (agora verde sem borda escura) */
 header{
     background: var(--principal);
     padding:20px;
@@ -29,10 +29,10 @@ header{
     font-size:1.4rem;
     font-weight:bold;
     color:white;
-    border-bottom:4px solid var(--botao);
+    border-bottom: 0; /* REMOVIDO */
 }
 
-/* ÁREA CENTRAL */
+/* CONTEÚDO CENTRAL */
 .container{
     max-width:550px;
     margin:auto;
@@ -45,7 +45,7 @@ input{
     padding:14px;
     margin:8px 0;
     border-radius:10px;
-    border:1px solid #C8E6E3;
+    border:1px solid #B7E7DF;
     background:var(--caixa);
     font-size:1rem;
 }
@@ -78,7 +78,7 @@ button{
     color:white;
 }
 
-/* TERMINAL → CINZA CLARO (sem preto) */
+/* TERMINAL → CINZA CLARO */
 .terminal{
     background:#FAFEFF;
     color:#00322F;
@@ -90,7 +90,7 @@ button{
     white-space:pre-wrap;
 }
 
-/* MENU INFERIOR */
+/* MENU INFERIOR (também verde) */
 .menu-bottom{
     position:fixed;
     bottom:0;
@@ -137,7 +137,6 @@ button{
 
 </div>
 
-<!-- MENU INFERIOR -->
 <div class="menu-bottom">
     <button onclick="nav('dashboard.html')">🏠 Início</button>
     <button onclick="nav('evolucao.html')">📈 Evolução</button>
