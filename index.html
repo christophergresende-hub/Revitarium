@@ -1,60 +1,107 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Revitarium • Login (v13 iOS)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviTARIUM V14</title>
+
 <style>
-    body {
-        margin:0; font-family:-apple-system, BlinkMacSystemFont, Arial;
-        background:#0A0A0A; color:white;
-        display:flex; justify-content:center; align-items:center;
-        height:100vh; padding:20px;
-    }
-    .card{
-        width:100%; max-width:390px;
-        background:#111; padding:30px; border-radius:20px;
-        box-shadow:0 0 25px rgba(0,0,0,.6);
-        animation:fade .4s ease;
-    }
-    @keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    h1{font-size:1.7rem;text-align:center;margin-bottom:20px;}
-    input,button{
-        width:100%;padding:15px;margin:10px 0;border-radius:12px;
-        border:none;font-size:1rem;
-    }
-    input{background:#222;color:white;}
-    button{
-        background:#008CFF;color:white;font-weight:bold;
-        box-shadow:0 4px 10px rgba(0,140,255,.4);
-    }
-    .footer{text-align:center;margin-top:15px;font-size:.8rem;color:#999;}
+  body {
+    margin: 0;
+    background: url('fundo.jpg') no-repeat center/cover;
+    font-family: Arial, sans-serif;
+    color: #c7faff;
+  }
+
+  /* ÍCONES */
+  .icone {
+    width: 110px;
+    height: 110px;
+    border-radius: 12px;
+    margin: 6px;
+    display: inline-block;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .icone:hover { filter: brightness(1.2); }
+
+  /* ÁREAS PARA HIGHLIGHT NA MULHER */
+  .area {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* REGIÕES */
+  .head        { top: 190px; left: 59%; width: 90px; height: 90px; }
+  .cervical    { top: 260px; left: 58%; width: 95px; height: 100px; }
+  .thoracic    { top: 340px; left: 57.5%; width: 120px; height: 110px; }
+  .ribcage     { top: 350px; left: 57.5%; width: 140px; height: 150px; }
+  .pelvis      { top: 450px; left: 57.5%; width: 130px; height: 140px; }
+  .lowerLimbs  { top: 520px; left: 58%; width: 140px; height: 280px; }
+  .fullBody    { top:150px; left:56%; width: 200px; height:700px; }
+
+  /* EFEITO DE SELEÇÃO */
+  .highlight { filter: drop-shadow(0 0 14px #26faff) brightness(1.2); transition: .25s; }
 </style>
 </head>
+
+
 <body>
 
-<div class="card">
-<h1>Revitarium</h1>
-
-<input id="email" type="text" placeholder="Email: 123"/>
-<input id="senha" type="password" placeholder="Senha: 123"/>
-
-<button id="loginBtn">Entrar</button>
-<div class="footer">v13 • iOS Clinical Interface</div>
+<!-- LADO ESQUERDO: ÍCONES -->
+<div style="position:absolute; top:260px; left:100px;">
+  <div class="icone" onclick="selecionarZona('cranio')"   style="background-image:url('icon-cranio.png')"></div>
+  <div class="icone" onclick="selecionarZona('cervical')" style="background-image:url('icon-cervical.png')"></div>
+  <div class="icone" onclick="selecionarZona('toracica')" style="background-image:url('icon-toracica.png')"></div>
+  <div class="icone" onclick="selecionarZona('torax')"    style="background-image:url('icon-torax.png')"></div>
+  <div class="icone" onclick="selecionarZona('pelve')"    style="background-image:url('icon-pelve.png')"></div>
+  <div class="icone" onclick="selecionarZona('membros')"  style="background-image:url('icon-membros.png')"></div>
+  <div class="icone" onclick="selecionarZona('full')"     style="background-image:url('icon-fullbody.png')"></div>
 </div>
 
+<!-- MULHER FIXA À DIREITA -->
+<img src="mulher-neon.png" 
+     style="position:absolute; right:120px; top:210px; height:780px; user-select:none; pointer-events:none;">
+
+
+<!-- ÁREAS SENSÍVEIS PARA HIGHLIGHT -->
+<div class="area head"        data-area="head"></div>
+<div class="area cervical"    data-area="cervical"></div>
+<div class="area thoracic"    data-area="thoracic"></div>
+<div class="area ribcage"     data-area="ribcage"></div>
+<div class="area pelvis"      data-area="pelvis"></div>
+<div class="area lowerLimbs"  data-area="lowerLimbs"></div>
+<div class="area fullBody"    data-area="fullBody"></div>
+
+
+<!-- SCRIPT FINAL -->
 <script>
-document.getElementById("loginBtn").onclick = () => {
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
-    
-    if(email === "123" && senha === "123"){
-        localStorage.setItem("revitarium_logged","yes");
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Credenciais inválidas");
-    }
+const zonas = {
+  cranio:   "head",
+  cervical: "cervical",
+  toracica: "thoracic",
+  torax:    "ribcage",
+  pelve:    "pelvis",
+  membros:  "lowerLimbs",
+  full:     "fullBody"
 };
+
+function selecionarZona(zona) {
+  removerHighlights();
+  aplicarHighlight(zonas[zona]);
+}
+
+function removerHighlights() {
+  document.querySelectorAll(".highlight")
+  .forEach(el => el.classList.remove("highlight"));
+}
+
+function aplicarHighlight(area) {
+  const target = document.querySelector(`[data-area="${area}"]`);
+  if (target) target.classList.add("highlight");
+}
 </script>
 
 </body>
