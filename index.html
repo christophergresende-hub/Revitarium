@@ -3,106 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReviTARIUM V14</title>
+<title>ReviTARIUM V14 - Clinical Biomechanics Intelligence</title>
 
 <style>
-  body {
-    margin: 0;
-    background: url('fundo.jpg') no-repeat center/cover;
-    font-family: Arial, sans-serif;
-    color: #c7faff;
-  }
+body{
+  margin:0;
+  background:url('fundo-estrelas.jpg') no-repeat center/cover;
+  font-family:Arial, sans-serif;
+  color:#b7faff;
+  overflow:hidden;
+}
 
-  /* ÍCONES */
-  .icone {
-    width: 110px;
-    height: 110px;
-    border-radius: 12px;
-    margin: 6px;
-    display: inline-block;
-    background-size: cover;
-    background-position: center;
-    cursor: pointer;
-    transition: .2s;
-  }
-  .icone:hover { filter: brightness(1.2); }
+/* CONTAINER PRINCIPAL */
+#container {
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+}
 
-  /* ÁREAS PARA HIGHLIGHT NA MULHER */
-  .area {
-    position: absolute;
-    pointer-events: none;
-  }
+/* TÍTULO */
+#titulo{
+  position:absolute;
+  top:60px; left:50%; transform:translateX(-50%);
+  text-align:center;
+}
+#titulo h1{ margin:10px 0; font-size:42px; font-weight:300; letter-spacing:1px; }
+#titulo h2{ font-size:18px; font-weight:300; }
 
-  /* REGIÕES */
-  .head        { top: 190px; left: 59%; width: 90px; height: 90px; }
-  .cervical    { top: 260px; left: 58%; width: 95px; height: 100px; }
-  .thoracic    { top: 340px; left: 57.5%; width: 120px; height: 110px; }
-  .ribcage     { top: 350px; left: 57.5%; width: 140px; height: 150px; }
-  .pelvis      { top: 450px; left: 57.5%; width: 130px; height: 140px; }
-  .lowerLimbs  { top: 520px; left: 58%; width: 140px; height: 280px; }
-  .fullBody    { top:150px; left:56%; width: 200px; height:700px; }
+/* BOX PRINCIPAL */
+#painel{
+  position:absolute;
+  top:200px; left:50%; transform:translateX(-50%);
+  width:80%; max-width:950px;
+  border-radius:32px;
+  border:1px solid rgba(150,255,255,0.25);
+  padding:40px;
+  backdrop-filter: blur(6px);
+}
 
-  /* EFEITO DE SELEÇÃO */
-  .highlight { filter: drop-shadow(0 0 14px #26faff) brightness(1.2); transition: .25s; }
+/* CAMPOS */
+label{ font-size:20px; }
+input{
+  width:100%;
+  background:rgba(160,255,255,0.05);
+  border:1px solid rgba(160,255,255,0.35);
+  border-radius:12px;
+  padding:16px;
+  font-size:18px;
+  color:#c7ffff;
+  margin:10px 0 26px 0;
+}
+
+/* ÍCONES À ESQUERDA */
+.area-icones{
+  display:grid;
+  grid-template-columns:repeat(2, 120px);
+  grid-gap:18px;
+  position:absolute;
+  left:60px; top:260px;
+}
+.icone{
+  width:120px; height:120px;
+  border-radius:18px;
+  background:rgba(0,255,255,0.08);
+  backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  transition:0.25s;
+  cursor:pointer;
+}
+.icone:hover{
+  filter:drop-shadow(0 0 10px #2ffcff);
+}
+
+/* MULHER */
+.mulher{
+  position:absolute;
+  height:820px;
+  right:120px;
+  top:200px;
+  pointer-events:none;
+  user-select:none;
+}
+
+/* MENU INFERIOR */
+.menu{
+  width:100%;
+  position:absolute;
+  bottom:40px; left:50%; transform:translateX(-50%);
+  display:flex; justify-content:center; gap:60px;
+}
+.menu a{
+  font-size:22px;
+  color:#c5ffff;
+  text-decoration:none;
+  transition:.25s;
+}
+.menu a:hover{
+  filter:drop-shadow(0 0 8px #2fffed);
+}
 </style>
 </head>
 
-
 <body>
 
-<!-- LADO ESQUERDO: ÍCONES -->
-<div style="position:absolute; top:260px; left:100px;">
-  <div class="icone" onclick="selecionarZona('cranio')"   style="background-image:url('icon-cranio.png')"></div>
-  <div class="icone" onclick="selecionarZona('cervical')" style="background-image:url('icon-cervical.png')"></div>
-  <div class="icone" onclick="selecionarZona('toracica')" style="background-image:url('icon-toracica.png')"></div>
-  <div class="icone" onclick="selecionarZona('torax')"    style="background-image:url('icon-torax.png')"></div>
-  <div class="icone" onclick="selecionarZona('pelve')"    style="background-image:url('icon-pelve.png')"></div>
-  <div class="icone" onclick="selecionarZona('membros')"  style="background-image:url('icon-membros.png')"></div>
-  <div class="icone" onclick="selecionarZona('full')"     style="background-image:url('icon-fullbody.png')"></div>
+<div id="container">
+
+  <!-- TÍTULO -->
+  <div id="titulo">
+    <img src="logo-revitarium.png" style="height:90px;">
+    <h1>ReviTARIUM <strong>V14</strong></h1>
+    <h2>Clinical Biomechanics Intelligence</h2>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="painel">
+
+    <label>ID do Paciente</label>
+    <input type="text" placeholder="Ex: 123">
+
+    <label>Inserir Nível Vertebral</label>
+    <input type="text" placeholder="Ex: T7 - 12°">
+
+  </div>
+
+  <!-- ÍCONES -->
+  <div class="area-icones">
+    <div class="icone"><img src="icon-skull.png" height="70"></div>
+    <div class="icone"><img src="icon-cervical.png" height="70"></div>
+    <div class="icone"><img src="icon-thoracic.png" height="70"></div>
+    <div class="icone"><img src="icon-ribcage.png" height="70"></div>
+    <div class="icone"><img src="icon-pelvis.png" height="70"></div>
+    <div class="icone"><img src="icon-limbs.png" height="70"></div>
+    <div class="icone"><img src="icon-fullbody.png" height="70"></div>
+  </div>
+
+  <!-- MULHER -->
+  <img src="mulher-neon-tech.png" class="mulher">
+
+  <!-- MENU -->
+  <div class="menu">
+    <a href="#">Início</a>
+    <a href="#">Evolução</a>
+    <a href="#">Previsão</a>
+  </div>
+
 </div>
-
-<!-- MULHER FIXA À DIREITA -->
-<img src="mulher-neon.png" 
-     style="position:absolute; right:120px; top:210px; height:780px; user-select:none; pointer-events:none;">
-
-
-<!-- ÁREAS SENSÍVEIS PARA HIGHLIGHT -->
-<div class="area head"        data-area="head"></div>
-<div class="area cervical"    data-area="cervical"></div>
-<div class="area thoracic"    data-area="thoracic"></div>
-<div class="area ribcage"     data-area="ribcage"></div>
-<div class="area pelvis"      data-area="pelvis"></div>
-<div class="area lowerLimbs"  data-area="lowerLimbs"></div>
-<div class="area fullBody"    data-area="fullBody"></div>
-
-
-<!-- SCRIPT FINAL -->
-<script>
-const zonas = {
-  cranio:   "head",
-  cervical: "cervical",
-  toracica: "thoracic",
-  torax:    "ribcage",
-  pelve:    "pelvis",
-  membros:  "lowerLimbs",
-  full:     "fullBody"
-};
-
-function selecionarZona(zona) {
-  removerHighlights();
-  aplicarHighlight(zonas[zona]);
-}
-
-function removerHighlights() {
-  document.querySelectorAll(".highlight")
-  .forEach(el => el.classList.remove("highlight"));
-}
-
-function aplicarHighlight(area) {
-  const target = document.querySelector(`[data-area="${area}"]`);
-  if (target) target.classList.add("highlight");
-}
-</script>
 
 </body>
 </html>
