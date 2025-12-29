@@ -3,46 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revitarium v14</title>
-<link rel="stylesheet" href="style.css">
+<title>ReviTARIUM v14</title>
+
+<!-- CSS BASE -->
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: url("assets/fundo.webp") no-repeat center center fixed;
+  background-size: cover;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+.container {
+  width: 90%;
+  margin: auto;
+  padding-top: 30px;
+}
+.box {
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0,255,255,0.4);
+  border-radius: 25px;
+  padding: 25px;
+  margin-top: 20px;
+}
+.input-field {
+  width: 100%;
+  padding: 15px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,255,255,0.3);
+  border-radius: 10px;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.icones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 20px;
+}
+.icones-grid div {
+  height: 110px;
+  background: rgba(0,255,255,0.12);
+  border: 1px solid rgba(0,255,255,0.4);
+  border-radius: 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.icones-grid img {
+  width: 55px;
+}
+.mulher {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  width: 240px;
+}
+.menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,255,255,0.1);
+  border-top: 1px solid rgba(0,255,255,0.3);
+  padding: 15px;
+  display:flex;
+  justify-content: space-around;
+}
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+</style>
 </head>
+
 <body>
-
-<div class="background">
-  <img src="assets/fundo.webp" class="bg-img">
-</div>
-
-<header class="topo">
-  <img src="assets/logo-revitarium.png" class="logo">
-  <h1>ReviTARIUM v14</h1>
-  <p>Clinical Biomechanics Intelligence</p>
-</header>
-
-<main class="painel">
-  <label>ID do Paciente</label>
-  <input type="text" placeholder="Ex: 123">
-
-  <label>Inserir Nível Vertebral</label>
-  <input type="text" placeholder="Ex: T7  •  12°">
-
-  <section class="grid-icones">
-    <img src="assets/ico-cranio.png" class="icon">
-    <img src="assets/ico-coluna1.png" class="icon">
-    <img src="assets/ico-coluna2.png" class="icon">
-    <img src="assets/ico-torax.png" class="icon">
-    <img src="assets/ico-bacia.png" class="icon">
-    <img src="assets/ico-perna.png" class="icon">
-    <img src="assets/ico-full.png" class="icon">
-  </section>
+<div class="container">
 
   <img src="assets/mulher.webp" class="mulher">
-</main>
 
-<footer class="nav">
-  <a class="ativo">Início</a>
-  <a>Evolução</a>
-  <a>Previsão</a>
-</footer>
+  <h1>ReviTARIUM v14</h1>
+  <p>Clinical Biomechanics Intelligence</p>
+
+  <div class="box">
+    <label>ID do Paciente</label>
+    <input class="input-field" placeholder="Ex: 123">
+
+    <label style="margin-top:20px;">Inserir Nível Vertebral</label>
+    <input class="input-field" placeholder="Ex: T7 - 12°">
+
+    <div class="icones-grid">
+      <div><img src="assets/ico-cranio.png"></div>
+      <div><img src="assets/ico-coluna1.png"></div>
+      <div><img src="assets/ico-coluna2.png"></div>
+      <div><img src="assets/ico-torax.png"></div>
+      <div><img src="assets/ico-bacia.png"></div>
+      <div><img src="assets/ico-perna.png"></div>
+      <div><img src="assets/ico-full.png"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+  <a href="#">Início</a>
+  <a href="evolucao.html">Evolução</a>
+  <a href="previsao.html">Previsão</a>
+</div>
 
 </body>
 </html>
