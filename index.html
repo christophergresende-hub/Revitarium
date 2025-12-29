@@ -4,114 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReviTARIUM v14</title>
-
-<!-- ================= ESTILO BASE ================ -->
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-        background: #000;
-    }
-
-    .fundo {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        z-index: -1;
-    }
-
-    h1 {
-        text-align: center;
-        color: #9fffe9;
-        font-size: 2.3rem;
-        margin-top: 40px;
-    }
-
-    .conteudo {
-        width: 90%;
-        margin: 0 auto;
-        margin-top: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .formulario {
-        width: 45%;
-        background: rgba(0,255,255,0.08);
-        border: 1px solid rgba(0,255,255,0.18);
-        backdrop-filter: blur(6px);
-        border-radius: 16px;
-        padding: 25px;
-    }
-
-    input {
-        width: 100%;
-        margin-bottom: 18px;
-        padding: 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(0,255,255,0.35);
-        background: rgba(0,255,255,0.05);
-        color: #9fffe9;
-        font-size: 1rem;
-    }
-
-    .icones-zonas {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 18px;
-        margin-top: 12px;
-    }
-
-    .icones-zonas img {
-        width: 90px;
-        padding: 10px;
-        border-radius: 12px;
-        background: rgba(0,255,255,0.10);
-        border: 1px solid rgba(0,255,255,0.25);
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .icones-zonas img:hover {
-        background: rgba(0,255,255,0.35);
-        transform: scale(1.05);
-    }
-
-    .painel-mulher {
-        width: 50%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .mulher {
-        width: 75%;
-        height: auto;
-    }
-
-    /* MENU INFERIOR */
-    .menu {
-        position: fixed;
-        bottom: 20px;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        font-size: 1.2rem;
-    }
-
-    .menu a {
-        text-decoration: none;
-        color: #9fffe9;
-        padding: 10px 20px;
-        border-radius: 10px;
-        background: rgba(0,255,255,0.10);
-        border: 1px solid rgba(0,255,255,0.25);
-    }
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -120,31 +13,32 @@
 <img src="assets/fundo.webp" class="fundo">
 
 <!-- TÍTULO -->
-<h1>ReviTARIUM v14<br><small style="font-size:16px;color:#9fffe9;">Clinical Biomechanics Intelligence</small></h1>
+<h1 class="titulo">ReviTARIUM v14<br><small>Clinical Biomechanics Intelligence</small></h1>
 
 <!-- CONTEÚDO -->
 <div class="conteudo">
-
-    <!-- FORMULÁRIO E ÍCONES -->
+    
+    <!-- FORMULÁRIO -->
     <div class="formulario">
         <label>ID do Paciente</label>
-        <input type="text" placeholder="Ex: 123">
+        <input id="idPaciente" type="text" placeholder="Ex: 123">
 
         <label>Inserir Nível Vertebral</label>
-        <input type="text" placeholder="Ex: T7 - 12°">
+        <input id="inputNivel" type="text" placeholder="Ex: T7 - 12°">
 
+        <!-- ÍCONES -->
         <div class="icones-zonas">
-            <img src="assets/ico-cranio.png">
-            <img src="assets/ico-coluna1.png">
-            <img src="assets/ico-coluna2.png">
-            <img src="assets/ico-torax.png">
-            <img src="assets/ico-bacia.png">
-            <img src="assets/ico-perna.png">
-            <img src="assets/ico-full.png">
+            <img src="assets/ico-cranio.png" onclick="selecionarZona('cranio')">
+            <img src="assets/ico-coluna1.png" onclick="selecionarZona('cervical')">
+            <img src="assets/ico-coluna2.png" onclick="selecionarZona('toracica')">
+            <img src="assets/ico-torax.png" onclick="selecionarZona('torax')">
+            <img src="assets/ico-bacia.png" onclick="selecionarZona('pelve')">
+            <img src="assets/ico-perna.png" onclick="selecionarZona('membros')">
+            <img src="assets/ico-full.png" onclick="selecionarZona('full')">
         </div>
     </div>
 
-    <!-- MULHER -->
+    <!-- MULHER  -->
     <div class="painel-mulher">
         <img src="assets/mulher.webp" class="mulher">
     </div>
@@ -152,11 +46,12 @@
 </div>
 
 <!-- MENU -->
-<div class="menu">
-    <a href="#">Início</a>
-    <a href="#">Evolução</a>
-    <a href="#">Previsão</a>
-</div>
+<nav class="menu">
+    <a href="index.html">Início</a>
+    <a href="evolucao.html">Evolução</a>
+    <a href="previsao.html">Previsão</a>
+</nav>
 
+<script src="js/app.js"></script>
 </body>
 </html>
