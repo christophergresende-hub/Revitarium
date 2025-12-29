@@ -1,0 +1,87 @@
+body {
+    margin: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+.fundo {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+.titulo {
+    text-align: center;
+    color: #9fffe9;
+    margin-top: 30px;
+    font-size: 2.2rem;
+}
+.titulo small {
+    font-size: 14px;
+    opacity: 0.7;
+}
+.conteudo {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+.formulario {
+    width: 40%;
+    padding: 20px;
+    background: rgba(0,255,255,0.07);
+    border: 1px solid rgba(0,255,255,0.22);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+}
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(0,255,255,0.40);
+    background: rgba(0,255,255,0.05);
+    color: #9fffe9;
+}
+.icones-zonas {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+}
+.icones-zonas img {
+    width: 85px;
+    background: rgba(0,255,255,0.12);
+    border-radius: 10px;
+    border: 1px solid rgba(0,255,255,0.4);
+    padding: 10px;
+    cursor: pointer;
+}
+.icones-zonas img:hover {
+    background: rgba(0,255,255,0.35);
+    transform: scale(1.05);
+}
+.painel-mulher {
+    width: 50%;
+    text-align: center;
+}
+.mulher {
+    width: 75%;
+}
+.menu {
+    position: fixed;
+    bottom: 18px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+}
+.menu a {
+    color: #9fffe9;
+    text-decoration: none;
+    padding: 10px 20px;
+    background: rgba(0,255,255,0.12);
+    border: 1px solid rgba(0,255,255,0.35);
+    border-radius: 10px;
+}
