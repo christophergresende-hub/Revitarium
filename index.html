@@ -3,150 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReviTARIUM V14 - Clinical Biomechanics Intelligence</title>
+<title>ReviTARIUM v14</title>
 
+<!-- ================= ESTILO BASE ================ -->
 <style>
-body{
-  margin:0;
-  background:url('fundo-estrelas.jpg') no-repeat center/cover;
-  font-family:Arial, sans-serif;
-  color:#b7faff;
-  overflow:hidden;
-}
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        background: #000;
+    }
 
-/* CONTAINER PRINCIPAL */
-#container {
-  position:absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-}
+    .fundo {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+    }
 
-/* TÍTULO */
-#titulo{
-  position:absolute;
-  top:60px; left:50%; transform:translateX(-50%);
-  text-align:center;
-}
-#titulo h1{ margin:10px 0; font-size:42px; font-weight:300; letter-spacing:1px; }
-#titulo h2{ font-size:18px; font-weight:300; }
+    h1 {
+        text-align: center;
+        color: #9fffe9;
+        font-size: 2.3rem;
+        margin-top: 40px;
+    }
 
-/* BOX PRINCIPAL */
-#painel{
-  position:absolute;
-  top:200px; left:50%; transform:translateX(-50%);
-  width:80%; max-width:950px;
-  border-radius:32px;
-  border:1px solid rgba(150,255,255,0.25);
-  padding:40px;
-  backdrop-filter: blur(6px);
-}
+    .conteudo {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
 
-/* CAMPOS */
-label{ font-size:20px; }
-input{
-  width:100%;
-  background:rgba(160,255,255,0.05);
-  border:1px solid rgba(160,255,255,0.35);
-  border-radius:12px;
-  padding:16px;
-  font-size:18px;
-  color:#c7ffff;
-  margin:10px 0 26px 0;
-}
+    .formulario {
+        width: 45%;
+        background: rgba(0,255,255,0.08);
+        border: 1px solid rgba(0,255,255,0.18);
+        backdrop-filter: blur(6px);
+        border-radius: 16px;
+        padding: 25px;
+    }
 
-/* ÍCONES À ESQUERDA */
-.area-icones{
-  display:grid;
-  grid-template-columns:repeat(2, 120px);
-  grid-gap:18px;
-  position:absolute;
-  left:60px; top:260px;
-}
-.icone{
-  width:120px; height:120px;
-  border-radius:18px;
-  background:rgba(0,255,255,0.08);
-  backdrop-filter:blur(4px);
-  display:flex; align-items:center; justify-content:center;
-  transition:0.25s;
-  cursor:pointer;
-}
-.icone:hover{
-  filter:drop-shadow(0 0 10px #2ffcff);
-}
+    input {
+        width: 100%;
+        margin-bottom: 18px;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,255,255,0.35);
+        background: rgba(0,255,255,0.05);
+        color: #9fffe9;
+        font-size: 1rem;
+    }
 
-/* MULHER */
-.mulher{
-  position:absolute;
-  height:820px;
-  right:120px;
-  top:200px;
-  pointer-events:none;
-  user-select:none;
-}
+    .icones-zonas {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 18px;
+        margin-top: 12px;
+    }
 
-/* MENU INFERIOR */
-.menu{
-  width:100%;
-  position:absolute;
-  bottom:40px; left:50%; transform:translateX(-50%);
-  display:flex; justify-content:center; gap:60px;
-}
-.menu a{
-  font-size:22px;
-  color:#c5ffff;
-  text-decoration:none;
-  transition:.25s;
-}
-.menu a:hover{
-  filter:drop-shadow(0 0 8px #2fffed);
-}
+    .icones-zonas img {
+        width: 90px;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(0,255,255,0.10);
+        border: 1px solid rgba(0,255,255,0.25);
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .icones-zonas img:hover {
+        background: rgba(0,255,255,0.35);
+        transform: scale(1.05);
+    }
+
+    .painel-mulher {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .mulher {
+        width: 75%;
+        height: auto;
+    }
+
+    /* MENU INFERIOR */
+    .menu {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        font-size: 1.2rem;
+    }
+
+    .menu a {
+        text-decoration: none;
+        color: #9fffe9;
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: rgba(0,255,255,0.10);
+        border: 1px solid rgba(0,255,255,0.25);
+    }
 </style>
 </head>
 
 <body>
 
-<div id="container">
+<!-- FUNDO -->
+<img src="assets/fundo.webp" class="fundo">
 
-  <!-- TÍTULO -->
-  <div id="titulo">
-    <img src="logo-revitarium.png" style="height:90px;">
-    <h1>ReviTARIUM <strong>V14</strong></h1>
-    <h2>Clinical Biomechanics Intelligence</h2>
-  </div>
+<!-- TÍTULO -->
+<h1>ReviTARIUM v14<br><small style="font-size:16px;color:#9fffe9;">Clinical Biomechanics Intelligence</small></h1>
 
-  <!-- PAINEL -->
-  <div id="painel">
+<!-- CONTEÚDO -->
+<div class="conteudo">
 
-    <label>ID do Paciente</label>
-    <input type="text" placeholder="Ex: 123">
+    <!-- FORMULÁRIO E ÍCONES -->
+    <div class="formulario">
+        <label>ID do Paciente</label>
+        <input type="text" placeholder="Ex: 123">
 
-    <label>Inserir Nível Vertebral</label>
-    <input type="text" placeholder="Ex: T7 - 12°">
+        <label>Inserir Nível Vertebral</label>
+        <input type="text" placeholder="Ex: T7 - 12°">
 
-  </div>
+        <div class="icones-zonas">
+            <img src="assets/ico-cranio.png">
+            <img src="assets/ico-coluna1.png">
+            <img src="assets/ico-coluna2.png">
+            <img src="assets/ico-torax.png">
+            <img src="assets/ico-bacia.png">
+            <img src="assets/ico-perna.png">
+            <img src="assets/ico-full.png">
+        </div>
+    </div>
 
-  <!-- ÍCONES -->
-  <div class="area-icones">
-    <div class="icone"><img src="icon-skull.png" height="70"></div>
-    <div class="icone"><img src="icon-cervical.png" height="70"></div>
-    <div class="icone"><img src="icon-thoracic.png" height="70"></div>
-    <div class="icone"><img src="icon-ribcage.png" height="70"></div>
-    <div class="icone"><img src="icon-pelvis.png" height="70"></div>
-    <div class="icone"><img src="icon-limbs.png" height="70"></div>
-    <div class="icone"><img src="icon-fullbody.png" height="70"></div>
-  </div>
+    <!-- MULHER -->
+    <div class="painel-mulher">
+        <img src="assets/mulher.webp" class="mulher">
+    </div>
 
-  <!-- MULHER -->
-  <img src="mulher-neon-tech.png" class="mulher">
+</div>
 
-  <!-- MENU -->
-  <div class="menu">
+<!-- MENU -->
+<div class="menu">
     <a href="#">Início</a>
     <a href="#">Evolução</a>
     <a href="#">Previsão</a>
-  </div>
-
 </div>
 
 </body>
