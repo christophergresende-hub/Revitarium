@@ -1,81 +1,136 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReviTARIUM v14</title>
-<link rel="stylesheet" href="style-dashboard.css">
 
 <style>
-body {
-  margin:0;
-  background: url("assets/fundo.webp") no-repeat center/cover fixed;
-  font-family: Arial, sans-serif;
-  color:white;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+
+body{
+    background:url("assets/fundo.webp") no-repeat center/cover;
+    height:100vh;
+    color:white;
 }
-.container {
-  width: 90%;
-  margin:auto;
-  margin-top: 40px;
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:20px;
-  padding:20px;
-  backdrop-filter: blur(6px);
-  background: rgba(0,255,255,0.05);
+
+.container{
+    width:100%;
+    padding:20px;
+    backdrop-filter: blur(6px);
 }
-.input {
-  width:100%; padding:12px;
-  background:rgba(255,255,255,0.1);
-  border-radius:10px; border:none;
-  color:white; margin-bottom:15px;
+
+.titulo{
+    text-align:center;
+    margin-top:30px;
+    font-size:34px;
+    font-weight:700;
+    letter-spacing:2px;
 }
-.icons-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr);
-  gap:12px; margin-top: 20px;
+
+.subtitulo{
+    text-align:center;
+    font-size:16px;
+    opacity:0.8;
+    margin-bottom:20px;
 }
-.icons-grid img {
-  width:95px; height:95px; border-radius:20px;
-  background:rgba(0,255,255,0.1);
-  padding:10px; border:1px solid rgba(0,255,255,0.2);
+
+.card{
+    width:90%;
+    margin:auto;
+    border:1px solid rgba(0,255,255,0.3);
+    border-radius:20px;
+    padding:20px;
+    backdrop-filter:blur(10px);
+    background:rgba(0,30,40,0.35);
 }
-.mulher {
-  position:absolute;
-  right:6%;
-  top:26%;
-  width:260px;
+
+label{font-size:18px;margin:5px 0;display:block;}
+input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid rgba(0,255,255,0.25);
+    background:rgba(255,255,255,0.05);
+    color:white;
+    margin-bottom:15px;
 }
-.footer-nav {
-  position:fixed; bottom:0; left:0; width:100%;
-  display:flex; justify-content:space-around;
-  background:rgba(0,255,255,0.08); padding:15px;
-  backdrop-filter:blur(8px);
+
+.grid-icones{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin-top:20px;
+}
+
+.icone{
+    background:rgba(0,255,255,0.08);
+    border:1px solid rgba(0,255,255,0.3);
+    border-radius:15px;
+    padding:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.icone img{width:60px;}
+
+.mulher{
+    position:absolute;
+    right:10px;
+    bottom:0;
+    width:45%;
+    max-width:360px;
+}
+
+.menu{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:rgba(0,255,255,0.08);
+    backdrop-filter:blur(5px);
+    border-top:1px solid rgba(0,255,255,0.3);
+    display:flex;
+    justify-content:space-around;
+    padding:14px;
+}
+.menu a{
+    color:white;
+    text-decoration:none;
+    font-size:18px;
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>ReviTARIUM v14</h1>
-  <p>Clinical Biomechanics Intelligence</p>
+    <h1 class="titulo">ReviTARIUM v14</h1>
+    <h3 class="subtitulo">Clinical Biomechanics Intelligence</h3>
 
-  <input class="input" placeholder="ID do Paciente  Ex:123">
-  <input class="input" placeholder="Inserir Nível Vertebral Ex: T7 • 12°">
+    <div class="card">
+        <label>ID do Paciente</label>
+        <input type="text" placeholder="Ex: 123">
 
-  <div class="icons-grid">
-    <img src="assets/ico-cranio.png">
-    <img src="assets/ico-coluna1.png">
-    <img src="assets/ico-coluna2.png">
-    <img src="assets/ico-torax.png">
-    <img src="assets/ico-bacia.png">
-    <img src="assets/ico-perna.png">
-    <img src="assets/ico-full.png">
-  </div>
+        <label>Inserir Nível Vertebral</label>
+        <input type="text" placeholder="Ex: T7 – 12°">
+
+        <div class="grid-icones">
+            <div class="icone"><img src="assets/ico-cranio.png"></div>
+            <div class="icone"><img src="assets/ico-coluna1.png"></div>
+            <div class="icone"><img src="assets/ico-coluna2.png"></div>
+            <div class="icone"><img src="assets/ico-torax.png"></div>
+            <div class="icone"><img src="assets/ico-bacia.png"></div>
+            <div class="icone"><img src="assets/ico-perna.png"></div>
+            <div class="icone"><img src="assets/ico-full.png"></div>
+        </div>
+    </div>
 </div>
 
 <img class="mulher" src="assets/mulher.webp">
 
-<div class="footer-nav">
-  <span>🏠 Início</span><span>📈 Evolução</span><span>🔮 Previsão</span>
+<div class="menu">
+    <a href="#">Início</a>
+    <a href="#">Evolução</a>
+    <a href="#">Previsão</a>
 </div>
 
 </body>
